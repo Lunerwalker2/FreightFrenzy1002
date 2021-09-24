@@ -15,6 +15,7 @@
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 dependencies {
     implementation project(':FtcRobotController')
@@ -22,5 +23,11 @@ dependencies {
 
 
 
+    implementation 'com.acmerobotics.roadrunner:core:0.5.3'
+
+    implementation 'org.openftc:easyopencv:1.5.0'
+
+    implementation 'org.ftclib.ftclib:core:1.2.0'
+    implementation 'org.openftc:apriltag:1.0.0'
 
 }
