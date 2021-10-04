@@ -71,6 +71,12 @@ public class AprilTagDemo extends LinearOpMode
     double cx = 319.803; //402.145;
     double cy = 241.251; //221.506;
 
+    /*
+    2560x1440p calib
+    fx: 1928.86 fy: 1928.86
+    cx: 1294.73 cy: 751.773
+     */
+
     // UNITS ARE METERS
     double tagsize = 0.1721;
 
@@ -128,6 +134,7 @@ public class AprilTagDemo extends LinearOpMode
                 camera.startStreaming(640,480, OpenCvCameraRotation.SIDEWAYS_LEFT);
             }
         });
+
 
         dashboard.startCameraStream(camera, 30);
 

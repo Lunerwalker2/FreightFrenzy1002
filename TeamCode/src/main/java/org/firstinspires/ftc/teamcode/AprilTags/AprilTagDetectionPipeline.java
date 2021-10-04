@@ -129,6 +129,11 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
         return input;
     }
 
+    @Override
+    public void onViewportTapped(){
+
+    }
+
     public void setDecimation(float decimation)
     {
         synchronized (decimationSync)
