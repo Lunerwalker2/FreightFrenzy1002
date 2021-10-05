@@ -102,38 +102,38 @@ public class AprilTagDemo extends LinearOpMode
     public void runOpMode()
     {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
 
-        camera.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
-        camera.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
+//         camera.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+//         camera.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
 
-        cameraHardwareHandlerThread = new HandlerThread("CameraHardwareHandlerThread");
-        cameraHardwareHandlerThread.start();
-        cameraHardwareHandler = new Handler(cameraHardwareHandlerThread.getLooper());
-//        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-//        {
-//            @Override
-//            public void onOpened()
-//            {
-//                camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
-//            }
-//
-//            @Override
-//            public void onError(int errorCode)
-//            {
-//
-//            }
-//        });
-        cameraHardwareHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                camera.openCameraDevice();
-                camera.startStreaming(640,480, OpenCvCameraRotation.SIDEWAYS_LEFT);
-            }
-        });
+//         cameraHardwareHandlerThread = new HandlerThread("CameraHardwareHandlerThread");
+//         cameraHardwareHandlerThread.start();
+//         cameraHardwareHandler = new Handler(cameraHardwareHandlerThread.getLooper());
+       camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+       {
+           @Override
+           public void onOpened()
+           {
+               camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
+           }
+
+           @Override
+           public void onError(int errorCode)
+           {
+
+           }
+       });
+//         cameraHardwareHandler.post(new Runnable() {
+//             @Override
+//             public void run() {
+//                 camera.openCameraDevice();
+//                 camera.startStreaming(640,480, OpenCvCameraRotation.SIDEWAYS_LEFT);
+//             }
+//         });
 
 
         dashboard.startCameraStream(camera, 30);
@@ -200,6 +200,18 @@ public class AprilTagDemo extends LinearOpMode
 
                     for(AprilTagDetection detection : detections)
                     {
+                    
+                        /*
+                        This is a terrible way of doing this, but my thought process is that the tag is at 0,0 and facing
+                        at wherever the x axis is (0 degrees). We are using -180 > x <= 180 for the range.
+                        
+                        Theroetically, all we need to do is the add the translation of camera to the position of the tag, and
+                        also add the rotation of the camera relative to the tag to the known rotation of the tag, and normalize it.
+                        
+                        I think.
+                        
+                        This implementation also only works with one tag, as each recursion o the loop will overwrite the previous
+                        */
                         packet.addLine(String.format("\nDetected tag ID=%d", detection.id));
                         packet.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
                         robotX = tagX + detection.pose.x*FEET_PER_METER;
@@ -212,6 +224,13 @@ public class AprilTagDemo extends LinearOpMode
                         packet.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
                     }
                 }
+                /*
+                The specific orientation of the tag determines what the axes we need are, but so far I think that the Z axis goes directly out from the middle
+                of the tag, and the x axis goes [positive] to the right.
+                
+                The rotation value we need is aso unknown as of now, but my theory is that it is the yaw.
+                
+                */
                 packet.put("Robot X", robotX);
                 packet.put("Robot Y", robotY);
                 packet.put("Robot Yaw Deg", robotYaw);
