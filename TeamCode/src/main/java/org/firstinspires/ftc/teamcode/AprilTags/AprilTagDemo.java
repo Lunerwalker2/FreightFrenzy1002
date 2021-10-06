@@ -64,21 +64,21 @@ public class AprilTagDemo extends LinearOpMode
 
     // Lens intrinsics
     // UNITS ARE PIXELS
-    // NOTE: this calibration is for the C920 webcam at 800x448.
-    // You will need to do your own calibration for other configurations!
-    double fx = 622.001; //578.272;
-    double fy = 622.001; //578.272;
-    double cx = 319.803; //402.145;
-    double cy = 241.251; //221.506;
+
+    //Current calib: c270 1280x720p
+    double fx = 1451.966;
+    double fy = 1451.966;
+    double cx = 574.203;
+    double cy = 356.385;
 
     /*
-    2560x1440p calib
+    2560x1440p calib galaxy s9
     fx: 1928.86 fy: 1928.86
     cx: 1294.73 cy: 751.773
      */
 
     // UNITS ARE METERS
-    double tagsize = 0.1721;
+    double tagsize = 0.095504;
 
     int numFramesWithoutDetection = 0;
 
@@ -87,8 +87,8 @@ public class AprilTagDemo extends LinearOpMode
     final float THRESHOLD_HIGH_DECIMATION_RANGE_METERS = 1.0f;
     final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 4;
 
-    private HandlerThread cameraHardwareHandlerThread;
-    private Handler cameraHardwareHandler;
+//    private HandlerThread cameraHardwareHandlerThread;
+//    private Handler cameraHardwareHandler;
 
     public static void drawRobot(Canvas canvas, Pose2d pose) {
         canvas.strokeCircle(pose.getX(), pose.getY(), 9);
@@ -118,7 +118,7 @@ public class AprilTagDemo extends LinearOpMode
            @Override
            public void onOpened()
            {
-               camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
+               camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
            }
 
            @Override
