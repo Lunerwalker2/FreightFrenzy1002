@@ -19,7 +19,7 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
     public static int leftMarkerPositionWidth = 20;
     public static int leftMarkerPositionHeight = 20;
 
-    public static double centerMarkerPositionX = 0.25;
+    public static double centerMarkerPositionX = 0.5;
     public static double centerMarkerPositionY = 0.5;
 
     public static int centerMarkerPositionWidth = 20;
@@ -47,7 +47,7 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
     private Mat yCrCbMat = new Mat();
     private Mat cBMat = new Mat();
 
-    public HubLevel getHubLevel(){
+    public HubLevel getHubLevel() {
         return hubLevel;
     }
 
@@ -98,8 +98,8 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
 
         //Set what our level is so all can see
 
-        if(leftMarkerDetected) hubLevel = HubLevel.BOTTOM;
-        else if(centerMarkerDetected) hubLevel = HubLevel.MIDDLE;
+        if (leftMarkerDetected) hubLevel = HubLevel.BOTTOM;
+        else if (centerMarkerDetected) hubLevel = HubLevel.MIDDLE;
         else hubLevel = HubLevel.TOP;
 
 
@@ -109,7 +109,8 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
 
         //Left Region, bottom level
         switch (hubLevel) {
-            case TOP: case MIDDLE:
+            case TOP:
+            case MIDDLE:
                 Imgproc.rectangle(input, leftSampleRect, new Scalar(190.0, 40.0, 70.0), 2);
                 break;
             case BOTTOM:
@@ -119,7 +120,8 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
 
         //Center region, middle level
         switch (hubLevel) {
-            case BOTTOM: case TOP:
+            case BOTTOM:
+            case TOP:
                 Imgproc.rectangle(input, centerSampleRect, new Scalar(190.0, 40.0, 70.0), 2);
                 break;
             case MIDDLE:
@@ -141,10 +143,15 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
                         default:
                             return "";
                     }
-                }).apply(hubLevel)
-        ,
-        new Point(0.0, 0.0), 1, 1.0, new Scalar(255.0, 0.0, 0.0)
+                }).apply(hubLevel),
+                new Point(0.5 * input.width(), 0.2 * input.height()),
+                Imgproc.FONT_HERSHEY_COMPLEX,
+                1.0,
+                new Scalar(255.0, 0.0, 0.0)
         );
+
+        leftSampleRegion.release();
+        centerSampleRegion.release();
 
         return input;
     }

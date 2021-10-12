@@ -23,7 +23,7 @@ public class DuckPipeline extends OpenCvPipeline {
     public static int leftMarkerPositionWidth = 20;
     public static int leftMarkerPositionHeight = 20;
 
-    public static double centerMarkerPositionX = 0.25;
+    public static double centerMarkerPositionX = 0.5;
     public static double centerMarkerPositionY = 0.5;
 
     public static int centerMarkerPositionWidth = 20;
@@ -33,7 +33,7 @@ public class DuckPipeline extends OpenCvPipeline {
 
 
     //volatile because it's accessed by the opmode thread with no sync
-    private volatile TeamMarkerPipeline.HubLevel hubLevel = TeamMarkerPipeline.HubLevel.BOTTOM;
+    private volatile HubLevel hubLevel = HubLevel.BOTTOM;
 
 
     public enum HubLevel {
@@ -51,7 +51,7 @@ public class DuckPipeline extends OpenCvPipeline {
     private Mat yCrCbMat = new Mat();
     private Mat cBMat = new Mat();
 
-    public TeamMarkerPipeline.HubLevel getHubLevel(){
+    public HubLevel getHubLevel(){
         return hubLevel;
     }
 
@@ -104,9 +104,9 @@ public class DuckPipeline extends OpenCvPipeline {
 
         //Set what our level is so all can see
 
-        if(leftMarkerDetected) hubLevel = TeamMarkerPipeline.HubLevel.BOTTOM;
-        else if(centerMarkerDetected) hubLevel = TeamMarkerPipeline.HubLevel.MIDDLE;
-        else hubLevel = TeamMarkerPipeline.HubLevel.TOP;
+        if(leftMarkerDetected) hubLevel = HubLevel.BOTTOM;
+        else if(centerMarkerDetected) hubLevel = HubLevel.MIDDLE;
+        else hubLevel = HubLevel.TOP;
 
 
         //Now that we have all the data we need here, we can start putting things on the viewport for debugging
@@ -136,7 +136,7 @@ public class DuckPipeline extends OpenCvPipeline {
 
         //Write some text on the viewport
         Imgproc.putText(input,
-                ((Function<TeamMarkerPipeline.HubLevel, String>) hublevel -> {
+                ((Function<HubLevel, String>) hublevel -> {
                     switch (hubLevel) {
                         case BOTTOM:
                             return "Bottom Level";
@@ -147,11 +147,15 @@ public class DuckPipeline extends OpenCvPipeline {
                         default:
                             return "";
                     }
-                }).apply(hubLevel)
-                ,
-                new Point(0.0, 0.0), 1, 1.0, new Scalar(255.0, 0.0, 0.0)
+                }).apply(hubLevel),
+                new Point(0.5 * input.width(), 0.2 * input.height()),
+                Imgproc.FONT_HERSHEY_COMPLEX,
+                1.0,
+                new Scalar(255.0, 0.0, 0.0)
         );
 
+        leftSampleRegion.release();
+        centerSampleRegion.release();
         return input;
     }
 }

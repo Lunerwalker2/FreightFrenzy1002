@@ -64,16 +64,28 @@ public class TestDriveTeleOp extends LinearOpMode {
         while (opModeIsActive()){
             if(isStopRequested()) return;
 
-            Pose2d roadRunnerVoodooPowers = new Pose2d(cubeInput(-gamepad1.left_stick_y, 0.52), cubeInput(-gamepad1.left_stick_x,0.52), cubeInput(gamepad1.right_stick_x, 0.52));
-            List<Double> drivePowers = getDrivePowers(normalizedVels(roadRunnerVoodooPowers));
+            double y = (Math.abs(gamepad1.left_stick_y) > 0.05) ? cubeInput(-gamepad1.left_stick_y, 0.52) : 0.0; // Remember, this is reversed!
+            double x = (Math.abs(gamepad1.left_stick_x) > 0.05) ? cubeInput(gamepad1.left_stick_x * 1.1, 0.52) : 0.0; // Counteract imperfect strafing
+            double rx = (Math.abs(gamepad1.right_stick_x) > 0.05) ? cubeInput(gamepad1.right_stick_x, 0.52) : 0.0;
+
+            // Denominator is the largest motor power (absolute value) or 1
+            // This ensures all the powers maintain the same ratio, but only when
+            // at least one is out of the range [-1, 1]
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+
+            double frontLeftPower = (y + x + rx) / denominator;
+            double backLeftPower = (y - x + rx) / denominator;
+            double frontRightPower = (y - x - rx) / denominator;
+            double backRightPower = (y + x - rx) / denominator;
+
 
             slowModeMult = gamepad1.left_bumper ? 0.5 : 1; //If the left bumper is pressed, reduce the speed
 
 
-            lf.setPower(drivePowers.get(0) * slowModeMult);
-            lb.setPower(drivePowers.get(1) * slowModeMult);
-            rf.setPower(drivePowers.get(3) * slowModeMult);
-            rb.setPower(drivePowers.get(2) * slowModeMult);
+            lf.setPower(frontLeftPower * slowModeMult);
+            lb.setPower(backLeftPower * slowModeMult);
+            rf.setPower(frontRightPower * slowModeMult);
+            rb.setPower(backRightPower * slowModeMult);
 
         }
 
@@ -84,29 +96,5 @@ public class TestDriveTeleOp extends LinearOpMode {
         double t = factor * Math.pow(input, 3);
         double r = input * (1-factor);
         return t+r;
-    }
-
-    List<Double> getDrivePowers(Pose2d drivePower){
-        return MecanumKinematics.robotToWheelVelocities(drivePower,
-                1.0, 1.0, 1.0);
-    }
-
-    Pose2d normalizedVels(Pose2d drivePower) {
-        Pose2d vel = drivePower;
-
-        if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
-                + Math.abs(drivePower.getHeading()) > 1) {
-            // re-normalize the powers according to the weights
-            double denom = VX_WEIGHT * Math.abs(drivePower.getX())
-                    + VY_WEIGHT * Math.abs(drivePower.getY())
-                    + OMEGA_WEIGHT * Math.abs(drivePower.getHeading());
-
-            vel = new Pose2d(
-                    VX_WEIGHT * drivePower.getX(),
-                    VY_WEIGHT * drivePower.getY(),
-                    OMEGA_WEIGHT * drivePower.getHeading()
-            ).div(denom);
-        }
-        return vel;
     }
 }
