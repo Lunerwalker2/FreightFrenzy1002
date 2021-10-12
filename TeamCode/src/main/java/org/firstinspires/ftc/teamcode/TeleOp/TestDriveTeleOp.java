@@ -54,8 +54,8 @@ public class TestDriveTeleOp extends LinearOpMode {
             motor.setMotorType(motorConfigurationType);
         }); //Sets the power decrease of RUE to 0%, making the max speed back to 100%
 
-        rf.setDirection(DcMotorSimple.Direction.REVERSE);
-        rb.setDirection(DcMotorSimple.Direction.REVERSE);
+        lf.setDirection(DcMotorSimple.Direction.REVERSE);
+        lb.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         waitForStart();
