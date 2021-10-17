@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.commands
 import com.arcrobotics.ftclib.command.CommandBase
 import com.qualcomm.robotcore.util.ElapsedTime
 
-class WaitCommand(private val milliseconds: Int): CommandBase() {
+class SleepCommand(private val milliseconds: Long): CommandBase() {
 
     private val timer = ElapsedTime()
 

@@ -4,12 +4,17 @@ import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.arcrobotics.ftclib.command.CommandOpMode
 import com.arcrobotics.ftclib.command.InstantCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import org.firstinspires.ftc.teamcode.commands.FollowTrajectoryCommand
+import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand
+import org.firstinspires.ftc.teamcode.commands.SleepCommand
 import org.firstinspires.ftc.teamcode.vision.HubLevel
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.Arm
 import java.lang.Math.toRadians
 
+@Autonomous(name = "Blue duck auto")
 class BlueDuckHubParkAuto : CommandOpMode() {
 
 
@@ -42,7 +47,15 @@ class BlueDuckHubParkAuto : CommandOpMode() {
         markerDetector.endStream()
 
         schedule(SequentialCommandGroup(
-
+                InstantCommand({
+                    telemetry.addLine("The program started!")
+                    telemetry.update()
+                }),
+                SleepCommand(2000),
+                FollowTrajectoryCommand(drive,
+                        drive.trajectoryBuilder(drive.poseEstimate)
+                                .forward(10.0)
+                )
         ))
 
 

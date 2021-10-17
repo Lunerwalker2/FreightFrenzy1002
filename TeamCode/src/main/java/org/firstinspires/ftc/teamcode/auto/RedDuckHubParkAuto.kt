@@ -4,6 +4,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.arcrobotics.ftclib.command.CommandOpMode
 import com.arcrobotics.ftclib.command.InstantCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
+import org.firstinspires.ftc.teamcode.commands.FollowTrajectoryCommand
+import org.firstinspires.ftc.teamcode.commands.SleepCommand
 import org.firstinspires.ftc.teamcode.vision.HubLevel
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
@@ -36,14 +38,23 @@ class RedDuckHubParkAuto : CommandOpMode() {
             hubLevel = markerDetector.teamMarkerPipeline.hubLevel
 
             telemetry.addData("Current Hub Level", hubLevel)
-            telemetry
+            telemetry.update()
 
         }
 
         markerDetector.endStream()
 
         schedule(SequentialCommandGroup(
-
+                InstantCommand({
+                    telemetry.addLine("The program started!")
+                    telemetry.addLine("Detected hub level: $hubLevel")
+                    telemetry.update()
+                }),
+                SleepCommand(2000),
+                FollowTrajectoryCommand(drive,
+                        drive.trajectoryBuilder(drive.poseEstimate)
+                                .forward(10.0)
+                )
         ))
 
 
