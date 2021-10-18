@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.CommandOpMode
 import com.arcrobotics.ftclib.command.InstantCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectoryCommand
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand
 import org.firstinspires.ftc.teamcode.commands.SleepCommand
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.Arm
 import java.lang.Math.toRadians
 
+@Disabled
 @Autonomous(name = "Blue duck auto")
 class BlueDuckHubParkAuto : CommandOpMode() {
 
@@ -25,6 +27,8 @@ class BlueDuckHubParkAuto : CommandOpMode() {
 
 
     override fun initialize() {
+
+
         //Subsystems
         val arm = Arm(hardwareMap)
 
@@ -49,13 +53,14 @@ class BlueDuckHubParkAuto : CommandOpMode() {
         schedule(SequentialCommandGroup(
                 InstantCommand({
                     telemetry.addLine("The program started!")
+                    telemetry.addLine("Detected hub level: $hubLevel")
                     telemetry.update()
                 }),
                 SleepCommand(2000),
-                FollowTrajectoryCommand(drive,
-                        drive.trajectoryBuilder(drive.poseEstimate)
-                                .forward(10.0)
-                )
+//                FollowTrajectoryCommand(drive,
+//                        drive.trajectoryBuilder(drive.poseEstimate)
+//                                .forward(10.0)
+//                )
         ))
 
 

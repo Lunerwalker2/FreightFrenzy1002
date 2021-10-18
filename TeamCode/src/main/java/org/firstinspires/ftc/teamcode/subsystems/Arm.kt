@@ -3,15 +3,16 @@ package org.firstinspires.ftc.teamcode.subsystems
 import com.acmerobotics.roadrunner.control.PIDCoefficients
 import com.acmerobotics.roadrunner.control.PIDFController
 import com.arcrobotics.ftclib.command.SubsystemBase
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.*
 import com.qualcomm.robotcore.util.Range
 import kotlin.math.abs
 import kotlin.math.cos
 
 class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
-    private val armMotor by lazy { hardwareMap.get(DcMotorEx::class.java, "arm") }
+
+    private val armMotor by lazy {
+        hardwareMap.get(DcMotorEx::class.java, "arm")
+    }
     var armState = ArmState.STOPPED
 
     private var power = 0.0
