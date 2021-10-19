@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.teleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 @TeleOp(name="Test Tape Eater")
 public class TestTankTeleOp extends LinearOpMode {
 
@@ -15,14 +15,13 @@ public class TestTankTeleOp extends LinearOpMode {
     DcMotor rightBack;
 
 
-    @Override
     public void runOpMode() throws InterruptedException {
 
 
         leftFront = hardwareMap.get(DcMotor.class, "lf");
         leftBack = hardwareMap.get(DcMotor.class, "lb");
-        rightFront = hardwareMap.get(DcMotor.class, "rf");
-        rightBack = hardwareMap.get(DcMotor.class, "rb");
+        leftFront = hardwareMap.get(DcMotor.class, "rf");
+        leftBack = hardwareMap.get(DcMotor.class, "rb");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -32,34 +31,22 @@ public class TestTankTeleOp extends LinearOpMode {
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         waitForStart();
 
-
         while(opModeIsActive()){
-
-            double leftPower = cubeInput(-gamepad1.left_stick_y, 0.52);
-            double rightPower = cubeInput(gamepad1.right_stick_y, 0.52);
-
-            leftFront.setPower(leftPower);
-            leftBack.setPower(leftPower);
-            rightFront.setPower(rightPower);
-            rightBack.setPower(rightPower);
+            leftFront.setPower(-gamepad1.left_stick_y);
+            leftBack.setPower(-gamepad1.left_stick_y);
+            rightFront.setPower(gamepad1.right_stick_y);
+            rightBack.setPower(gamepad1.right_stick_y);
         }
 
         leftFront.setPower(0);
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
-    }
-
-    double cubeInput(double input, double factor){
-        double t = factor * Math.pow(input, 3);
-        double r = input * (1-factor);
-        return t+r;
     }
 
 }

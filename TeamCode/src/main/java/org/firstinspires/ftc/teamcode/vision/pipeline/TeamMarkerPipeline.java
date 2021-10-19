@@ -1,6 +1,9 @@
-package org.firstinspires.ftc.teamcode.Vision.pipeline;
+package org.firstinspires.ftc.teamcode.vision.pipeline;
 
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import android.graphics.Bitmap;
+
+import org.firstinspires.ftc.teamcode.vision.HubLevel;
+import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -10,11 +13,8 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.function.Function;
-/*
-Right now this is pretty much the exact same thing as the team marker pipeline, at least
-until we know what color our team marker will be
- */
-public class DuckPipeline extends OpenCvPipeline {
+
+public class TeamMarkerPipeline extends OpenCvPipeline {
 
 
     public static double leftMarkerPositionX = 0.25;
@@ -36,12 +36,6 @@ public class DuckPipeline extends OpenCvPipeline {
     private volatile HubLevel hubLevel = HubLevel.BOTTOM;
 
 
-    public enum HubLevel {
-        BOTTOM,
-        MIDDLE,
-        TOP
-    }
-
 
     //We are going to assume the marker is solid yellow here.
 
@@ -51,14 +45,12 @@ public class DuckPipeline extends OpenCvPipeline {
     private Mat yCrCbMat = new Mat();
     private Mat cBMat = new Mat();
 
-    public HubLevel getHubLevel(){
+    public HubLevel getHubLevel() {
         return hubLevel;
     }
 
     @Override
     public Mat processFrame(Mat input) {
-
-
 
 
         //Convert to the YCrCb color space from RGB
@@ -104,8 +96,8 @@ public class DuckPipeline extends OpenCvPipeline {
 
         //Set what our level is so all can see
 
-        if(leftMarkerDetected) hubLevel = HubLevel.BOTTOM;
-        else if(centerMarkerDetected) hubLevel = HubLevel.MIDDLE;
+        if (leftMarkerDetected) hubLevel = HubLevel.BOTTOM;
+        else if (centerMarkerDetected) hubLevel = HubLevel.MIDDLE;
         else hubLevel = HubLevel.TOP;
 
 
@@ -115,7 +107,8 @@ public class DuckPipeline extends OpenCvPipeline {
 
         //Left Region, bottom level
         switch (hubLevel) {
-            case TOP: case MIDDLE:
+            case TOP:
+            case MIDDLE:
                 Imgproc.rectangle(input, leftSampleRect, new Scalar(190.0, 40.0, 70.0), 2);
                 break;
             case BOTTOM:
@@ -125,7 +118,8 @@ public class DuckPipeline extends OpenCvPipeline {
 
         //Center region, middle level
         switch (hubLevel) {
-            case BOTTOM: case TOP:
+            case BOTTOM:
+            case TOP:
                 Imgproc.rectangle(input, centerSampleRect, new Scalar(190.0, 40.0, 70.0), 2);
                 break;
             case MIDDLE:
@@ -156,6 +150,45 @@ public class DuckPipeline extends OpenCvPipeline {
 
         leftSampleRegion.release();
         centerSampleRegion.release();
+
+        synchronized (sync) {
+            if (matSavingState == MatSavingState.MAT_REQUESTED) {
+                input.copyTo(matToSave);
+                matSavingState = MatSavingState.MAT_READY_FOR_CONVERSION;
+            }
+        }
+
         return input;
     }
+
+    private enum MatSavingState{
+        NONE_REQUESTED,
+        MAT_REQUESTED,
+        MAT_READY_FOR_CONVERSION
+    }
+
+    private MatSavingState matSavingState = MatSavingState.NONE_REQUESTED;
+
+    final Object sync = new Object();
+    private Mat matToSave = new Mat();
+
+    public void storeNextMat(){
+        synchronized (sync) {
+            matSavingState = MatSavingState.MAT_REQUESTED;
+        }
+    }
+
+
+    public Bitmap getCurrentBitmap(){
+        synchronized (sync){
+            if(matSavingState == MatSavingState.MAT_READY_FOR_CONVERSION){
+                final Bitmap bitmap = Bitmap.createBitmap(matToSave.cols(), matToSave.rows(), Bitmap.Config.RGB_565);
+                Utils.matToBitmap(matToSave, bitmap);
+                matSavingState = MatSavingState.NONE_REQUESTED;
+                return bitmap;
+            } else return null;
+        }
+    }
+
+
 }
