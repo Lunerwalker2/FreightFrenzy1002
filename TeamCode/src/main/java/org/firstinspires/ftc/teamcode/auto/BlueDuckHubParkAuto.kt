@@ -63,7 +63,7 @@ class BlueDuckHubParkAuto : CommandOpMode() {
                 ),
                 FollowTrajectoySequenceCommand(drive,
                        drive.trajectorySequenceBuilder(drive.poseEstimate)
-                               .turn(Math.toRadians(-90))
+                               .turn(Math.toRadians(-90.0))
                 )
         ))
 
