@@ -27,7 +27,7 @@ class RedDuckHubParkAuto : CommandOpMode() {
 
     override fun initialize() {
         //Subsystems
-        val arm = Arm(hardwareMap)
+//        val arm = Arm(hardwareMap)
 
         drive = SampleMecanumDrive(hardwareMap)
         drive.poseEstimate = Pose2d(0.0, 0.0, toRadians(-90.0))

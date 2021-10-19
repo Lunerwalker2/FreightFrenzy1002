@@ -39,7 +39,7 @@ public class MeepMeepTesting {
                 .setDriveTrainType(DriveTrainType.MECANUM)
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-36,60,toRadians(-90)))
+                        drive.trajectorySequenceBuilder(new Pose2d(-42.0,54.5,toRadians(-90.0)))
                                 .forward(8)
                                 .turn(toRadians(90))
                                 .setReversed(true)

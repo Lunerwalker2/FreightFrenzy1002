@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
+import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.arcrobotics.ftclib.command.CommandOpMode
 import com.arcrobotics.ftclib.command.InstantCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
@@ -15,7 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.Arm
 import java.lang.Math.toRadians
 
-@Disabled
+
 @Autonomous(name = "Blue duck auto")
 class BlueDuckHubParkAuto : CommandOpMode() {
 
@@ -30,10 +31,10 @@ class BlueDuckHubParkAuto : CommandOpMode() {
 
 
         //Subsystems
-        val arm = Arm(hardwareMap)
+//        val arm = Arm(hardwareMap)
 
         drive = SampleMecanumDrive(hardwareMap)
-        drive.poseEstimate = Pose2d(0.0, 0.0, toRadians(-90.0))
+        drive.poseEstimate = Pose2d(-42.0, 54.5, toRadians(-90.0))
 
         markerDetector = TeamMarkerDetector(hardwareMap)
         markerDetector.init()
@@ -58,12 +59,20 @@ class BlueDuckHubParkAuto : CommandOpMode() {
                 }),
                 SleepCommand(2000),
                 FollowTrajectoryCommand(drive,
-                       drive.trajectoryBuilder(drive.poseEstimate)
-                               .forward(10.0)
+                        drive.trajectoryBuilder(drive.poseEstimate)
+                                .forward(15.0)
                 ),
-                FollowTrajectoySequenceCommand(drive,
-                       drive.trajectorySequenceBuilder(drive.poseEstimate)
-                               .turn(Math.toRadians(-90.0))
+                FollowTrajectoryCommand(drive,
+                        drive.trajectoryBuilder(drive.poseEstimate)
+                                .lineTo(Vector2d(-42.0, 45.0))
+                ),
+                FollowTrajectorySequenceCommand(drive,
+                        drive.trajectorySequenceBuilder(drive.poseEstimate)
+                                .turn(Math.toRadians(90.0))
+                ),
+                FollowTrajectoryCommand(drive,
+                        drive.trajectoryBuilder(drive.poseEstimate)
+                                .lineToConstantHeading(Vector2d(-52.0, 50.0))
                 )
         ))
 
