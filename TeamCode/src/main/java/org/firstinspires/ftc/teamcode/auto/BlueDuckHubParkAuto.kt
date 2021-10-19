@@ -57,10 +57,14 @@ class BlueDuckHubParkAuto : CommandOpMode() {
                     telemetry.update()
                 }),
                 SleepCommand(2000),
-//                FollowTrajectoryCommand(drive,
-//                        drive.trajectoryBuilder(drive.poseEstimate)
-//                                .forward(10.0)
-//                )
+                FollowTrajectoryCommand(drive,
+                       drive.trajectoryBuilder(drive.poseEstimate)
+                               .forward(10.0)
+                ),
+                FollowTrajectoySequenceCommand(drive,
+                       drive.trajectorySequenceBuilder(drive.poseEstimate)
+                               .turn(Math.toRadians(-90))
+                )
         ))
 
 
