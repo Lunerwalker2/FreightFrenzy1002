@@ -39,10 +39,6 @@ class TestAuto: CommandOpMode() {
         }
 
 
-        markerDetector.teamMarkerPipeline.storeNextMat()
-        sleep(1000)
-        FtcDashboard.getInstance().sendImage(markerDetector.teamMarkerPipeline.currentBitmap)
-
         markerDetector.endStream()
 
         schedule(SequentialCommandGroup(
