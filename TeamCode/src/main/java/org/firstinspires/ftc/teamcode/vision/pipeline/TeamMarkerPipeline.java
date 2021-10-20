@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.vision.pipeline;
 
 import android.graphics.Bitmap;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.teamcode.vision.HubLevel;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -14,6 +16,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.function.Function;
 
+@Config
 public class TeamMarkerPipeline extends OpenCvPipeline {
 
 
@@ -29,7 +32,7 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
     public static int centerMarkerPositionWidth = 20;
     public static int centerMarkerPositionHeight = 20;
 
-    public static int thresholdValue = 120;
+    public static int thresholdValue = 190;
 
 
     //volatile because it's accessed by the opmode thread with no sync
@@ -82,8 +85,8 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
         Scalar leftRegionMean = Core.mean(leftSampleRegion);
         Scalar centerRegionMean = Core.mean(centerSampleRegion);
 
-        boolean leftMarkerDetected = (leftRegionMean.val[0] < thresholdValue);
-        boolean centerMarkerDetected = (centerRegionMean.val[0] < thresholdValue);
+        boolean leftMarkerDetected = (leftRegionMean.val[0] > thresholdValue); //see if it is blue
+        boolean centerMarkerDetected = (centerRegionMean.val[0] > thresholdValue); //see if it is blue
 
         //if both are detected
         if (leftMarkerDetected && centerMarkerDetected) {
