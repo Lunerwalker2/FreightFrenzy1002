@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
-import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.control.PIDCoefficients
 import com.acmerobotics.roadrunner.control.PIDFController
 import com.arcrobotics.ftclib.command.SubsystemBase
@@ -9,7 +8,6 @@ import com.qualcomm.robotcore.util.Range
 import kotlin.math.abs
 import kotlin.math.cos
 
-@Config
 class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
 
     private val armMotor by lazy {
@@ -30,11 +28,7 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
     )
 
     companion object {
-        @JvmField
         var coefficients = PIDCoefficients(5.0, 0.0, 0.0)
-
-        @JvmField
-        var feedForwardConst: Double = 2.0
 
         private const val armMinAngle = -40.0
         private const val armMaxAngle = 90.0

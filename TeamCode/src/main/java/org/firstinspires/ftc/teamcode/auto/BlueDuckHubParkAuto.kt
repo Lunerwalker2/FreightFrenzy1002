@@ -60,20 +60,20 @@ class BlueDuckHubParkAuto : CommandOpMode() {
                 SleepCommand(2000),
                 FollowTrajectoryCommand(drive,
                         drive.trajectoryBuilder(drive.poseEstimate)
-                                .forward(15.0)
+                                .forward(30.0)
                 ),
                 FollowTrajectoryCommand(drive,
                         drive.trajectoryBuilder(drive.poseEstimate)
-                                .lineTo(Vector2d(-42.0, 45.0))
+                                .lineToConstantHeading(Vector2d(-52.0, 54.5))
                 ),
-                FollowTrajectorySequenceCommand(drive,
-                        drive.trajectorySequenceBuilder(drive.poseEstimate)
-                                .turn(Math.toRadians(90.0))
-                ),
-                FollowTrajectoryCommand(drive,
-                        drive.trajectoryBuilder(drive.poseEstimate)
-                                .lineToConstantHeading(Vector2d(-52.0, 50.0))
-                )
+//                FollowTrajectorySequenceCommand(drive,
+//                        drive.trajectorySequenceBuilder(drive.poseEstimate)
+//                                .turn(Math.toRadians(90.0))
+//                ),
+//                FollowTrajectoryCommand(drive,
+//                        drive.trajectoryBuilder(drive.poseEstimate)
+//                                .lineToConstantHeading(Vector2d(-52.0, 20.0))
+//                )
         ))
 
 
