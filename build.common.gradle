@@ -19,7 +19,6 @@ import java.util.regex.Pattern
 
 apply plugin: 'com.android.application'
 
-def useProguard = true
 
 android {
 
@@ -60,7 +59,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
         
-        multiDexEnabled !useProguard
+        multiDexEnabled true
 
         /**
          * We keep the versionCode and versionName of robot controller applications in sync with

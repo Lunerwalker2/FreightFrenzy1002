@@ -29,7 +29,7 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
     public static int centerMarkerPositionWidth = 20;
     public static int centerMarkerPositionHeight = 20;
 
-    public static int thresholdValue = 120;
+    public static int thresholdValue = 150;
 
 
     //volatile because it's accessed by the opmode thread with no sync
@@ -82,8 +82,8 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
         Scalar leftRegionMean = Core.mean(leftSampleRegion);
         Scalar centerRegionMean = Core.mean(centerSampleRegion);
 
-        boolean leftMarkerDetected = (leftRegionMean.val[0] < thresholdValue);
-        boolean centerMarkerDetected = (centerRegionMean.val[0] < thresholdValue);
+        boolean leftMarkerDetected = (leftRegionMean.val[0] > thresholdValue);
+        boolean centerMarkerDetected = (centerRegionMean.val[0] > thresholdValue);
 
         //if both are detected
         if (leftMarkerDetected && centerMarkerDetected) {
@@ -151,44 +151,7 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
         leftSampleRegion.release();
         centerSampleRegion.release();
 
-        synchronized (sync) {
-            if (matSavingState == MatSavingState.MAT_REQUESTED) {
-                input.copyTo(matToSave);
-                matSavingState = MatSavingState.MAT_READY_FOR_CONVERSION;
-            }
-        }
-
         return input;
     }
-
-    private enum MatSavingState{
-        NONE_REQUESTED,
-        MAT_REQUESTED,
-        MAT_READY_FOR_CONVERSION
-    }
-
-    private MatSavingState matSavingState = MatSavingState.NONE_REQUESTED;
-
-    final Object sync = new Object();
-    private Mat matToSave = new Mat();
-
-    public void storeNextMat(){
-        synchronized (sync) {
-            matSavingState = MatSavingState.MAT_REQUESTED;
-        }
-    }
-
-
-    public Bitmap getCurrentBitmap(){
-        synchronized (sync){
-            if(matSavingState == MatSavingState.MAT_READY_FOR_CONVERSION){
-                final Bitmap bitmap = Bitmap.createBitmap(matToSave.cols(), matToSave.rows(), Bitmap.Config.RGB_565);
-                Utils.matToBitmap(matToSave, bitmap);
-                matSavingState = MatSavingState.NONE_REQUESTED;
-                return bitmap;
-            } else return null;
-        }
-    }
-
 
 }

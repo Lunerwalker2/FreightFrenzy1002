@@ -1,11 +1,14 @@
-package org.firstinspires.ftc.teamcode.teleOp;
+package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="Test Tape Eater")
-public class TestTankTeleOp extends LinearOpMode {
+@Autonomous(name="Tank Parking Auto")
+public class ParkingAuto extends LinearOpMode {
 
 
 
@@ -15,13 +18,14 @@ public class TestTankTeleOp extends LinearOpMode {
     DcMotor rightBack;
 
 
-    public void runOpMode() throws InterruptedException {
-
+    @Override
+    public void runOpMode() {
 
         leftFront = hardwareMap.get(DcMotor.class, "lf");
         leftBack = hardwareMap.get(DcMotor.class, "lb");
-        leftFront = hardwareMap.get(DcMotor.class, "rf");
-        leftBack = hardwareMap.get(DcMotor.class, "rb");
+        rightFront = hardwareMap.get(DcMotor.class, "rf");
+        rightBack = hardwareMap.get(DcMotor.class, "rb");
+
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -33,21 +37,24 @@ public class TestTankTeleOp extends LinearOpMode {
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
         waitForStart();
 
-        if(isStopRequested()) return;
-        while(opModeIsActive()){
-            leftFront.setPower(-gamepad1.left_stick_y);
-            leftBack.setPower(-gamepad1.left_stick_y);
-            rightFront.setPower(gamepad1.right_stick_y);
-            rightBack.setPower(gamepad1.right_stick_y);
-        }
+        if (isStopRequested()) return;
 
-        leftFront.setPower(0);
-        leftBack.setPower(0);
-        rightFront.setPower(0);
-        rightBack.setPower(0);
+        sleep(1000);
+
+        setMotorPowers(0.8, 0.8);
+        sleep(3000);
+        setMotorPowers(0,0);
+
+
+
     }
 
+    void setMotorPowers(double leftSpeed, double rightSpeed){
+        leftFront.setPower(leftSpeed);
+        leftBack.setPower(leftSpeed);
+        rightFront.setPower(rightSpeed);
+        rightBack.setPower(rightSpeed);
+    }
 }
