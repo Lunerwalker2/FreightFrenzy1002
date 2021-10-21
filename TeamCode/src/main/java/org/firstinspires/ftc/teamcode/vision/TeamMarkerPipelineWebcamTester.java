@@ -60,6 +60,9 @@ public class TeamMarkerPipelineWebcamTester extends LinearOpMode {
 
             telemetry.addData("Current Hub Level", pipeline.getHubLevel());
 
+            telemetry.addData("left cb", pipeline.leftRegionCb);
+            telemetry.addData("center cb", pipeline.centerRegionCb);
+
             telemetry.update();
 
         }

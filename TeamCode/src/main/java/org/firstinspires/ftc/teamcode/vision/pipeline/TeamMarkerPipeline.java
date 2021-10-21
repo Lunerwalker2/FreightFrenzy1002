@@ -32,12 +32,15 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
     public static int centerMarkerPositionWidth = 20;
     public static int centerMarkerPositionHeight = 20;
 
-    public static int thresholdValue = 190;
+    public static int thresholdValue = 150;
 
 
     //volatile because it's accessed by the opmode thread with no sync
     private volatile HubLevel hubLevel = HubLevel.BOTTOM;
 
+
+    public volatile double leftRegionCb = 0;
+    public volatile double centerRegionCb = 0;
 
 
     //We are going to assume the marker is solid yellow here.
@@ -85,8 +88,11 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
         Scalar leftRegionMean = Core.mean(leftSampleRegion);
         Scalar centerRegionMean = Core.mean(centerSampleRegion);
 
-        boolean leftMarkerDetected = (leftRegionMean.val[0] > thresholdValue); //see if it is blue
-        boolean centerMarkerDetected = (centerRegionMean.val[0] > thresholdValue); //see if it is blue
+        leftRegionCb = leftRegionMean.val[0];
+        centerRegionCb = centerRegionMean.val[0];
+
+        boolean leftMarkerDetected = (leftRegionCb > thresholdValue); //see if it is blue
+        boolean centerMarkerDetected = (centerRegionCb > thresholdValue); //see if it is blue
 
         //if both are detected
         if (leftMarkerDetected && centerMarkerDetected) {

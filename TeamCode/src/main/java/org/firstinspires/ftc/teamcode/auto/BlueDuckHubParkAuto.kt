@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.auto
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
+import com.acmerobotics.roadrunner.trajectory.Trajectory
 import com.arcrobotics.ftclib.command.CommandOpMode
 import com.arcrobotics.ftclib.command.InstantCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.vision.HubLevel
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.Arm
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
 import java.lang.Math.toRadians
 
 
@@ -27,14 +29,34 @@ class BlueDuckHubParkAuto : CommandOpMode() {
     lateinit var hubLevel: HubLevel
 
 
+    lateinit var goForward: Trajectory
+    lateinit var goToCarusel: Trajectory
+    lateinit var turnRight: TrajectorySequence
+
+    val startPose = Pose2d(-42.0, 54.5, toRadians(-90.0))
+
+
     override fun initialize() {
+
+        goForward = drive.trajectoryBuilder(startPose)
+                .forward(30.0)
+                .build()
+
+        goToCarusel = drive.trajectoryBuilder(goForward.end())
+                .lineToConstantHeading(Vector2d(-22.0, 54.5))
+                .build()
+
+        turnRight = drive.trajectorySequenceBuilder(goToCarusel.end())
+                .turn(Math.toRadians(90.0))
+                .build()
+
 
 
         //Subsystems
 //        val arm = Arm(hardwareMap)
 
         drive = SampleMecanumDrive(hardwareMap)
-        drive.poseEstimate = Pose2d(-42.0, 54.5, toRadians(-90.0))
+        drive.poseEstimate = startPose
 
         markerDetector = TeamMarkerDetector(hardwareMap)
         markerDetector.init()
@@ -58,18 +80,9 @@ class BlueDuckHubParkAuto : CommandOpMode() {
                     telemetry.update()
                 }),
                 SleepCommand(2000),
-                FollowTrajectoryCommand(drive,
-                        drive.trajectoryBuilder(drive.poseEstimate)
-                                .forward(30.0)
-                ),
-                FollowTrajectoryCommand(drive,
-                        drive.trajectoryBuilder(drive.poseEstimate)
-                                .lineToConstantHeading(Vector2d(-52.0, 54.5))
-                ),
-//                FollowTrajectorySequenceCommand(drive,
-//                        drive.trajectorySequenceBuilder(drive.poseEstimate)
-//                                .turn(Math.toRadians(90.0))
-//                ),
+                FollowTrajectoryCommand(drive, goForward),
+                FollowTrajectoryCommand(drive,goToCarusel),
+                FollowTrajectorySequenceCommand(drive,turnRight)
 //                FollowTrajectoryCommand(drive,
 //                        drive.trajectoryBuilder(drive.poseEstimate)
 //                                .lineToConstantHeading(Vector2d(-52.0, 20.0))
