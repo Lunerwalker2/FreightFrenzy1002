@@ -19,8 +19,6 @@ import java.lang.Math.toRadians
 class RedDuckHubParkAuto : AutoBase() {
 
 
-    lateinit var drive: SampleMecanumDrive
-
     lateinit var markerDetector: TeamMarkerDetector
     lateinit var hubLevel: HubLevel
 
