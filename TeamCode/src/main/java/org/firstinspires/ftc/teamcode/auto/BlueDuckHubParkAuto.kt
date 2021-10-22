@@ -23,10 +23,6 @@ import java.lang.Math.toRadians
 @Autonomous(name = "Blue Duck Auto")
 class BlueDuckHubParkAuto : AutoBase() {
 
-
-
-    lateinit var drive: SampleMecanumDrive
-
     lateinit var markerDetector: TeamMarkerDetector
     lateinit var hubLevel: HubLevel
 
