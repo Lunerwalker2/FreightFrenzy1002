@@ -7,6 +7,7 @@ class SetArmPosition(private val arm: Arm, private val armPosition: Arm.ArmPosit
 
     override fun initialize(){
         arm.setArm(armPosition)
+        addRequirements(arm)
     }
 
     override fun isFinished(): Boolean {

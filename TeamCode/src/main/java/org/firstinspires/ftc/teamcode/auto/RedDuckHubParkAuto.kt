@@ -16,7 +16,7 @@ import java.lang.Math.toRadians
 
 @Disabled
 @Autonomous(name="Red duck auto")
-class RedDuckHubParkAuto : CommandOpMode() {
+class RedDuckHubParkAuto : AutoBase() {
 
 
     lateinit var drive: SampleMecanumDrive
@@ -26,6 +26,8 @@ class RedDuckHubParkAuto : CommandOpMode() {
 
 
     override fun initialize() {
+        super.initialize()
+
         //Subsystems
 //        val arm = Arm(hardwareMap)
 

@@ -15,6 +15,10 @@ class Intake(private val hardwareMap: HardwareMap) : SubsystemBase() {
 
     private var firstRun = true
 
+    init {
+        register()
+    }
+
 
 
     override fun periodic(){

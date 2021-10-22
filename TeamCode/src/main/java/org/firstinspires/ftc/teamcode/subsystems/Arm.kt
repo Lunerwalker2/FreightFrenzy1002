@@ -28,7 +28,7 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
     )
 
     companion object {
-        var coefficients = PIDCoefficients(5.0, 0.0, 0.0)
+        var coefficients = PIDCoefficients(0.06, 0.0, 0.0)
 
         private const val armMinAngle = -40.0
         private const val armMaxAngle = 90.0
@@ -54,6 +54,10 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
         MIDDLE_LEVEL(2000),
         TOP_LEVEL(3000),
         CAP_LEVEL(4000)
+    }
+
+    init{
+        register()
     }
 
 

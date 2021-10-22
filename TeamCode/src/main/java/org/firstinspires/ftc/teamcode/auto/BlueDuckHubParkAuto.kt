@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.acmerobotics.roadrunner.trajectory.Trajectory
 import com.arcrobotics.ftclib.command.CommandOpMode
+import com.arcrobotics.ftclib.command.CommandScheduler
 import com.arcrobotics.ftclib.command.InstantCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
@@ -19,8 +20,9 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
 import java.lang.Math.toRadians
 
 
-@Autonomous(name = "Blue duck auto")
-class BlueDuckHubParkAuto : CommandOpMode() {
+@Autonomous(name = "Blue Duck Auto")
+class BlueDuckHubParkAuto : AutoBase() {
+
 
 
     lateinit var drive: SampleMecanumDrive
@@ -37,6 +39,7 @@ class BlueDuckHubParkAuto : CommandOpMode() {
 
 
     override fun initialize() {
+        super.initialize()
 
         goForward = drive.trajectoryBuilder(startPose)
                 .forward(30.0)
