@@ -23,6 +23,8 @@ class TestAuto: CommandOpMode() {
 
 
     override fun initialize() {
+        
+        super.initialize();
 
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
