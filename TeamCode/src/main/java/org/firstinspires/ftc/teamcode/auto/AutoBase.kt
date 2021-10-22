@@ -7,6 +7,8 @@ import com.qualcomm.hardware.lynx.LynxModule
 abstract class AutoBase : CommandOpMode() {
 
     val allHubs by lazy { hardwareMap.getAll(LynxModule::class.java) }
+    
+    lateinit var drive: SampleMecanumDrive
 
     override fun initialize() {
             for (module in allHubs) {
@@ -19,6 +21,8 @@ abstract class AutoBase : CommandOpMode() {
             for (module in allHubs) {
                 module.clearBulkCache()
             } }
+        
+            drive = SampleMecanumDrive(hardwareMap)
     }
 
 }
