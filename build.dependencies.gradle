@@ -23,6 +23,5 @@ dependencies {
     implementation 'org.firstinspires.ftc:gameAssets-FreightFrenzy:1.0.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.3'
 
-    implementation 'com.github.OutoftheBoxFTC:EasyTensorflowAPI:v1.0.6-Alpha' //Just for the lols lmao
 }
 

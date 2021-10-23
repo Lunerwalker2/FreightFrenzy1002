@@ -15,11 +15,8 @@ class Intake(private val hardwareMap: HardwareMap) : SubsystemBase() {
 
     private var firstRun = true
 
-    init {
-        register()
-    }
 
-
+    //Calling the constructor of the superclass already registers this subsystem
 
     override fun periodic(){
         if(firstRun){

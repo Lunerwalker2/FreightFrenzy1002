@@ -1,12 +1,6 @@
-package org.firstinspires.ftc.teamcode.vision.pipeline;
+package org.firstinspires.ftc.teamcode.vision.eocvsim;
 
-import android.graphics.Bitmap;
 
-import com.acmerobotics.dashboard.config.Config;
-
-import org.firstinspires.ftc.teamcode.vision.HubLevel;
-import org.firstinspires.ftc.teamcode.vision.eocvsim.TeamMarkerPipelineSim;
-import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -17,23 +11,30 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.function.Function;
 
-@Config
-public class TeamMarkerPipeline extends OpenCvPipeline {
+
+public class TeamMarkerPipelineSim extends OpenCvPipeline {
+
+    enum HubLevel {
+        BOTTOM,
+        MIDDLE,
+        TOP;
+    }
+
 
 
     public static double leftMarkerPositionX = 0.25;
-    public static double leftMarkerPositionY = 0.5;
+    public static double leftMarkerPositionY = 0.4;
 
     public static int leftMarkerPositionWidth = 20;
     public static int leftMarkerPositionHeight = 20;
 
     public static double centerMarkerPositionX = 0.5;
-    public static double centerMarkerPositionY = 0.5;
+    public static double centerMarkerPositionY = 0.4;
 
     public static int centerMarkerPositionWidth = 20;
     public static int centerMarkerPositionHeight = 20;
 
-    public static int thresholdValue = 150;
+    public static int thresholdValue = 140;
 
 
     //volatile because it's accessed by the opmode thread with no sync
@@ -162,44 +163,9 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
         leftSampleRegion.release();
         centerSampleRegion.release();
 
-        synchronized (sync) {
-            if (matSavingState == MatSavingState.MAT_REQUESTED) {
-                input.copyTo(matToSave);
-                matSavingState = MatSavingState.MAT_READY_FOR_CONVERSION;
-            }
-        }
-
         return input;
     }
 
-    private enum MatSavingState{
-        NONE_REQUESTED,
-        MAT_REQUESTED,
-        MAT_READY_FOR_CONVERSION
-    }
-
-    private MatSavingState matSavingState = MatSavingState.NONE_REQUESTED;
-
-    final Object sync = new Object();
-    private Mat matToSave = new Mat();
-
-    public void storeNextMat(){
-        synchronized (sync) {
-            matSavingState = MatSavingState.MAT_REQUESTED;
-        }
-    }
-
-
-    public Bitmap getCurrentBitmap(){
-        synchronized (sync){
-            if(matSavingState == MatSavingState.MAT_READY_FOR_CONVERSION){
-                final Bitmap bitmap = Bitmap.createBitmap(matToSave.cols(), matToSave.rows(), Bitmap.Config.RGB_565);
-                Utils.matToBitmap(matToSave, bitmap);
-                matSavingState = MatSavingState.NONE_REQUESTED;
-                return bitmap;
-            } else return null;
-        }
-    }
 
 
 }

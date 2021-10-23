@@ -22,14 +22,16 @@ class RedDuckHubParkAuto : AutoBase() {
     lateinit var markerDetector: TeamMarkerDetector
     lateinit var hubLevel: HubLevel
 
+    lateinit var drive: SampleMecanumDrive
+
 
     override fun initialize() {
         super.initialize()
+        drive = SampleMecanumDrive(hardwareMap)
 
         //Subsystems
 //        val arm = Arm(hardwareMap)
 
-        drive = SampleMecanumDrive(hardwareMap)
         drive.poseEstimate = Pose2d(0.0, 0.0, toRadians(-90.0))
 
         markerDetector = TeamMarkerDetector(hardwareMap)
@@ -53,7 +55,7 @@ class RedDuckHubParkAuto : AutoBase() {
                     telemetry.addLine("Detected hub level: $hubLevel")
                     telemetry.update()
                 }),
-                SleepCommand(2000),
+                SleepCommand(2000)
 //                FollowTrajectoryCommand(drive,
 //                        drive.trajectoryBuilder(drive.poseEstimate)
 //                                .forward(10.0)

@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.vision.HubLevel
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector
 
 @Autonomous(name="test command auto")
-class TestAuto: CommandOpMode() {
+class TestAuto: AutoBase() {
 
     lateinit var markerDetector: TeamMarkerDetector
     lateinit var hubLevel: HubLevel
@@ -24,7 +24,7 @@ class TestAuto: CommandOpMode() {
 
     override fun initialize() {
         
-        super.initialize();
+        super.initialize()
 
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 

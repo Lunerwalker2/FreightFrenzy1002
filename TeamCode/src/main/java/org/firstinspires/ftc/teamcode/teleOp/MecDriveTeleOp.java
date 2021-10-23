@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import java.util.ArrayList;
 
 @TeleOp(name="Simple Mecnaum Drive")
-public class TestDriveTeleOp extends LinearOpMode {
+public class MecDriveTeleOp extends LinearOpMode {
 
 
     DcMotorEx lf;

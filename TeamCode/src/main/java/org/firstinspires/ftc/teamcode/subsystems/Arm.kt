@@ -10,6 +10,8 @@ import kotlin.math.cos
 
 class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
 
+    //Calling the constructor of the superclass already registers this subsystem
+
     private val armMotor by lazy {
         hardwareMap.get(DcMotorEx::class.java, "arm")
     }

@@ -31,11 +31,15 @@ class BlueDuckHubParkAuto : AutoBase() {
     lateinit var goToCarusel: Trajectory
     lateinit var turnRight: TrajectorySequence
 
-    val startPose = Pose2d(-42.0, 54.5, toRadians(-90.0))
+    lateinit var drive: SampleMecanumDrive
+
+    private val startPose = Pose2d(-42.0, 54.5, toRadians(-90.0))
 
 
     override fun initialize() {
         super.initialize()
+
+        drive = SampleMecanumDrive(hardwareMap)
 
         goForward = drive.trajectoryBuilder(startPose)
                 .forward(30.0)
@@ -46,7 +50,7 @@ class BlueDuckHubParkAuto : AutoBase() {
                 .build()
 
         turnRight = drive.trajectorySequenceBuilder(goToCarusel.end())
-                .turn(Math.toRadians(90.0))
+                .turn(toRadians(90.0))
                 .build()
 
 
@@ -54,7 +58,6 @@ class BlueDuckHubParkAuto : AutoBase() {
         //Subsystems
 //        val arm = Arm(hardwareMap)
 
-        drive = SampleMecanumDrive(hardwareMap)
         drive.poseEstimate = startPose
 
         markerDetector = TeamMarkerDetector(hardwareMap)

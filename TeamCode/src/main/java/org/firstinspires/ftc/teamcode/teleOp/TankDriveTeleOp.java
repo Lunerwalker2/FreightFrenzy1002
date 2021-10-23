@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name="Test Tape Eater")
-public class TestTankTeleOp extends LinearOpMode {
+public class TankDriveTeleOp extends LinearOpMode {
 
 
 
