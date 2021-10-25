@@ -1,19 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.vision;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.vision.HubLevel;
-import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector;
-
-@Autonomous(name="Tank Parking Auto")
-public class ParkingAuto extends LinearOpMode {
-
-
+@Autonomous
+public class BlueHubDuckAuto extends LinearOpMode {
 
     DcMotor leftFront;
     DcMotor leftBack;
@@ -23,6 +15,13 @@ public class ParkingAuto extends LinearOpMode {
     TeamMarkerDetector detector = new TeamMarkerDetector(hardwareMap);
 
     HubLevel hubLevel = HubLevel.BOTTOM;
+
+    //EDIT THESE VALUES
+    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * 3.1415);
 
     @Override
     public void runOpMode() {
@@ -61,18 +60,10 @@ public class ParkingAuto extends LinearOpMode {
 
         sleep(1000);
 
-        setMotorPowers(0.8, 0.8);
-        sleep(3000);
-        setMotorPowers(0,0);
+
 
 
 
     }
 
-    void setMotorPowers(double leftSpeed, double rightSpeed){
-        leftFront.setPower(leftSpeed);
-        leftBack.setPower(leftSpeed);
-        rightFront.setPower(rightSpeed);
-        rightBack.setPower(rightSpeed);
-    }
 }
