@@ -45,13 +45,15 @@ class BlueDuckHubParkAuto : AutoBase() {
                 .forward(30.0)
                 .build()
 
-        goToCarusel = drive.trajectoryBuilder(goForward.end())
-                .lineToConstantHeading(Vector2d(-22.0, 54.5))
-                .build()
-
         turnRight = drive.trajectorySequenceBuilder(goToCarusel.end())
                 .turn(toRadians(90.0))
                 .build()
+
+        goToCarusel = drive.trajectoryBuilder(goForward.end())
+                .lineToConstantHeading(Vector2d(-42.0, 24.5))
+                .build()
+
+
 
 
 
@@ -83,8 +85,8 @@ class BlueDuckHubParkAuto : AutoBase() {
                 }),
                 SleepCommand(2000),
                 FollowTrajectoryCommand(drive, goForward),
-                FollowTrajectoryCommand(drive,goToCarusel),
-                FollowTrajectorySequenceCommand(drive,turnRight)
+                FollowTrajectorySequenceCommand(drive,turnRight),
+                FollowTrajectoryCommand(drive,goToCarusel)
 //                FollowTrajectoryCommand(drive,
 //                        drive.trajectoryBuilder(drive.poseEstimate)
 //                                .lineToConstantHeading(Vector2d(-52.0, 20.0))
