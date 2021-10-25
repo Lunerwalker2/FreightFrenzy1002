@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.Range
 import kotlin.math.abs
 import kotlin.math.cos
 
+@Config
 class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
 
     //Calling the constructor of the superclass already registers this subsystem
@@ -20,18 +21,24 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
     private var power = 0.0
 
     private var firstRun = true
+    
+    @JvmStatic
+    var coefficients = PIDCoefficients(0.06, 0.0, 0.0)
+    
+    @JvmStatic
+    var armGravityFeedforward: Double = 2.0
 
     //TODO: Test this
     private val armGravityController = PIDFController(coefficients,
             kF = { position, _ ->
                 val angle = Range.scale(position, 0.0, armMaxAngleTicks.toDouble(), armMinAngle, armMaxAngle) //scale encoder ticks from 0 to top of the arm to degrees
-                cos(angle)
+                cos(angle) * armGravityFeedforward
             }
     )
 
+    
+    
     companion object {
-        var coefficients = PIDCoefficients(0.06, 0.0, 0.0)
-
         private const val armMinAngle = -40.0
         private const val armMaxAngle = 90.0
 
