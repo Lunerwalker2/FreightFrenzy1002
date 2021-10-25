@@ -22,10 +22,10 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
 
     private var firstRun = true
     
-    @JvmStatic
+    @JvmField
     var coefficients = PIDCoefficients(0.06, 0.0, 0.0)
     
-    @JvmStatic
+    @JvmField
     var armGravityFeedforward: Double = 2.0
 
     //TODO: Test this
