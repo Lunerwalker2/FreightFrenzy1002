@@ -13,6 +13,10 @@ public class CarouselWheel extends SubsystemBase {
     private double power = 0.0; //the power for the wheel
 
     public CarouselWheel(HardwareMap hardwareMap){
+
+        register();
+
+        
         wheelMotor = hardwareMap.get(DcMotor.class, "carouselMotor");
 
         wheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT); //Not really necessary

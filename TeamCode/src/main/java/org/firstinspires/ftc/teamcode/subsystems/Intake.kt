@@ -7,6 +7,10 @@ import com.qualcomm.robotcore.hardware.Servo
 
 class Intake(private val hardwareMap: HardwareMap) : SubsystemBase() {
 
+    init {
+        register()
+    }
+
 
     private val intakeMotor by lazy { hardwareMap.get(DcMotor::class.java, "intake") }
     private val flapServo by lazy { hardwareMap.get(Servo::class.java, "flap") }
@@ -47,7 +51,7 @@ class Intake(private val hardwareMap: HardwareMap) : SubsystemBase() {
         power = -1.0
     }
 
-    fun stopIntake(){
+    fun stop(){
         power = 0.0
     }
 }

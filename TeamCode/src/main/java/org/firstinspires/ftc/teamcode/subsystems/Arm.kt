@@ -17,6 +17,7 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
     private val armMotor by lazy {
         hardwareMap.get(DcMotorEx::class.java, "arm")
     }
+
     var armState = ArmState.STOPPED
 
     private var power = 0.0

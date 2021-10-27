@@ -9,8 +9,15 @@ import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationCon
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.noahbres.meepmeep.MeepMeep;
+import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
+import com.noahbres.meepmeep.core.entity.Entity;
+import com.noahbres.meepmeep.roadrunner.Constraints;
+import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.DriveTrainType;
+import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequence;
+import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
 import java.util.Arrays;
 
@@ -28,19 +35,17 @@ public class MeepMeepTesting {
     public static int HUB_LEVEL = (int) (Math.random() * 2);
 
 
+
     public static void main(String[] args) {
 
 
-        MeepMeep mm = new MeepMeep(800)
-                .setBackground(MeepMeep.Background.FIELD_FREIGHT_FRENZY)
-                .setTheme(new ColorSchemeRedDark())
-                .setBackgroundAlpha(1f)
-                .setDarkMode(true)
-                .setDriveTrainType(DriveTrainType.MECANUM)
-                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
+        MeepMeep mm = new MeepMeep(800);
+
+        RoadRunnerBotEntity bot = new DefaultBotBuilder(mm)
+                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 17)
+                .setColorScheme(new ColorSchemeRedDark())
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-42.0,54.5,toRadians(-90.0)))
-                                .forward(8)
                                 .turn(toRadians(90))
                                 .setReversed(true)
                                 .lineTo(new Vector2d(-56, 58))
@@ -70,11 +75,14 @@ public class MeepMeepTesting {
                                 .forward(40)
 
                                 .build()
-                )
+                );
+
+        mm
+                .setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)
+                .setTheme(new ColorSchemeRedDark())
+                .setBackgroundAlpha(0.95f)
+                .addEntity(bot)
                 .start();
-
-
-
 
     }
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
