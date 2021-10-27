@@ -32,7 +32,7 @@ public class BlueHubAuto extends LinearOpMode {
 
     BNO055IMU imu;
 
-    TeamMarkerDetector detector = new TeamMarkerDetector(hardwareMap);
+    TeamMarkerDetector detector;
 
     HubLevel hubLevel = HubLevel.BOTTOM;
 
@@ -76,6 +76,8 @@ public class BlueHubAuto extends LinearOpMode {
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        detector = new TeamMarkerDetector(hardwareMap);
+
         detector.init();
 
         detector.startStream();
@@ -109,80 +111,81 @@ public class BlueHubAuto extends LinearOpMode {
             currentPosition = leftFront.getCurrentPosition(); //get the current position of one of the motors
             double error = targetPosition - currentPosition; //find the error
 
-            double output = updatePController(error, POSITION_P, -1, 0.9); //get the output of the p controller
+            double output = updatePController(error, POSITION_P, -0.6, 0.6); //get the output of the p controller
             setMotorPowers(output, output); //apply the power to the motors
 
         }
         setMotorPowers(0,0); //Stop motors when we reach target
 
-        sleep(500);
-
-            targetAngle = -45; //45 degrees to the left
-            currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; //get the current angle
-
-            while (((targetAngle - currentAngle) > 2) && opModeIsActive()) { //tolerance of 2 degrees
-                currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; //get the current angle
-                double error = getAngleError(targetAngle, currentAngle);
-
-                double output = updatePController(error, HEADING_P, -0.6, 0.6);
-                setMotorPowers(output, -output);
-            }
-            setMotorPowers(0, 0);
-
-        sleep(500);
-
-        switch (hubLevel){
-            case TOP:
-                arm.setTargetPosition(1000); //TODO: Find positions
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                arm.setPower(0.3);
-
-                sleep(1000);
-
-                //TODO: deposit freight
-
-                break;
-            case MIDDLE:
-                arm.setTargetPosition(2000);
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                arm.setPower(0.3);
-
-                sleep(1000);
-
-                //TODO: deposit freight
-                break;
-            case BOTTOM:
-                arm.setTargetPosition(3000);
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                arm.setPower(0.3);
-
-                sleep(1000);
-
-                //TODO: deposit freight
-
-                break;
-        }
-
-        //Back away
-
-        targetPosition = 10 * COUNTS_PER_INCH;
-        currentPosition = leftFront.getCurrentPosition();
-
-        while(((targetPosition - currentPosition) > 20) && opModeIsActive()){
-            currentPosition = leftFront.getCurrentPosition();
-            double error = targetPosition - currentPosition;
-
-            double output = updatePController(error, POSITION_P, -1, 0.9);
-            setMotorPowers(output, output);
-
-        }
-        setMotorPowers(0,0);
-
-        //Let arm drop
-        arm.setPower(0);
-
-        //Turn so that we can reverse into the parking zone
-
+//
+//        sleep(500);
+//
+//            targetAngle = -45; //45 degrees to the left
+//            currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; //get the current angle
+//
+//            while (((targetAngle - currentAngle) > 2) && opModeIsActive()) { //tolerance of 2 degrees
+//                currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; //get the current angle
+//                double error = getAngleError(targetAngle, currentAngle);
+//
+//                double output = updatePController(error, HEADING_P, -0.6, 0.6);
+//                setMotorPowers(output, -output);
+//            }
+//            setMotorPowers(0, 0);
+//
+//        sleep(500);
+//
+//        switch (hubLevel){
+//            case TOP:
+//                arm.setTargetPosition(1000); //TODO: Find positions
+//                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                arm.setPower(0.3);
+//
+//                sleep(1000);
+//
+//                //TODO: deposit freight
+//
+//                break;
+//            case MIDDLE:
+//                arm.setTargetPosition(2000);
+//                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                arm.setPower(0.3);
+//
+//                sleep(1000);
+//
+//                //TODO: deposit freight
+//                break;
+//            case BOTTOM:
+//                arm.setTargetPosition(3000);
+//                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                arm.setPower(0.3);
+//
+//                sleep(1000);
+//
+//                //TODO: deposit freight
+//
+//                break;
+//        }
+//
+//        //Back away
+//
+//        targetPosition = 10 * COUNTS_PER_INCH;
+//        currentPosition = leftFront.getCurrentPosition();
+//
+//        while(((targetPosition - currentPosition) > 20) && opModeIsActive()){
+//            currentPosition = leftFront.getCurrentPosition();
+//            double error = targetPosition - currentPosition;
+//
+//            double output = updatePController(error, POSITION_P, -1, 0.6);
+//            setMotorPowers(output, output);
+//
+//        }
+//        setMotorPowers(0,0);
+//
+//        //Let arm drop
+//        arm.setPower(0);
+//
+//        //Turn so that we can reverse into the parking zone
+//
 
 
 
