@@ -17,9 +17,6 @@ public class MainTankTeleOp extends LinearOpMode {
 
     DcMotor arm;
     DcMotor carousel;
-    
-    
-    //DcMotorSimple intake;
 
 
     Servo claw;
@@ -37,8 +34,6 @@ public class MainTankTeleOp extends LinearOpMode {
         arm = hardwareMap.get(DcMotor.class, "arm");
 
         carousel = hardwareMap.get(DcMotor.class, "carousel");
-
-        //intake = hardwareMap.get(DcMotorSimple.class, "intake");
         
         claw = hardwareMap.get(Servo.class, "claw");
 
