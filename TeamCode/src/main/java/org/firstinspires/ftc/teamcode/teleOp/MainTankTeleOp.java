@@ -17,10 +17,9 @@ public class MainTankTeleOp extends LinearOpMode {
 
     DcMotor arm;
     DcMotor carousel;
-    DcMotorSimple intake;
 
 
-    Servo lol;
+    Servo claw;
 
 
     @Override
@@ -35,8 +34,8 @@ public class MainTankTeleOp extends LinearOpMode {
         arm = hardwareMap.get(DcMotor.class, "arm");
 
         carousel = hardwareMap.get(DcMotor.class, "carousel");
-
-        intake = hardwareMap.get(DcMotorSimple.class, "intake");
+        
+        claw = hardwareMap.get(Servo.class, "claw");
 
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -61,18 +60,35 @@ public class MainTankTeleOp extends LinearOpMode {
         waitForStart();
 
         if (isStopRequested()) return;
+        
+        boolean prevState = false;
+        boolean clawOpen = false;
 
         while (opModeIsActive()) {
+            
+            if(gamepad2.left_bumper && gamepad2.left_bumper != prevState){
+                if(!clawOpen){
+                    claw.setPosition(0.6); //open
+                    clawOpen = true;
+                } else {
+                    claw.setPosition(0.0); //close
+                    clawOpen = false;
+                }
+            }
+            prevState = gamepad2.left_bumper;
+        
 
-            arm.setPower(gamepad2.right_stick_y);
+            if(gamepad1.dpad_up) arm.setPower(0.3);
+            else if(gamepad1.dpad_down) arm.setPower(-0.1);
+            else arm.setPower(0);
 
             if (gamepad2.left_trigger > 0.6) carousel.setPower(0.3);
             else if (gamepad2.right_trigger > 0.6) carousel.setPower(-0.3);
             else carousel.setPower(0);
 
-            if (gamepad2.a) intake.setPower(0.7);
-            else if (gamepad2.y) intake.setPower(-0.7);
-            else intake.setPower(0);
+//             if (gamepad2.a) intake.setPower(0.7);
+//             else if (gamepad2.y) intake.setPower(-0.7);
+//             else intake.setPower(0);
 
             //do things lol
 
@@ -81,6 +97,8 @@ public class MainTankTeleOp extends LinearOpMode {
             rightFront.setPower(gamepad1.right_stick_y);
             rightBack.setPower(gamepad1.right_stick_y);
         }
+        
+        arm.setPower(0);
 
         leftFront.setPower(0);
         leftBack.setPower(0);

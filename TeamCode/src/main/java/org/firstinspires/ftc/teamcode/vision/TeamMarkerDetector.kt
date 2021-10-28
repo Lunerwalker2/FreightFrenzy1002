@@ -18,10 +18,13 @@ class TeamMarkerDetector(private val hardwareMap: HardwareMap) {
 
 
 
-    fun init() {
+    fun initialize() {
         //Get the viewport id
         val cameraMonitorViewId = hardwareMap.appContext.resources.getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.packageName)
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName::class.java, "Webcam 1"), cameraMonitorViewId)
+
+        //Get the viewport id
+
 
         camera.setPipeline(teamMarkerPipeline)
 

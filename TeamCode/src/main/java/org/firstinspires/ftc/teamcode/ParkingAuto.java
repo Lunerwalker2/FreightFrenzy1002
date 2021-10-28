@@ -43,7 +43,7 @@ public class ParkingAuto extends LinearOpMode {
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        detector.init();
+        detector.initialize();
 
         detector.startStream();
         while(!isStarted() && opModeIsActive()){

@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.vision.HubLevel;
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector;
 
+@Autonomous(name="BlueHubDuck")
 public class BlueHubAuto extends LinearOpMode {
 
 
@@ -29,7 +31,7 @@ public class BlueHubAuto extends LinearOpMode {
     DcMotor rightFront;
     DcMotor rightBack;
 
-    DcMotor arm;
+    DcMotorEx arm;
 
     BNO055IMU imu;
 
@@ -45,7 +47,7 @@ public class BlueHubAuto extends LinearOpMode {
         rightFront = hardwareMap.get(DcMotor.class, "rf");
         rightBack = hardwareMap.get(DcMotor.class, "rb");
 
-        arm = hardwareMap.get(DcMotor.class, "arm");
+        arm = hardwareMap.get(DcMotorEx.class, "arm");
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
@@ -60,10 +62,9 @@ public class BlueHubAuto extends LinearOpMode {
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm.setPositionPIDFCoefficients(5);
 
 
 
@@ -77,14 +78,9 @@ public class BlueHubAuto extends LinearOpMode {
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-
         detector = new TeamMarkerDetector(hardwareMap);
 
-        detector.init();
+        detector.initialize();
 
         detector.startStream();
         while(!isStarted() && opModeIsActive()){
@@ -113,7 +109,7 @@ public class BlueHubAuto extends LinearOpMode {
         targetPosition = 10 * COUNTS_PER_INCH; //set the target as 20 inches ahead
         currentPosition = leftFront.getCurrentPosition();
 
-        while(((targetPosition - currentPosition) > 20) && opModeIsActive()){ //tolerance of 20 encoder ticks
+        while(((targetPosition - currentPosition) > 10) && opModeIsActive()){ //tolerance of 20 encoder ticks
             currentPosition = leftFront.getCurrentPosition(); //get the current position of one of the motors
             double error = targetPosition - currentPosition; //find the error
 
@@ -142,9 +138,9 @@ public class BlueHubAuto extends LinearOpMode {
 //
 //        switch (hubLevel){
 //            case TOP:
-//                arm.setTargetPosition(1000); //TODO: Find positions
+//                arm.setTargetPosition(76); //TODO: Find positions
 //                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                arm.setPower(0.3);
+//                arm.setPower(0.2);
 //
 //                sleep(1000);
 //
@@ -152,18 +148,18 @@ public class BlueHubAuto extends LinearOpMode {
 //
 //                break;
 //            case MIDDLE:
-//                arm.setTargetPosition(2000);
+//                arm.setTargetPosition(51);
 //                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                arm.setPower(0.3);
+//                arm.setPower(0.2);
 //
 //                sleep(1000);
 //
 //                //TODO: deposit freight
 //                break;
 //            case BOTTOM:
-//                arm.setTargetPosition(3000);
+//                arm.setTargetPosition(12);
 //                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                arm.setPower(0.3);
+//                arm.setPower(0.2);
 //
 //                sleep(1000);
 //
