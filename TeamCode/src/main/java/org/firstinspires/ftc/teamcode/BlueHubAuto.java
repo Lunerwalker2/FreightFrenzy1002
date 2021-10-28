@@ -136,9 +136,9 @@ public class BlueHubAuto extends LinearOpMode {
 //
 //        switch (hubLevel){
 //            case TOP:
-//                arm.setTargetPosition(1000); //TODO: Find positions
+//                arm.setTargetPosition(76); //TODO: Find positions
 //                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                arm.setPower(0.3);
+//                arm.setPower(0.2);
 //
 //                sleep(1000);
 //
@@ -146,18 +146,18 @@ public class BlueHubAuto extends LinearOpMode {
 //
 //                break;
 //            case MIDDLE:
-//                arm.setTargetPosition(2000);
+//                arm.setTargetPosition(51);
 //                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                arm.setPower(0.3);
+//                arm.setPower(0.2);
 //
 //                sleep(1000);
 //
 //                //TODO: deposit freight
 //                break;
 //            case BOTTOM:
-//                arm.setTargetPosition(3000);
+//                arm.setTargetPosition(12);
 //                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                arm.setPower(0.3);
+//                arm.setPower(0.2);
 //
 //                sleep(1000);
 //
