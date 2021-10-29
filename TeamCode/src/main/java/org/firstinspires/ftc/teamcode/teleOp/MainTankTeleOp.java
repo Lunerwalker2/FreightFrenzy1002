@@ -18,7 +18,6 @@ public class MainTankTeleOp extends LinearOpMode {
     DcMotor arm;
     DcMotor carousel;
 
-
     Servo claw;
 
 
@@ -60,35 +59,31 @@ public class MainTankTeleOp extends LinearOpMode {
         waitForStart();
 
         if (isStopRequested()) return;
-        
-        boolean prevState = false;
+
+        boolean wasPressed = false;
         boolean clawOpen = false;
 
         while (opModeIsActive()) {
-            
-            if(gamepad2.left_bumper && gamepad2.left_bumper != prevState){
+
+            if(gamepad2.left_bumper && gamepad2.left_bumper != wasPressed){
                 if(!clawOpen){
-                    claw.setPosition(0.6); //open
+                    claw.setPosition(0.2);
                     clawOpen = true;
                 } else {
-                    claw.setPosition(0.0); //close
+                    claw.setPosition(0.7);
                     clawOpen = false;
                 }
             }
-            prevState = gamepad2.left_bumper;
+            wasPressed = gamepad2.left_bumper;
         
 
-            if(gamepad1.dpad_up) arm.setPower(0.3);
-            else if(gamepad1.dpad_down) arm.setPower(-0.1);
-            else arm.setPower(0);
+            if(gamepad2.dpad_up) arm.setPower(0.3);
+            else if(gamepad2.dpad_down) arm.setPower(-0.1);
+            else arm.setPower(0.05);
 
-            if (gamepad2.left_trigger > 0.6) carousel.setPower(0.3);
-            else if (gamepad2.right_trigger > 0.6) carousel.setPower(-0.3);
+            if (gamepad2.left_trigger > 0.2) carousel.setPower(0.3);
+            else if (gamepad2.right_trigger > 0.2) carousel.setPower(-0.3);
             else carousel.setPower(0);
-
-//             if (gamepad2.a) intake.setPower(0.7);
-//             else if (gamepad2.y) intake.setPower(-0.7);
-//             else intake.setPower(0);
 
             //do things lol
 
@@ -99,6 +94,8 @@ public class MainTankTeleOp extends LinearOpMode {
         }
         
         arm.setPower(0);
+
+        carousel.setPower(0);
 
         leftFront.setPower(0);
         leftBack.setPower(0);

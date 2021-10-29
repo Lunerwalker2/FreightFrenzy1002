@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+@Disabled
 @Autonomous
 public class ArmPositionTest extends LinearOpMode {
 
@@ -35,11 +37,35 @@ public class ArmPositionTest extends LinearOpMode {
 
         armController.setSetPoint(51);
 
+        int targetPosition = 51;
+        int level = 2;
         while(opModeIsActive()) {
-            double currentPosition = arm.getCurrentPosition();
-            arm.setPower(armController.calculate(currentPosition));
 
-            telemetry.addData("current position", currentPosition);
+            if(gamepad2.dpad_up && level != 3) level++;
+            else if(gamepad2.dpad_down && level != 0) level--;
+
+            switch (level){
+                case 0:
+                    targetPosition = 1;
+                    break;
+                case 1:
+                    targetPosition = 12;
+                    break;
+                case 2:
+                    targetPosition = 51;
+                    break;
+                case 3:
+                    targetPosition = 71;
+                    break;
+                default:
+                    break;
+            }
+
+            double currentPosition = arm.getCurrentPosition();
+            arm.setPower(armController.calculate(currentPosition, targetPosition));
+
+            telemetry.addData("Current position", currentPosition);
+            telemetry.addData("Target position", targetPosition);
             telemetry.update();
         }
 

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -21,13 +22,15 @@ public class BlueHubAuto extends LinearOpMode {
 
 
     private static final double COUNTS_PER_MOTOR_REV = 560;
-    private static final double DRIVE_GEAR_REDUCTION = 0.5; //TODO: find this
-    private static final double WHEEL_DIAMETER_INCHES = 3.0; //TODO: find this
+    private static final double DRIVE_GEAR_REDUCTION = 1.0; //TODO: find this
+    private static final double WHEEL_DIAMETER_INCHES = 3.54; //TODO: find this
     private static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
 
     private static final double POSITION_P = 0.05;
     private static final double HEADING_P = 0.05;
+
+    private static final double HEADING_THRESHOLD = 2;
 
     DcMotor leftFront;
     DcMotor leftBack;
@@ -35,6 +38,8 @@ public class BlueHubAuto extends LinearOpMode {
     DcMotor rightBack;
 
     DcMotorEx arm;
+
+    Servo claw;
 
     BNO055IMU imu;
 
@@ -53,6 +58,8 @@ public class BlueHubAuto extends LinearOpMode {
         rightBack = hardwareMap.get(DcMotor.class, "rb");
 
         arm = hardwareMap.get(DcMotorEx.class, "arm");
+
+        claw = hardwareMap.get(Servo.class, "claw");
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
@@ -80,6 +87,12 @@ public class BlueHubAuto extends LinearOpMode {
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
 
         detector.initialize();
 
@@ -98,11 +111,14 @@ public class BlueHubAuto extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        double currentAngle = 0;
-        double targetAngle = 0;
+        claw.setPosition(0.2); //TODO: Find this
+        sleep(500);
 
         encoderDrive(0.6, 20, 20, 4); //go forward
-        encoderDrive(0.5, -8, 8, 3); //turn
+
+        gyroTurn(0.5, -45);
+
+//        encoderDrive(0.5, -8, 8, 3); //turn
 
         sleep(500);
 
@@ -118,6 +134,8 @@ public class BlueHubAuto extends LinearOpMode {
                 encoderDrive(0.4, 10, 10, 3); //go forward
 
                 //TODO: deposit freight
+                openClaw();
+                sleep(500);
 
                 break;
             case MIDDLE:
@@ -131,6 +149,9 @@ public class BlueHubAuto extends LinearOpMode {
                 encoderDrive(0.4, 10, 10, 3); //go forward
 
                 //TODO: deposit freight
+                openClaw();
+                sleep(500);
+
                 break;
             case BOTTOM:
                 arm.setPower(0.2);
@@ -144,21 +165,38 @@ public class BlueHubAuto extends LinearOpMode {
 
                 //TODO: deposit freight
 
+                //have to open it less to not hit the top of the lelvel
+                claw.setPosition(0.4);
+                sleep(1000);
+
                 break;
         }
+
+        //back up
+        encoderDrive(0.3, -8, 8, 3);
+
+        closeClaw();
 
 
         //Let arm drop
         arm.setPower(0);
 
-        //back up
-        encoderDrive(0.3, -8, 8, 3);
-
         //Turn so that we can reverse into the parking zone
 
 
-
     }
+
+
+    void closeClaw(){
+        claw.setPosition(0.7);
+    }
+
+    void openClaw(){
+        claw.setPosition(0.2);
+    }
+
+
+
 
     public void encoderDrive(double speed,
                              double leftInches, double rightInches,
@@ -208,6 +246,65 @@ public class BlueHubAuto extends LinearOpMode {
             sleep(250);   // optional pause after each move
         }
     }
+
+    public void gyroTurn (  double speed, double angle) {
+
+        // keep looping while we are still active, and not on heading.
+        while (opModeIsActive() && !onHeading(speed, angle, HEADING_P)) {
+            // Update telemetry & Allow time for other processes to run.
+            telemetry.update();
+        }
+    }
+
+    boolean onHeading(double speed, double angle, double PCoeff) {
+        double   error ;
+        double   steer ;
+        boolean  onTarget = false ;
+        double leftSpeed;
+        double rightSpeed;
+
+        // determine turn power based on +/- error
+        error = getError(angle);
+
+        if (Math.abs(error) <= HEADING_THRESHOLD) {
+            steer = 0.0;
+            leftSpeed  = 0.0;
+            rightSpeed = 0.0;
+            onTarget = true;
+        }
+        else {
+            steer = getSteer(error, PCoeff);
+            rightSpeed  = speed * steer;
+            leftSpeed   = -rightSpeed;
+        }
+
+        // Send desired speeds to motors.
+        setMotorPowers(leftSpeed, rightSpeed);
+
+        // Display it for the driver.
+        telemetry.addData("Target", "%5.2f", angle);
+        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+
+        return onTarget;
+    }
+
+
+    public double getError(double targetAngle) {
+
+        double robotError;
+
+        // calculate error in -179 to +180 range  (
+        robotError = targetAngle - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle;
+        while (robotError > 180)  robotError -= 360;
+        while (robotError <= -180) robotError += 360;
+        return robotError;
+    }
+
+    public double getSteer(double error, double PCoeff) {
+        return Range.clip(error * PCoeff, -1, 1);
+    }
+
 
     void setModes(DcMotor.RunMode mode) {
         leftFront.setMode(mode);

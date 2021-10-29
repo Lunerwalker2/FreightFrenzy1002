@@ -44,29 +44,42 @@ public class TestTankTeleOp extends LinearOpMode {
 
         if(isStopRequested()) return;
 
+        double speedMultiplier = 0.8;
+
         while(opModeIsActive()) {
 
-            double y = -gamepad1.left_stick_y * 0.8;
-            double r = gamepad1.right_stick_x * 0.8;
+
+            if(gamepad1.left_bumper) speedMultiplier = 0.6;
+            else speedMultiplier = 0.8;
+
+            double y = cubeInput(-gamepad1.left_stick_y, 0.52); //give more fine control
+            double r = gamepad1.right_stick_x;
 
 
-            leftFront.setPower(y + r);
-            leftBack.setPower(y + r);
-            rightFront.setPower(y - r);
-            rightBack.setPower(y - r);
+            leftFront.setPower((y + r) * speedMultiplier);
+            leftBack.setPower((y + r) * speedMultiplier);
+            rightFront.setPower((y - r) * speedMultiplier);
+            rightBack.setPower((y - r) * speedMultiplier);
 
 
 
-//            leftFront.setPower(-gamepad1.left_stick_y * 0.8);
-//            leftBack.setPower(-gamepad1.left_stick_y * 0.8);
-//            rightFront.setPower(gamepad1.right_stick_y * 0.8);
-//            rightBack.setPower(gamepad1.right_stick_y * 0.8);
+//            leftFront.setPower(-gamepad1.left_stick_y * speedMultiplier);
+//            leftBack.setPower(-gamepad1.left_stick_y * speedMultiplier);
+//            rightFront.setPower(gamepad1.right_stick_y * speedMultiplier);
+//            rightBack.setPower(gamepad1.right_stick_y * speedMultiplier);
 
         }
         leftFront.setPower(0);
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
+    }
+
+    //y = ax^3 + x(1-a)
+    static double cubeInput(double input, double factor){
+        double a = factor * Math.pow(input, 3);
+        double b = input * (1 - factor);
+        return a + b;
     }
 
 }
