@@ -46,7 +46,7 @@ public class ParkingAuto extends LinearOpMode {
         detector.initialize();
 
         detector.startStream();
-        while(!isStarted() && opModeIsActive()){
+        while(!isStarted() && !isStopRequested()){
             hubLevel = detector.getTeamMarkerPipeline().getHubLevel();
 
             telemetry.addData("Hub Level", hubLevel);
@@ -54,8 +54,6 @@ public class ParkingAuto extends LinearOpMode {
         }
         detector.endStream();
 
-
-        waitForStart();
 
         if (isStopRequested()) return;
 
