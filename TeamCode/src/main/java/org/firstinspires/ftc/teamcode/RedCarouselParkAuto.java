@@ -32,15 +32,13 @@ public class RedCarouselParkAuto extends LinearOpMode {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         waitForStart();
@@ -49,16 +47,17 @@ public class RedCarouselParkAuto extends LinearOpMode {
 
         sleep(1000);
 
-        setMotorPowers(0.8, 0.8);
-        sleep(2000);
+        setMotorPowers(-0.04, 0.8);
+        sleep(1000);
         setMotorPowers(0,0);
 
+//        sleep(500);
+//        setMotorPowers(-0.4, 0.4);
+//        sleep(1500);
+//        setMotorPowers(0,0);
+
         sleep(500);
-        carousel.setPower(0.5);
-        sleep(3000);
-        carousel.setPower(0);
-
-
+        carousel.setPower(0.2);
 
     }
 

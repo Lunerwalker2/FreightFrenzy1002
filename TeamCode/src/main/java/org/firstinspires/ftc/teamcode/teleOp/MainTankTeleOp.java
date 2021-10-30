@@ -3,11 +3,12 @@ package org.firstinspires.ftc.teamcode.teleOp;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-
+@TeleOp
 public class MainTankTeleOp extends LinearOpMode {
 
     DcMotor leftFront;
@@ -46,10 +47,10 @@ public class MainTankTeleOp extends LinearOpMode {
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
 
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -64,7 +65,7 @@ public class MainTankTeleOp extends LinearOpMode {
         boolean wasPressed = false;
         boolean clawOpen = false;
 
-        double speedMultiplier = 0.8;
+        double speedMultiplier;
 
         while (opModeIsActive()) {
 
@@ -73,7 +74,7 @@ public class MainTankTeleOp extends LinearOpMode {
                     claw.setPosition(0.2);
                     clawOpen = true;
                 } else {
-                    claw.setPosition(0.6);
+                    claw.setPosition(0.63);
                     clawOpen = false;
                 }
             }
@@ -82,16 +83,16 @@ public class MainTankTeleOp extends LinearOpMode {
 
             arm.setPower(-gamepad2.left_stick_y);
 
-            if (gamepad2.left_trigger > 0.2) carousel.setPower(0.5);
-            else if (gamepad2.right_trigger > 0.2) carousel.setPower(-0.5);
+            if (gamepad2.left_trigger > 0.2) carousel.setPower(0.4);
+            else if (gamepad2.right_trigger > 0.2) carousel.setPower(-0.4);
             else carousel.setPower(0);
 
             //do things lol
 
-            if(gamepad1.left_bumper) speedMultiplier = 0.6;
-            else speedMultiplier = 0.8;
+            if(gamepad1.left_bumper) speedMultiplier = 0.4;
+            else speedMultiplier = 0.7;
 
-            double y = cubeInput(-gamepad1.left_stick_y, 0.52); //give more fine control
+            double y = -gamepad1.left_stick_y;  //give more fine control
             double r = gamepad1.right_stick_x;
 
 

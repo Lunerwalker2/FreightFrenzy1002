@@ -10,6 +10,12 @@ class ArmPIDFController {
 
     val armController = PIDFController(PIDCoefficients(6.0, 0.0, 0.0), kF = { // 0 to bottom 43 ticks, 1.48 degs per tick
         position: Double, _ ->
-            1.6 * cos(position / 420 * 360)
+            1.6 * cos(position / 420 * 360) //gravity feedforward term is Fg * cos(angle of arm)
     })
+
+    /*
+    See tylers book on controls engineering in frc.
+
+    Fg = mg(L/2)
+     */
 }
