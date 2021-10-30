@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -18,9 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.vision.HubLevel;
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector;
 
-@Disabled
-@Autonomous(name = "BlueHubDuck")
-public class BlueHubAuto extends LinearOpMode {
+@Autonomous(name = "BlueHubDuckPark")
+public class BlueHubParkAuto extends LinearOpMode {
 
 
     private static final double COUNTS_PER_MOTOR_REV = 560;
@@ -94,21 +91,6 @@ public class BlueHubAuto extends LinearOpMode {
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
-
-        detector.initialize();
-
-        detector.startStream();
-        while (!isStarted() && !isStopRequested()) {
-            hubLevel = detector.getTeamMarkerPipeline().getHubLevel();
-
-            telemetry.addData("Hub Level", hubLevel);
-            telemetry.update();
-        }
-
-
-        detector.endStream();
-
         //Start
 
         if (isStopRequested()) return;
@@ -116,7 +98,7 @@ public class BlueHubAuto extends LinearOpMode {
         claw.setPosition(0.2); //TODO: Find this
         sleep(500);
 
-        encoderDrive(0.6, 20, 20, 4); //go forward
+        encoderDrive(0.7, 20, 20, 4); //go forward
 
         gyroTurn(0.5, -45);
 
@@ -124,58 +106,23 @@ public class BlueHubAuto extends LinearOpMode {
 
         sleep(500);
 
-        switch (hubLevel) {
-            case TOP:
-                arm.setPower(0.2);
-                while (arm.getCurrentPosition() < 70) {
-                    telemetry.addLine("hi");
-                    telemetry.update();
-                }
-                arm.setPower(0.05);
-
-                encoderDrive(0.4, 10, 10, 3); //go forward
-
-                //TODO: deposit freight
-                openClaw();
-                sleep(500);
-
-                break;
-            case MIDDLE:
-                arm.setPower(0.2);
-                while (arm.getCurrentPosition() < 51) {
-                    telemetry.addLine("hi");
-                    telemetry.update();
-                }
-                arm.setPower(0.05);
-
-                encoderDrive(0.4, 10, 10, 3); //go forward
-
-                //TODO: deposit freight
-                openClaw();
-                sleep(500);
-
-                break;
-            case BOTTOM:
-                arm.setPower(0.2);
-                while (arm.getCurrentPosition() < 12) {
-                    telemetry.addLine("hi");
-                    telemetry.update();
-                }
-                arm.setPower(0.05);
-
-                encoderDrive(0.4, 10, 10, 3); //go forward
-
-                //TODO: deposit freight
-
-                //have to open it less to not hit the top of the lelvel
-                claw.setPosition(0.4);
-                sleep(1000);
-
-                break;
+        arm.setPower(0.2);
+        while (arm.getCurrentPosition() < 70) {
+            telemetry.addLine("hi");
+            telemetry.update();
         }
+        arm.setPower(0.05);
+
+        encoderDrive(0.7, 10, 10, 3); //go forward
+
+        //deposit freight
+        openClaw();
+
+
+        sleep(500);
 
         //back up
-        encoderDrive(0.3, -8, 8, 3);
+        encoderDrive(0.5, -8, -8, 3);
 
         closeClaw();
 

@@ -25,6 +25,8 @@ dependencies {
 
     implementation 'org.ftclib.ftclib:core:1.2.0'
 
+    implementation 'com.acmerobotics.roadrunner:core:0.5.4'
+
 
 
 }

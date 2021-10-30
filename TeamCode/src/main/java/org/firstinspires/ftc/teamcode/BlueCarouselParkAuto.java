@@ -4,14 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.vision.HubLevel;
-import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector;
-
-@Autonomous(name="Tank Parking Auto")
-public class ParkingAuto extends LinearOpMode {
+@Autonomous( group = "Carousel Park")
+public class BlueCarouselParkAuto extends LinearOpMode {
 
 
 
@@ -19,6 +14,8 @@ public class ParkingAuto extends LinearOpMode {
     DcMotor leftBack;
     DcMotor rightFront;
     DcMotor rightBack;
+
+    DcMotor carousel;
 
     @Override
     public void runOpMode() {
@@ -28,6 +25,7 @@ public class ParkingAuto extends LinearOpMode {
         rightFront = hardwareMap.get(DcMotor.class, "rf");
         rightBack = hardwareMap.get(DcMotor.class, "rb");
 
+        carousel = hardwareMap.get(DcMotor.class, "carousel");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -41,17 +39,24 @@ public class ParkingAuto extends LinearOpMode {
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+//        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+//        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
+
+        waitForStart();
 
         if (isStopRequested()) return;
 
         sleep(1000);
 
         setMotorPowers(0.8, 0.8);
-        sleep(3000);
+        sleep(2000);
         setMotorPowers(0,0);
+
+        sleep(500);
+        carousel.setPower(-0.5);
+        sleep(3000);
+        carousel.setPower(0);
 
 
 
