@@ -19,11 +19,9 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.AprilTags;
+package org.firstinspires.ftc.teamcode.demo;
 
 import android.annotation.SuppressLint;
-import android.os.Handler;
-import android.os.HandlerThread;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -34,26 +32,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.apriltags.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvInternalCamera2;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-
-import kotlin.collections.MapsKt;
 
 @SuppressLint("DefaultLocale")
 @TeleOp
 public class AprilTagDemo extends LinearOpMode
 {
-
-
-
 
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -78,7 +68,7 @@ public class AprilTagDemo extends LinearOpMode
      */
 
     // UNITS ARE METERS
-    double tagsize = 0.095504;
+    double tagsize = 0.095504; //4 inch tag print out
 
     int numFramesWithoutDetection = 0;
 
