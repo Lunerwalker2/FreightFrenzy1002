@@ -21,6 +21,7 @@
 
 package org.firstinspires.ftc.teamcode.apriltags
 
+import com.arcrobotics.ftclib.geometry.*
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix
 import org.openftc.apriltag.AprilTagDetection
 import org.openftc.apriltag.AprilTagPose
@@ -119,12 +120,11 @@ class AprilTagLocalizer(
                             //Make a var to hold the given camera translation according to this detection
                             val currentDetectionCameraTranslation = Pose.covertAprilTagPoseToPose(detection.pose)
 
-                            //Translate the given translation by the known tag position
-                            currentDetectionCameraTranslation.addTagTo(tagPosition)
+                            val currentCameraFieldPosition = findCameraPoseFromTag(tagPosition, currentDetectionCameraTranslation)
 
 
                             if (isFirstDetectionOfUpdate) {
-                                cameraPosition = currentDetectionCameraTranslation.copy()
+                                cameraPosition = currentCameraFieldPosition.copy()
                                 isFirstDetectionOfUpdate = false
                             } else {
 
@@ -135,7 +135,7 @@ class AprilTagLocalizer(
                                    it is null, which is impossible here but you never know.
 
                                  */
-                                cameraPosition!!.averageWith(currentDetectionCameraTranslation)
+                                cameraPosition!!.averageWith(currentCameraFieldPosition)
                             }
                         }
                     }
@@ -146,6 +146,40 @@ class AprilTagLocalizer(
 
         //Return our position
         return cameraPosition
+    }
+
+
+    /**
+     * Adds the given april tag translation to the pose of the tag to find the camera pose.
+     *
+     * x in our field coordinates correspond to z in the translation if the our field coordinate
+     * heading is 0.
+     *
+     * y in our field coordinates corresponds to x in the same situation as above.
+     *
+     * So, we add the tag x to the translation z, and the tag y to the translation x.
+     * Then we rotate that by the heading value we use, yaw in this case afaik.
+     *
+     */
+    private fun findCameraPoseFromTag(tagPosition: Pose, tagTranslation: Pose): Pose{
+        //Use FTCLib to make a pose object to manipulate here
+        val translatedPose = Pose2d(tagPosition.x, tagPosition.y, Rotation2d(tagPosition.yaw))
+
+        //Translate by the z,x of the tag translation and rotate by the yaw of the translation
+        translatedPose.plus(
+                Transform2d(Translation2d(tagTranslation.z, tagTranslation.x),
+                Rotation2d(tagTranslation.yaw))
+        )
+
+        return Pose(
+                translatedPose.x,
+                translatedPose.y,
+                tagPosition.z,
+                translatedPose.rotation.radians,
+                tagPosition.pitch,
+                tagPosition.roll
+        )
+
     }
 
 
@@ -278,20 +312,10 @@ class AprilTagLocalizer(
             var roll: Double
     ) {
 
-        /**
-         * Adds the given april tag pose to the current pose
-         */
-        fun addTagTo(pose: Pose){
-            x += pose.x
-            y += pose.z
-            z += pose.y
-            yaw = normalizeRad(yaw + pose.yaw)
-            pitch = normalizeRad(pitch + pose.pitch)
-            roll = normalizeRad(roll + pose.roll)
-        }
+
 
         /**
-         * Adds the given pose to the current pose
+         * Adds the given pose to the current pose.
          */
         fun addTo(pose: Pose){
             x += pose.x
@@ -322,11 +346,10 @@ class AprilTagLocalizer(
              * Converts the april tag pose class of the plugin to the inner pose class
              * found here.
              *
-             * The april tag pose has weird axes with the z pointing out and the the x to the right,
-             * and y going up and down. This means we have to switch some values around.
+             * Keep in mind that the april tag pose represents a translation and rotation from a tag,
+             * not an absolute position in the field, and the resulting pose object will be the same.
              */
             fun covertAprilTagPoseToPose(aprilTagPose: AprilTagPose): Pose {
-                //TODO: switch actual vuforia axes to field axes
                 return Pose(
                         aprilTagPose.x,
                         aprilTagPose.y,
