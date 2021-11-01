@@ -188,8 +188,7 @@ public class AprilTagDemo extends LinearOpMode
                         aprilTagDetectionPipeline.setDecimation(DECIMATION_HIGH);
                     }
 
-                    for(AprilTagDetection detection : detections)
-                    {
+                    for(AprilTagDetection detection : detections) {
                     
                         /*
                         This is a terrible way of doing this, but my thought process is that the tag is at 0,0 and facing
@@ -199,6 +198,7 @@ public class AprilTagDemo extends LinearOpMode
                         also add the rotation of the camera relative to the tag to the known rotation of the tag, and normalize it.
                         
                         I think.
+
                         
                         This implementation also only works with one tag, as each recursion o the loop will overwrite the previous
                         */
@@ -236,7 +236,6 @@ public class AprilTagDemo extends LinearOpMode
         camera.stopStreaming();
         camera.closeCameraDevice();
     }
-
     static double normalizeDeg(double angle){
         while (angle >= 180.0) angle -= 360.0;
         while (angle < -180.0) angle += 360.0;
