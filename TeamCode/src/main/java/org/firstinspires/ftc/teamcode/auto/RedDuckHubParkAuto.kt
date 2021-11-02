@@ -14,6 +14,14 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.Arm
 import java.lang.Math.toRadians
 
+
+/*
+ * Lots of comments are omitted from this class mainly because they are/would be mostly the same as the
+ * corresponding blue alliance one.
+ *
+ * The blue alliance autos are where we are usually doing dev since as of now that's the only side
+ * we have taped out, so the red autos will be a bit behind with changes.
+ */
 @Disabled
 @Autonomous(name="Red duck auto")
 class RedDuckHubParkAuto : AutoBase() {

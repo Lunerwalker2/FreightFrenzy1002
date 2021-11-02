@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.vision.HubLevel
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector
 
 @Autonomous(name="test command auto")
-class TestAuto: AutoBase() {
+class STestAuto: AutoBase() {
 
     lateinit var markerDetector: TeamMarkerDetector
     lateinit var hubLevel: HubLevel

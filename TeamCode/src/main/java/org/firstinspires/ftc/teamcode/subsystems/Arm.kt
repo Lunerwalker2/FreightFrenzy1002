@@ -25,32 +25,46 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
     private var firstRun = true
     
     @JvmField
-    var coefficients = PIDCoefficients(0.06, 0.0, 0.0)
+    var coefficients = PIDCoefficients(3.0, 0.0, 0.0)
     
     @JvmField
-    var armGravityFeedforward: Double = 2.0
+    var armGravityFeedforward: Double = 2.0 //TODO: Find this
 
     //TODO: Test this
+    /*
+    See the book Controls Engineering in FRC for an explanation of this and the equation
+    for a theoretical gravity feedforward constant.
+
+    Fg = m*g*(L/2)*cos(angle of arm)
+     */
     private val armGravityController = PIDFController(coefficients,
             kF = { position, _ ->
-                val angle = Range.scale(position, 0.0, armMaxAngleTicks.toDouble(), armMinAngle, armMaxAngle) //scale encoder ticks from 0 to top of the arm to degrees
+                //Find the angle of the arm in degrees
+
+                /*
+                The arm starts at lower than 0 degrees so we do have to subtract the difference
+                between that and the actual 0 position of the arm in ticks. Otherwise the controller
+                would think that the arm started perfectly horizontal.
+                 */
+
+                val angle = (position - ARM_TO_HORIZONTAL_TICKS_OFFSET) / TICKS_PER_REV * 360.0
                 cos(angle) * armGravityFeedforward
             }
     )
-
-    
     
     companion object {
-        private const val armMinAngle = -40.0
-        private const val armMaxAngle = 90.0
 
-        private const val armMaxAngleTicks = 7000 //TODO: Find this
-
+        //The tolerance of our controller in ticks
         private const val positionTolerance = 20
 
+        //Encoder ticks per revolution of our motor
+        private const val TICKS_PER_REV = 420.0
+
+        private const val ARM_TO_HORIZONTAL_TICKS_OFFSET = 50.0
     }
 
 
+    //Current movement state of arm
     enum class ArmState {
         MOVING_MANUAL,
         MOVING_AUTO,
@@ -59,15 +73,18 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
     }
 
     //TODO: Find these
+    //Encoder positions of the arm motor for different levels
     enum class ArmPosition(val targetPosition: Int) {
         DOWN(0),
-        BOTTOM_LEVEL(1000),
-        MIDDLE_LEVEL(2000),
-        TOP_LEVEL(3000),
-        CAP_LEVEL(4000)
+        BOTTOM_LEVEL(12),
+        MIDDLE_LEVEL(51),
+        TOP_LEVEL(76)
+        //CAP_LEVEL(4000)
     }
 
     init{
+        //We can raise this but to be safe we are leaving it here for now
+        armGravityController.setOutputBounds(-0.8, 0.8)
         register()
     }
 
@@ -86,8 +103,11 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
                 armMotor.power = armGravityController.update(armMotor.currentPosition.toDouble()) //Hold the
             }
             ArmState.MOVING_AUTO -> {
-                val currentPosition = armMotor.currentPosition //Store it so we cna avoid reading twice for bulk reading
-                if (abs(currentPosition - armGravityController.targetPosition) <= positionTolerance) {
+                val currentPosition = armMotor.currentPosition
+
+                //Check if the current position is within our tolerance range
+                if (abs(armGravityController.targetPosition - currentPosition) <= positionTolerance) {
+                    //If it is, then make the new target the currentPosition
                     armGravityController.targetPosition = currentPosition.toDouble()
                     armState = ArmState.HOLDING //If we are at the target position, hold the arm
                 } else {

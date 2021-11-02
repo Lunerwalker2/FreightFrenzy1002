@@ -8,6 +8,12 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 
 abstract class AutoBase : CommandOpMode() {
 
+    /*
+    Create a variable to hold the list of hubs on the robot for use of bulk caching.
+
+    By lazy means that the object will be created the first time it is accessed, i.e, when
+    the hardware map is set in init.
+     */
     val allHubs by lazy { hardwareMap.getAll(LynxModule::class.java) }
 
 

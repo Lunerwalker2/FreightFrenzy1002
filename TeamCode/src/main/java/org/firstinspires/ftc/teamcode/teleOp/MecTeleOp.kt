@@ -5,9 +5,13 @@ import com.arcrobotics.ftclib.command.button.GamepadButton
 import com.arcrobotics.ftclib.command.button.Trigger
 import com.arcrobotics.ftclib.gamepad.GamepadEx
 import com.arcrobotics.ftclib.gamepad.GamepadKeys
+import com.qualcomm.robotcore.hardware.DcMotorEx
 import org.firstinspires.ftc.teamcode.subsystems.Arm
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
+import org.firstinspires.ftc.teamcode.subsystems.Claw
 import org.firstinspires.ftc.teamcode.subsystems.Intake
+import kotlin.math.abs
+import kotlin.math.max
 
 /*
 I'm using a lot of ftclib classes in this because the framework exists for auto, so might as well.
@@ -17,8 +21,15 @@ MOST OF THIS IS NOT HOW THE SDK WORKS PLEASE DON'T TAKE THIS AS AN EXAMPLE OF TH
 class MecTeleOp : CommandOpMode() {
 
     lateinit var arm: Arm
-    lateinit var intake: Intake
+//    lateinit var intake: Intake
     lateinit var carouselWheel: CarouselWheel
+    lateinit var claw: Claw
+
+    //We could go and use the rr drive class but meh I'd like to show the math anyway
+    private lateinit var leftFront: DcMotorEx
+    private lateinit var leftBack: DcMotorEx
+    private lateinit var rightFront: DcMotorEx
+    private lateinit var rightBack: DcMotorEx
 
     private var powerMultiplier = 1.0
 
@@ -28,10 +39,11 @@ class MecTeleOp : CommandOpMode() {
     //Hold the current position
     var armCurrentPosition = Arm.ArmPosition.DOWN
 
+
     override fun initialize() {
 
         arm = Arm(hardwareMap)
-        intake = Intake(hardwareMap)
+//        intake = Intake(hardwareMap)
         carouselWheel = CarouselWheel(hardwareMap)
 
         //Define our gamepads with ftclib things
@@ -61,15 +73,22 @@ class MecTeleOp : CommandOpMode() {
                 .whenReleased( Runnable { powerMultiplier = 1.0}) //When it's released, set it back to normal
 
 
-        //outtake
-        manipulatorLeftBumper
-                .whenPressed(intake::outtake) //Outtake when pressed
-                .whenReleased(intake::stop) //Stop when released
+        //Claw togglex`
+        manipulatorLeftBumper.toggleWhenPressed(
+                claw::openClaw,
+                claw::closeClaw
+        )
 
-        //intake
-        manipulatorRightBumper
-                .whenPressed(intake::intake) //Intake when pressed
-                .whenReleased(intake::stop) //Stop when released
+
+//        //outtake
+//        manipulatorLeftBumper
+//                .whenPressed(intake::outtake) //Outtake when pressed
+//                .whenReleased(intake::stop) //Stop when released
+//
+//        //intake
+//        manipulatorRightBumper
+//                .whenPressed(intake::intake) //Intake when pressed
+//                .whenReleased(intake::stop) //Stop when released
 
         //arm
         manipulatorDPadUp
@@ -94,6 +113,30 @@ class MecTeleOp : CommandOpMode() {
 
     override fun run() {
         super.run()
+
+        val x = -gamepad1.left_stick_y.toDouble()
+        val y = gamepad1.left_stick_x.toDouble()
+        val rx = gamepad1.right_stick_x.toDouble()
+
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio, but only when
+        // at least one is out of the range [-1, 1]
+
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio, but only when
+        // at least one is out of the range [-1, 1]
+        val denominator: Double = max(abs(y) + abs(x) + abs(rx), 1.0)
+
+        val frontLeftPower = (y + x + rx) / denominator
+        val backLeftPower = (y - x + rx) / denominator
+        val frontRightPower = (y - x - rx) / denominator
+        val backRightPower = (y + x - rx) / denominator
+
+        leftFront.power = frontLeftPower * powerMultiplier
+        leftBack.power = backLeftPower * powerMultiplier
+        rightFront.power = frontRightPower * powerMultiplier
+        rightBack.power = backRightPower * powerMultiplier
+
     }
 
 
