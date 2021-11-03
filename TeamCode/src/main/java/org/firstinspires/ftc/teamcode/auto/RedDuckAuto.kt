@@ -31,16 +31,19 @@ class RedDuckAuto : AutoBase() {
     lateinit var drive: SampleMecanumDrive
 
     //Our starting position
-    private val startPose = Pose2d(-42.0, -54.5, toRadians(-90.0))
+    private val startPose = Pose2d(-33.6, -64.0, toRadians(90.0))
 
 
     override fun initialize() {
         super.initialize()
 
+
+        drive = SampleMecanumDrive(hardwareMap)
+
         //Make sure we set the current position estimate in rr as our starting position
         drive.poseEstimate = startPose
 
-        drive = SampleMecanumDrive(hardwareMap)
+
 
         telemetry.addLine("Generating trajectories...")
         telemetry.update()
@@ -52,11 +55,11 @@ class RedDuckAuto : AutoBase() {
                 .build()
 
         turnLeft = drive.trajectorySequenceBuilder(goForward.end())
-                .turn(-90.0)
+                .turn(toRadians(-90.0))
                 .build()
 
         goToCarousel = drive.trajectoryBuilder(turnLeft.end())
-                .lineToConstantHeading(Vector2d(-62.0, -44.5))
+                .lineToConstantHeading(Vector2d(-55.0, -60.0))
                 .build()
 
 

@@ -44,10 +44,12 @@ public class MeepMeepTesting {
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 17)
                 .setColorScheme(new ColorSchemeRedDark())
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-42.0, 54.5, toRadians(-90.0)))
+                        drive.trajectorySequenceBuilder(new Pose2d(-33.6, 64, toRadians(-90.0)))
                                 .forward(10)
                                 .turn(toRadians(-90))
-                                .lineToConstantHeading(new Vector2d(-62.0, 44.5))
+                                .lineToConstantHeading(new Vector2d(-55.0, 60.0))
+                                .waitSeconds(2)
+                                .lineToConstantHeading(new Vector2d(-58.0, 35.0))
 
 //                                .setReversed(true)
 //                                .lineTo(new Vector2d(-56, 58))

@@ -43,9 +43,11 @@ class BlueDuckHubParkAuto : AutoBase() {
         super.initialize()
 
         //Make sure we set the current position estimate in rr as our starting position
-        drive.poseEstimate = startPose
+
 
         drive = SampleMecanumDrive(hardwareMap)
+        drive.poseEstimate = startPose
+
 
         //Generating trajectories is an expensive task, so we do it in init
         goForward = drive.trajectoryBuilder(startPose)
