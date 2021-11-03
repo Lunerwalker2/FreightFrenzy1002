@@ -5,13 +5,12 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
 
+
 class Intake(private val hardwareMap: HardwareMap) : SubsystemBase() {
 
-    init {
-        register()
-    }
+    //Epic minimal syntax kotlin superclass constructor calling time yay suck it java!
 
-
+    //The by lazy thing means that it will be set the first time it is accessed
     private val intakeMotor by lazy { hardwareMap.get(DcMotor::class.java, "intake") }
     private val flapServo by lazy { hardwareMap.get(Servo::class.java, "flap") }
 
@@ -19,8 +18,6 @@ class Intake(private val hardwareMap: HardwareMap) : SubsystemBase() {
 
     private var firstRun = true
 
-
-    //Calling the constructor of the superclass already registers this subsystem
 
     override fun periodic(){
         if(firstRun){

@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.CommandOpMode
 import com.arcrobotics.ftclib.command.InstantCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import org.firstinspires.ftc.teamcode.commands.SleepCommand
 import org.firstinspires.ftc.teamcode.commands.TestMessageCommand
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
@@ -15,8 +16,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm
 import org.firstinspires.ftc.teamcode.vision.HubLevel
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector
 
-@Autonomous(name="test command auto")
-class STestAuto: AutoBase() {
+@Disabled
+@Autonomous(name="Test command auto")
+class TestAuto: AutoBase() {
 
     lateinit var markerDetector: TeamMarkerDetector
     lateinit var hubLevel: HubLevel

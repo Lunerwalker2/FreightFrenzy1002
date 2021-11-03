@@ -21,9 +21,10 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
     var armState = ArmState.STOPPED
 
     private var power = 0.0
-
     private var firstRun = true
-    
+
+    //The annotations mean it can be seen by ftc dashboard (in kotlin)
+    //Equivalent of doing public static in java.
     @JvmField
     var coefficients = PIDCoefficients(3.0, 0.0, 0.0)
     
@@ -60,6 +61,7 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
         //Encoder ticks per revolution of our motor
         private const val TICKS_PER_REV = 420.0
 
+        //Distance in the encoder ticks from the bottom limit of the arms rotation to horizontal
         private const val ARM_TO_HORIZONTAL_TICKS_OFFSET = 50.0
     }
 
@@ -90,6 +92,7 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
 
 
     override fun periodic() {
+        //On the first run set the zero power behavior and run mode
         if(firstRun){
             armMotor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
             armMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
@@ -102,6 +105,7 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
             ArmState.HOLDING -> { //If we are holding, keep the arm at the position it was stopped at
                 armMotor.power = armGravityController.update(armMotor.currentPosition.toDouble()) //Hold the
             }
+            //If we are moving to a position, update the motor powers with the controller
             ArmState.MOVING_AUTO -> {
                 val currentPosition = armMotor.currentPosition
 

@@ -23,7 +23,7 @@ import java.lang.Math.toRadians
  * we have taped out, so the red autos will be a bit behind with changes.
  */
 @Disabled
-@Autonomous(name="Red duck auto")
+@Autonomous(name="Red Hub & Duck Auto")
 class RedDuckHubParkAuto : AutoBase() {
 
 

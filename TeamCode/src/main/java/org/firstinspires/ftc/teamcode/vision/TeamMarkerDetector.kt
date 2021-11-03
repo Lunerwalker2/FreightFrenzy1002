@@ -8,6 +8,20 @@ import org.openftc.easyopencv.OpenCvCamera.AsyncCameraOpenListener
 import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
 
+/*
+Class that abstracts our vision pipeline and all the EOCV things needed to run it.
+
+The constructor can be called at any time, as long as the init() function is called
+inside the opmode (once the hardware map is set).
+
+startStream() is called once you want the pipeline to start, likely at the end of the init stuff
+and right before the loop that reads the hub level.
+
+the getHubLevel() in the pipeline class can be called to get the current hub level, this should
+probably be called until the end of init to get the last detection after randomization.
+
+endStream() should be called after init, at start. It is blocking so it might have a slight delay.
+ */
 class TeamMarkerDetector(private val hardwareMap: HardwareMap) {
 
 

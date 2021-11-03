@@ -40,6 +40,7 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
     private volatile HubLevel hubLevel = HubLevel.BOTTOM;
 
 
+    //volatile because reasons
     public volatile double leftRegionCb = 0;
     public volatile double centerRegionCb = 0;
 
@@ -86,16 +87,19 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
         Mat leftSampleRegion = cBMat.submat(leftSampleRect);
         Mat centerSampleRegion = cBMat.submat(centerSampleRect);
 
+        //Find the average color value of each the regions
         Scalar leftRegionMean = Core.mean(leftSampleRegion);
         Scalar centerRegionMean = Core.mean(centerSampleRegion);
 
+        //read the first channel, the only channel in this case since we extracted it before.
         leftRegionCb = leftRegionMean.val[0];
         centerRegionCb = centerRegionMean.val[0];
 
+        //Test the amount against our threshold to see if there is a marker there.
         boolean leftMarkerDetected = (leftRegionCb > thresholdValue); //see if it is blue
         boolean centerMarkerDetected = (centerRegionCb > thresholdValue); //see if it is blue
 
-        //if both are detected
+        //if both are detected just choose whichever one is more blue
         if (leftMarkerDetected && centerMarkerDetected) {
             if (leftRegionMean.val[0] >= centerRegionMean.val[0]) { //include the rare equals case in this because /s
                 centerMarkerDetected = false;
@@ -159,9 +163,12 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
                 2
         );
 
+        //Make sure to release the mats we created in the pipeline, otherwise we get mem leaks
         leftSampleRegion.release();
         centerSampleRegion.release();
 
+
+        //Me playing with mat to bitmap conversion, don't worry about this
         synchronized (sync) {
             if (matSavingState == MatSavingState.MAT_REQUESTED) {
                 input.copyTo(matToSave);
@@ -171,6 +178,9 @@ public class TeamMarkerPipeline extends OpenCvPipeline {
 
         return input;
     }
+
+
+    //All this is me messing around with converting a mat to a bitmap, it's not relevant to the pipeline
 
     private enum MatSavingState{
         NONE_REQUESTED,
