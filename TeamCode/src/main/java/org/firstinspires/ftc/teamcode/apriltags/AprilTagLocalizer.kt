@@ -50,15 +50,17 @@ class AprilTagLocalizer(
 
 
     init {
-        if(webcams.isNotEmpty()){//Fill our map with new pipelines for each webcam
+        if (webcams.isNotEmpty()) {//Fill our map with new pipelines for each webcam
             webcams.forEach {
-                pipelineMap.put(it, AprilTagDetectionPipeline(
+                val pipeline = AprilTagDetectionPipeline(
                         tagSize,
                         it.calibration.fx,
                         it.calibration.fy,
                         it.calibration.cx,
                         it.calibration.cy,
-                ))
+                )
+                it.camera.setPipeline(pipeline)
+                pipelineMap.put(it, pipeline)
             }
         } else {
             throw RuntimeException("Localizer must be given at least 1 camera!")
@@ -124,13 +126,13 @@ class AprilTagLocalizer(
 
 
                             //Make a var to hold the given camera translation according to this detection
-                            val currentDetectionCameraTranslation = Pose.covertAprilTagPoseToPose(detection.pose)
+//                            val currentDetectionCameraTranslation = Pose.covertAprilTagPoseToPose(detection.pose)
 
-                            val currentCameraFieldPosition = findCameraPoseFromTag(currentDetectionCameraTranslation)
+                            val currentCameraFieldPosition = findCameraPoseFromTag(detection.pose)
 
 
                             if (isFirstDetectionOfUpdate) {
-                                cameraPosition = currentCameraFieldPosition.copy()
+                                cameraPosition = currentCameraFieldPosition
                                 isFirstDetectionOfUpdate = false
                             } else {
 
@@ -167,27 +169,28 @@ class AprilTagLocalizer(
      * Then we rotate that by the heading value we use, yaw in this case afaik.
      *
      */
-    private fun findCameraPoseFromTag(tagTranslation: Pose): Pose{
+    private fun findCameraPoseFromTag(tagTranslation: AprilTagPose): Pose {
         //Use FTCLib to make a pose object to manipulate here
-        val translatedPose = Pose2d(tagPosition.x, tagPosition.y, Rotation2d(tagPosition.yaw))
+        val translatedVec = Vector2d(tagPosition.x, tagPosition.y)
+        val tagRotation = Rotation2d(tagPosition.yaw)
 
         //Translate by the z,x of the tag translation and rotate by the yaw of the translation
-        translatedPose.plus(
-                Transform2d(Translation2d(tagTranslation.z, tagTranslation.x),
-                Rotation2d(tagTranslation.yaw))
-        )
+        translatedVec.plus(Vector2d(tagTranslation.z * FEET_PER_METER, tagTranslation.x * FEET_PER_METER))
+        translatedVec.rotateBy(tagTranslation.yaw)
+
+        tagRotation.rotateBy(Rotation2d(tagTranslation.yaw))
+
 
         return Pose(
-                translatedPose.x,
-                translatedPose.y,
+                translatedVec.x,
+                translatedVec.y,
                 tagPosition.z,
-                translatedPose.rotation.radians,
+                tagRotation.radians,
                 tagPosition.pitch,
                 tagPosition.roll
         )
 
     }
-
 
 
     /**
@@ -263,15 +266,15 @@ class AprilTagLocalizer(
      * Returns a multi-line string that contains performance information about the pipeline(s).
      */
     fun getPipelineTelemetryInfo(): String {
-            val builder: StringBuilder = StringBuilder()
-            var count = 0
-            pipelineMap.forEach {
-                builder.append("Webcam $count Pipeline FPS: ${it.key.camera.fps} \n")
-                builder.append("Webcam $count Overhead ms: ${it.key.camera.overheadTimeMs} \n")
-                builder.append("Webcam $count Pipeline ms: ${it.key.camera.pipelineTimeMs} \n")
-                count++
-            }
-            return builder.toString()
+        val builder: StringBuilder = StringBuilder()
+        var count = 0
+        pipelineMap.forEach {
+            builder.append("Webcam $count Pipeline FPS: ${it.key.camera.fps} \n")
+            builder.append("Webcam $count Overhead ms: ${it.key.camera.overheadTimeMs} \n")
+            builder.append("Webcam $count Pipeline ms: ${it.key.camera.pipelineTimeMs} \n")
+            count++
+        }
+        return builder.toString()
     }
 
 
@@ -302,7 +305,7 @@ class AprilTagLocalizer(
 
 
     /**
-    * Enum for webcam calibs we will use. Fx and fy are focal length; cx and cy are principal point.
+     * Enum for webcam calibs we will use. Fx and fy are focal length; cx and cy are principal point.
      *  Height and width are in pixels.
 
      */
@@ -339,7 +342,7 @@ class AprilTagLocalizer(
         /**
          * Adds the given pose to the current pose.
          */
-        fun addTo(pose: Pose){
+        fun addTo(pose: Pose) {
             x += pose.x
             y += pose.y
             z += pose.z

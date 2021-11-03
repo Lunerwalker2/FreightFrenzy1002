@@ -13,7 +13,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
-
 @TeleOp(name = "April Tag Localization Test")
 public class AprilTagLocalizerTester extends LinearOpMode {
 
@@ -125,7 +124,7 @@ public class AprilTagLocalizerTester extends LinearOpMode {
             //Print out the positions to telemetry
             packet.put("Camera X", cameraPosition.getX());
             packet.put("Camera Y", cameraPosition.getY());
-            packet.put("Camera Z", Math.toDegrees(cameraPosition.getYaw()));
+            packet.put("Camera Yaw", Math.toDegrees(cameraPosition.getYaw()));
 
             //Draw the robot and tag on the field
             field.setFill("#3F51B5");

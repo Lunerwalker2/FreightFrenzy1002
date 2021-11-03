@@ -199,7 +199,7 @@ public class AprilTagDemo extends LinearOpMode
                         This is a terrible way of doing this, but my thought process is that the tag is at 0,0 and facing
                         at wherever the x axis is (0 degrees). We are using -180 > x <= 180 for the range.
                         
-                        Theroetically, all we need to do is the add the translation of camera to the position of the tag, and
+                        Theoretically, all we need to do is the add the translation of camera to the position of the tag, and
                         also add the rotation of the camera relative to the tag to the known rotation of the tag, and normalize it.
                         
                         I think.
