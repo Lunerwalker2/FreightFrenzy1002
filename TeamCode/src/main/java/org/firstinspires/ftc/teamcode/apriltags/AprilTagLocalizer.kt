@@ -22,11 +22,12 @@
 package org.firstinspires.ftc.teamcode.apriltags
 
 import com.arcrobotics.ftclib.geometry.*
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix
 import org.openftc.apriltag.AprilTagDetection
 import org.openftc.apriltag.AprilTagPose
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraRotation
+import java.lang.RuntimeException
+import java.lang.StringBuilder
 
 /**
  * Localizer that manages different pipelines and webcams to localization with april tags.
@@ -49,21 +50,26 @@ class AprilTagLocalizer(
 
 
     init {
-        //Fill our map with new pipelines for each webcam
-        webcams.forEach {
-            pipelineMap[it] = AprilTagDetectionPipeline(
-                    tagSize,
-                    it.calibration.fx,
-                    it.calibration.fy,
-                    it.calibration.cx,
-                    it.calibration.cy,
-            )
+        if(webcams.isNotEmpty()){//Fill our map with new pipelines for each webcam
+            webcams.forEach {
+                pipelineMap.put(it, AprilTagDetectionPipeline(
+                        tagSize,
+                        it.calibration.fx,
+                        it.calibration.fy,
+                        it.calibration.cx,
+                        it.calibration.cy,
+                ))
+            }
+        } else {
+            throw RuntimeException("Localizer must be given at least 1 camera!")
         }
     }
 
     /**
      * Runs an update of the localizer. Sees if there is any new detections from the cameras.
-     * Returns the average of the camera position if there are detections, null otherwise.
+     * Returns the average of the camera position from all cameras if there are detections, null otherwise.
+     *
+     * DISTANCES ARE IN METERS!!!!!
      */
     fun update(): Pose? {
         //Create a position that will be changed if there are detections and null otherwise
@@ -120,7 +126,7 @@ class AprilTagLocalizer(
                             //Make a var to hold the given camera translation according to this detection
                             val currentDetectionCameraTranslation = Pose.covertAprilTagPoseToPose(detection.pose)
 
-                            val currentCameraFieldPosition = findCameraPoseFromTag(tagPosition, currentDetectionCameraTranslation)
+                            val currentCameraFieldPosition = findCameraPoseFromTag(currentDetectionCameraTranslation)
 
 
                             if (isFirstDetectionOfUpdate) {
@@ -161,7 +167,7 @@ class AprilTagLocalizer(
      * Then we rotate that by the heading value we use, yaw in this case afaik.
      *
      */
-    private fun findCameraPoseFromTag(tagPosition: Pose, tagTranslation: Pose): Pose{
+    private fun findCameraPoseFromTag(tagTranslation: Pose): Pose{
         //Use FTCLib to make a pose object to manipulate here
         val translatedPose = Pose2d(tagPosition.x, tagPosition.y, Rotation2d(tagPosition.yaw))
 
@@ -219,14 +225,14 @@ class AprilTagLocalizer(
 
     /**
      * Opens the cameras async and starts their streams. This is an expensive operation,
-     * so be careful. By default this streams in 640x480 and upright.
+     * so be careful. By default this streams in upright.
      */
     fun openCamerasAndStartStream() {
         if (localizerState == LocalizerState.NOT_STARTED) {
             pipelineMap.forEach {
                 it.key.camera.openCameraDeviceAsync(object : OpenCvCamera.AsyncCameraOpenListener {
                     override fun onOpened() {
-                        it.key.camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT)
+                        it.key.camera.startStreaming(it.key.calibration.width, it.key.calibration.height, OpenCvCameraRotation.UPRIGHT)
                     }
 
                     override fun onError(errorCode: Int) {
@@ -250,6 +256,22 @@ class AprilTagLocalizer(
             }
             localizerState = LocalizerState.STOPPED
         }
+    }
+
+
+    /**
+     * Returns a multi-line string that contains performance information about the pipeline(s).
+     */
+    fun getPipelineTelemetryInfo(): String {
+            val builder: StringBuilder = StringBuilder()
+            var count = 0
+            pipelineMap.forEach {
+                builder.append("Webcam $count Pipeline FPS: ${it.key.camera.fps} \n")
+                builder.append("Webcam $count Overhead ms: ${it.key.camera.overheadTimeMs} \n")
+                builder.append("Webcam $count Pipeline ms: ${it.key.camera.pipelineTimeMs} \n")
+                count++
+            }
+            return builder.toString()
     }
 
 
@@ -280,12 +302,14 @@ class AprilTagLocalizer(
 
 
     /**
-    Enum for webcam calibs we will use. Fx and fy are focal length; cx and cy are principal point.
+    * Enum for webcam calibs we will use. Fx and fy are focal length; cx and cy are principal point.
+     *  Height and width are in pixels.
+
      */
-    enum class WebcamCalibrations(val fx: Double, val fy: Double, val cx: Double, val cy: Double) {
-        C270_1280x720(1451.966, 1451.966, 574.203, 356.385),
-        C270_640x480(822.317, 822.317, 319.495, 242.502),
-        HD3000_640x480(678.154, 678.17, 318.135, 228.374);
+    enum class WebcamCalibrations(val fx: Double, val fy: Double, val cx: Double, val cy: Double, val width: Int, val height: Int) {
+        C270_1280x720(1451.966, 1451.966, 574.203, 356.385, 1280, 720),
+        C270_640x480(822.317, 822.317, 319.495, 242.502, 640, 480),
+        HD3000_640x480(678.154, 678.17, 318.135, 228.374, 640, 480);
     }
 
     /**
@@ -311,8 +335,6 @@ class AprilTagLocalizer(
             var pitch: Double,
             var roll: Double
     ) {
-
-
 
         /**
          * Adds the given pose to the current pose.
@@ -341,6 +363,21 @@ class AprilTagLocalizer(
         }
 
         companion object {
+
+            /**
+             * Returns a new Pose object that has all the distance measurements converted
+             * from meters to inches.
+             */
+            fun convertMetersToInches(inchesPose: Pose): Pose {
+                return Pose(
+                        inchesPose.x * FEET_PER_METER,
+                        inchesPose.y * FEET_PER_METER,
+                        inchesPose.z * FEET_PER_METER,
+                        inchesPose.yaw,
+                        inchesPose.pitch,
+                        inchesPose.roll,
+                )
+            }
 
             /**
              * Converts the april tag pose class of the plugin to the inner pose class
@@ -388,8 +425,8 @@ class AprilTagLocalizer(
          */
         fun normalizeDeg(unormalized: Double): Double {
             var angle = unormalized
-            while (angle > 180) angle -= 360.0
-            while (angle <= -180) angle += 360.0
+            while (angle >= 180) angle -= 360.0
+            while (angle < -180) angle += 360.0
             return angle
         }
 
@@ -398,8 +435,8 @@ class AprilTagLocalizer(
          */
         fun normalizeRad(unormalized: Double): Double {
             var angle = unormalized
-            while (angle > Math.PI) angle -= (2.0 * Math.PI)
-            while (angle <= -Math.PI) angle += (2.0 * Math.PI)
+            while (angle >= Math.PI) angle -= (2.0 * Math.PI)
+            while (angle < -Math.PI) angle += (2.0 * Math.PI)
             return angle
         }
     }

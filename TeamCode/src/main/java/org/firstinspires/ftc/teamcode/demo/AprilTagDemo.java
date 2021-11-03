@@ -21,7 +21,6 @@
 
 package org.firstinspires.ftc.teamcode.demo;
 
-import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -40,7 +39,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@SuppressLint("DefaultLocale")
+
 @TeleOp
 public class AprilTagDemo extends LinearOpMode
 {
@@ -55,11 +54,17 @@ public class AprilTagDemo extends LinearOpMode
     // Lens intrinsics
     // UNITS ARE PIXELS
 
-    //Current calib: c270 1280x720p
-    double fx = 1451.966;
-    double fy = 1451.966;
-    double cx = 574.203;
-    double cy = 356.385;
+//    //Current calib: c270 1280x720p
+//    double fx = 1451.966;
+//    double fy = 1451.966;
+//    double cx = 574.203;
+//    double cy = 356.385;
+
+    //c270 640x480
+    double fx = 822.317f;
+    double fy = 822.317f;
+    double cx = 319.495f;
+    double cy = 242.502f;
 
     /*
     2560x1440p calib galaxy s9
@@ -68,7 +73,7 @@ public class AprilTagDemo extends LinearOpMode
      */
 
     // UNITS ARE METERS
-    double tagsize = 0.095504; //4 inch tag print out
+    double tagsize = 0.096044; //3.78125 inch tag print out
 
     int numFramesWithoutDetection = 0;
 
@@ -108,7 +113,7 @@ public class AprilTagDemo extends LinearOpMode
            @Override
            public void onOpened()
            {
-               camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
+               camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
            }
 
            @Override
@@ -126,7 +131,7 @@ public class AprilTagDemo extends LinearOpMode
 //         });
 
 
-        dashboard.startCameraStream(camera, 30);
+        dashboard.startCameraStream(camera, 15);
 
         waitForStart();
 
