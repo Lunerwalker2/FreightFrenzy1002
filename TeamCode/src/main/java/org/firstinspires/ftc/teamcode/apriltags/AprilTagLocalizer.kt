@@ -71,7 +71,7 @@ class AprilTagLocalizer(
      * Runs an update of the localizer. Sees if there is any new detections from the cameras.
      * Returns the average of the camera position from all cameras if there are detections, null otherwise.
      *
-     * DISTANCES ARE IN METERS!!!!!
+     * Distances are returned in inches
      */
     fun update(): Pose? {
         //Create a position that will be changed if there are detections and null otherwise
@@ -140,8 +140,7 @@ class AprilTagLocalizer(
                                 pose using an assertion operator
                                    We do this because kotlin requires a null safe call and this operator means
                                    the program will throw an assertion error on this line if somehow
-                                   it is null, which is impossible here but you never know.
-
+                                   it is null, which is impossible here but you never know
                                  */
                                 cameraPosition!!.averageWith(currentCameraFieldPosition)
                             }
@@ -175,7 +174,7 @@ class AprilTagLocalizer(
         val tagRotation = Rotation2d(tagPosition.yaw)
 
         //Translate by the z,x of the tag translation and rotate by the yaw of the translation
-        translatedVec.plus(Vector2d(tagTranslation.z * FEET_PER_METER, tagTranslation.x * FEET_PER_METER))
+        translatedVec.plus(Vector2d(tagTranslation.z * FEET_PER_METER * 12.0, tagTranslation.x * FEET_PER_METER * 12.0))
         translatedVec.rotateBy(tagTranslation.yaw)
 
         tagRotation.rotateBy(Rotation2d(tagTranslation.yaw))
@@ -184,7 +183,7 @@ class AprilTagLocalizer(
         return Pose(
                 translatedVec.x,
                 translatedVec.y,
-                tagPosition.z,
+                tagPosition.z * FEET_PER_METER * 12.0,
                 tagRotation.radians,
                 tagPosition.pitch,
                 tagPosition.roll

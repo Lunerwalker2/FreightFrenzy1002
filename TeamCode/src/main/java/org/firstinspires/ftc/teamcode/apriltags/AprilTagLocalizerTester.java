@@ -115,10 +115,9 @@ public class AprilTagLocalizerTester extends LinearOpMode {
 
             //Check if the update returned null (no new position updates)
             if(currentPosition != null) {
-                //If it didn't then update the cameras's position
+                //If it didn't then update the camera's position
 
-                //Make sure we convert to inches
-                cameraPosition = AprilTagLocalizer.Pose.Companion.convertMetersToInches(currentPosition);
+                cameraPosition = currentPosition;
             }
 
             //Print out the positions to telemetry
@@ -131,7 +130,7 @@ public class AprilTagLocalizerTester extends LinearOpMode {
             drawRobot(field, new Pose2d(cameraPosition.getX(), cameraPosition.getY(), Math.toDegrees(cameraPosition.getYaw())));
 
 
-            field.setFill("#00ff3d");
+            field.setFill("#00ffb4");
             field.fillRect(tagPosition.getX(), tagPosition.getY(), 4, 4);
 
 

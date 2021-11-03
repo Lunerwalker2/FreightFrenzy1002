@@ -123,11 +123,11 @@ public class AprilTagHubLevelDetector extends LinearOpMode
             ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
 
 
+            int level = 2;
 
             // If there's been a new frame...
             if(detections != null)
             {
-
 
                 telemetry.addData("FPS", camera.getFps());
                 telemetry.addData("Overhead ms", camera.getOverheadTimeMs());
@@ -158,6 +158,11 @@ public class AprilTagHubLevelDetector extends LinearOpMode
                     }
 
                     for(AprilTagDetection detection : detections) {
+
+
+                        if(detection.pose.x * FEET_PER_METER > 1.0) level = 1;
+                        else level = 0;
+
                         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
                         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
                         telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
@@ -168,6 +173,8 @@ public class AprilTagHubLevelDetector extends LinearOpMode
                     }
                 }
             }
+            telemetry.addData("Hub level (0 is bottom, 2 is top)", level);
+            telemetry.update();
 
             sleep(20);
         }
