@@ -172,24 +172,28 @@ class AprilTagLocalizer(
         var rangeToTarget = sqrt(tagTranslation.x.pow(2) + tagTranslation.y.pow(2)
         + tagTranslation.z.pow(2))
         val azimuthToTargetRad = asin(tagTranslation.x / tagTranslation.z)
+        val elevationToTargetRad = asin(-tagTranslation.y / tagTranslation.z)
 
         rangeToTarget *= FEET_PER_METER * 12.0 //convert to inches
 
-        val fieldXToTarget = rangeToTarget * sin(azimuthToTargetRad)
-        val fieldYToTarget = rangeToTarget * cos(azimuthToTargetRad)
+        val rangeToTarget2d = rangeToTarget * cos(elevationToTargetRad)
+
+
+        val fieldXToTarget = rangeToTarget2d * cos(azimuthToTargetRad)
+        val fieldYToTarget = rangeToTarget2d * sin(azimuthToTargetRad)
 
         //FTCLib vector class
-        val translationVec = Vector2d(fieldXToTarget, fieldYToTarget)
+        var translationVec = Vector2d(fieldXToTarget, fieldYToTarget)
 
         //Rotates vector by the translation yaw to tag (i think?)
-        translationVec.rotateBy(Math.toDegrees(tagTranslation.yaw))
+        translationVec = translationVec.rotateBy(Math.toDegrees(tagTranslation.yaw))
 
         //Now I think we add it to the tag position?
-        translationVec.plus(Vector2d(tagPosition.x, tagPosition.y))
+        translationVec = translationVec.plus(Vector2d(tagPosition.x, tagPosition.y))
 
 
         //Find the camera's heading on the field by adding the tag heading to the yaw (i think)
-        val cameraHeading = normalizeRad(tagPosition.yaw + tagTranslation.yaw)
+        val cameraHeading = normalizeRad(tagPosition.yaw + tagTranslation.yaw - Math.PI)
 
 
 
