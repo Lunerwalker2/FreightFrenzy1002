@@ -123,11 +123,11 @@ public class AprilTagLocalizerTester extends LinearOpMode {
             //Print out the positions to telemetry
             packet.put("Camera X", cameraPosition.getX());
             packet.put("Camera Y", cameraPosition.getY());
-            packet.put("Camera Yaw", Math.toDegrees(cameraPosition.getYaw()));
+            packet.put("Camera Yaw Deg", Math.toDegrees(cameraPosition.getYaw()));
 
             //Draw the robot and tag on the field
             field.setFill("#3F51B5");
-            drawRobot(field, new Pose2d(cameraPosition.getX(), cameraPosition.getY(), Math.toDegrees(cameraPosition.getYaw())));
+            drawRobot(field, new Pose2d(cameraPosition.getX(), cameraPosition.getY(), cameraPosition.getYaw()));
 
 
             field.setFill("#00ffb4");

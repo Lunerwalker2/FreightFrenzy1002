@@ -22,12 +22,15 @@
 package org.firstinspires.ftc.teamcode.apriltags
 
 import com.arcrobotics.ftclib.geometry.*
+import com.qualcomm.robotcore.util.RobotLog
 import org.openftc.apriltag.AprilTagDetection
 import org.openftc.apriltag.AprilTagPose
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraRotation
 import java.lang.RuntimeException
 import java.lang.StringBuilder
+import kotlin.math.cos
+import kotlin.math.tan
 
 /**
  * Localizer that manages different pipelines and webcams to localization with april tags.
@@ -131,8 +134,9 @@ class AprilTagLocalizer(
                             val currentCameraFieldPosition = findCameraPoseFromTag(detection.pose)
 
 
+
                             if (isFirstDetectionOfUpdate) {
-                                cameraPosition = currentCameraFieldPosition
+                                cameraPosition = currentCameraFieldPosition.copy()
                                 isFirstDetectionOfUpdate = false
                             } else {
 
@@ -152,7 +156,7 @@ class AprilTagLocalizer(
         }
 
         //Return our position
-        return cameraPosition
+        return cameraPosition?.copy()
     }
 
 
@@ -173,8 +177,10 @@ class AprilTagLocalizer(
         val translatedVec = Vector2d(tagPosition.x, tagPosition.y)
         val tagRotation = Rotation2d(tagPosition.yaw)
 
+        val calculatedXTranslation = (tagTranslation.z  / tan(tagTranslation.yaw))
+
         //Translate by the z,x of the tag translation and rotate by the yaw of the translation
-        translatedVec.plus(Vector2d(tagTranslation.z * FEET_PER_METER * 12.0, tagTranslation.x * FEET_PER_METER * 12.0))
+        translatedVec.plus(Vector2d(tagTranslation.z * FEET_PER_METER * 12.0, calculatedXTranslation * FEET_PER_METER * 12.0))
         translatedVec.rotateBy(tagTranslation.yaw)
 
         tagRotation.rotateBy(Rotation2d(tagTranslation.yaw))
@@ -183,11 +189,19 @@ class AprilTagLocalizer(
         return Pose(
                 translatedVec.x,
                 translatedVec.y,
-                tagPosition.z * FEET_PER_METER * 12.0,
+                tagTranslation.y, //this isn't really the value but it doesn't matter so...
                 tagRotation.radians,
                 tagPosition.pitch,
                 tagPosition.roll
         )
+//        return Pose(
+//                tagTranslation.x,
+//                tagTranslation.z,
+//                tagTranslation.y,
+//                tagTranslation.yaw,
+//                tagTranslation.pitch,
+//                tagTranslation.roll
+//        )
 
     }
 
