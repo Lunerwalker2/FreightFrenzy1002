@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.InstantCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
+import org.firstinspires.ftc.teamcode.commands.SetArmPosition
 import org.firstinspires.ftc.teamcode.commands.SleepCommand
 import org.firstinspires.ftc.teamcode.commands.TestMessageCommand
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
@@ -16,12 +17,10 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm
 import org.firstinspires.ftc.teamcode.vision.HubLevel
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector
 
-@Disabled
 @Autonomous(name="Test command auto")
 class TestAuto: AutoBase() {
 
-    lateinit var markerDetector: TeamMarkerDetector
-    lateinit var hubLevel: HubLevel
+    lateinit var arm: Arm
 
 
     override fun initialize() {
@@ -30,29 +29,17 @@ class TestAuto: AutoBase() {
 
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-        markerDetector = TeamMarkerDetector(hardwareMap)
-        markerDetector.init()
+        arm = Arm(hardwareMap)
 
-
-        markerDetector.startStream()
-        while (!isStarted && !isStopRequested) {
-            hubLevel = markerDetector.teamMarkerPipeline.hubLevel
-
-            telemetry.addData("Current Hub Level", hubLevel)
-            telemetry.update()
-        }
-
-
-        markerDetector.endStream()
+        waitForStart()
 
         schedule(SequentialCommandGroup(
                 InstantCommand({
                     telemetry.addLine("The program started!")
-                    telemetry.addLine("Detected hub level: $hubLevel")
                     telemetry.update()
                 }),
                 SleepCommand(2000),
-                TestMessageCommand("The test message is here.", 6, telemetry)
+                SetArmPosition(arm, Arm.ArmPosition.MIDDLE_LEVEL)
 //                FollowTrajectoryCommand(drive,
 //                        drive.trajectoryBuilder(drive.poseEstimate)
 //                                .forward(10.0)

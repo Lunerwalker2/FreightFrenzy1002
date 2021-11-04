@@ -14,9 +14,8 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
 
     //Calling the constructor of the superclass already registers this subsystem
 
-    private val armMotor by lazy {
-        hardwareMap.get(DcMotorEx::class.java, "arm")
-    }
+    private val armMotor by lazy {hardwareMap.get(DcMotorEx::class.java, "arm")}
+
 
     var armState = ArmState.STOPPED
 
@@ -26,10 +25,10 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
     //The annotations mean it can be seen by ftc dashboard (in kotlin)
     //Equivalent of doing public static in java.
     @JvmField
-    var coefficients = PIDCoefficients(3.0, 0.0, 0.0)
+    var coefficients = PIDCoefficients(0.02, 0.0, 0.0)
     
     @JvmField
-    var armGravityFeedforward: Double = 2.0 //TODO: Find this
+    var armGravityFeedforward: Double = 1.0 //TODO: Find this
 
     //TODO: Test this
     /*
@@ -38,25 +37,18 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
 
     Fg = m*g*(L/2)*cos(angle of arm)
      */
+
+
     private val armGravityController = PIDFController(coefficients,
             kF = { position, _ ->
-                //Find the angle of the arm in degrees
-
-                /*
-                The arm starts at lower than 0 degrees so we do have to subtract the difference
-                between that and the actual 0 position of the arm in ticks. Otherwise the controller
-                would think that the arm started perfectly horizontal.
-                 */
-
-                val angle = (position - ARM_TO_HORIZONTAL_TICKS_OFFSET) / TICKS_PER_REV * 360.0
-                cos(angle) * armGravityFeedforward
+                findGravityFF(position)
             }
     )
     
     companion object {
 
         //The tolerance of our controller in ticks
-        private const val positionTolerance = 20
+        private const val positionTolerance = 7
 
         //Encoder ticks per revolution of our motor
         private const val TICKS_PER_REV = 420.0
@@ -103,7 +95,12 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
                 armMotor.power = 0.0
             }
             ArmState.HOLDING -> { //If we are holding, keep the arm at the position it was stopped at
-                armMotor.power = armGravityController.update(armMotor.currentPosition.toDouble()) //Hold the
+                val currentPosition = armMotor.currentPosition
+                if(abs(armGravityController.targetPosition - currentPosition) <= 8){
+                    armMotor.power = findGravityFF(currentPosition.toDouble())
+                } else {
+                    armMotor.power = armGravityController.update(armMotor.currentPosition.toDouble()) //Hold the
+                }
             }
             //If we are moving to a position, update the motor powers with the controller
             ArmState.MOVING_AUTO -> {
@@ -123,6 +120,19 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
             }
         }
 
+    }
+
+    private fun findGravityFF(position: Double): Double {
+        //Find the angle of the arm in degrees
+
+        /*
+        The arm starts at lower than 0 degrees so we do have to subtract the difference
+        between that and the actual 0 position of the arm in ticks. Otherwise the controller
+        would think that the arm started perfectly horizontal.
+         */
+
+        val angle = (position - ARM_TO_HORIZONTAL_TICKS_OFFSET) / TICKS_PER_REV * 360.0
+        return cos(angle) * armGravityFeedforward
     }
 
 
