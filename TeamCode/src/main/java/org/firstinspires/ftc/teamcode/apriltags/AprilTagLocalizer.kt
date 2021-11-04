@@ -29,8 +29,7 @@ import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraRotation
 import java.lang.RuntimeException
 import java.lang.StringBuilder
-import kotlin.math.cos
-import kotlin.math.tan
+import kotlin.math.*
 
 /**
  * Localizer that manages different pipelines and webcams to localization with april tags.
@@ -166,31 +165,40 @@ class AprilTagLocalizer(
      * x in our field coordinates correspond to z in the translation if the our field coordinate
      * heading is 0.
      *
-     * y in our field coordinates corresponds to x in the same situation as above.
-     *
-     * So, we add the tag x to the translation z, and the tag y to the translation x.
-     * Then we rotate that by the heading value we use, yaw in this case afaik.
-     *
      */
     private fun findCameraPoseFromTag(tagTranslation: AprilTagPose): Pose {
-        //Use FTCLib to make a pose object to manipulate here
-        val translatedVec = Vector2d(tagPosition.x, tagPosition.y)
-        val tagRotation = Rotation2d(tagPosition.yaw)
 
-        val calculatedXTranslation = (tagTranslation.z  / tan(tagTranslation.yaw))
 
-        //Translate by the z,x of the tag translation and rotate by the yaw of the translation
-        translatedVec.plus(Vector2d(tagTranslation.z * FEET_PER_METER * 12.0, calculatedXTranslation * FEET_PER_METER * 12.0))
-        translatedVec.rotateBy(tagTranslation.yaw)
+        var rangeToTarget = sqrt(tagTranslation.x.pow(2) + tagTranslation.y.pow(2)
+        + tagTranslation.z.pow(2))
+        val azimuthToTargetRad = asin(tagTranslation.x / tagTranslation.z)
 
-        tagRotation.rotateBy(Rotation2d(tagTranslation.yaw))
+        rangeToTarget *= FEET_PER_METER * 12.0 //convert to inches
+
+        val fieldXToTarget = rangeToTarget * sin(azimuthToTargetRad)
+        val fieldYToTarget = rangeToTarget * cos(azimuthToTargetRad)
+
+        //FTCLib vector class
+        val translationVec = Vector2d(fieldXToTarget, fieldYToTarget)
+
+        //Rotates vector by the translation yaw to tag (i think?)
+        translationVec.rotateBy(Math.toDegrees(tagTranslation.yaw))
+
+        //Now I think we add it to the tag position?
+        translationVec.plus(Vector2d(tagPosition.x, tagPosition.y))
+
+
+        //Find the camera's heading on the field by adding the tag heading to the yaw (i think)
+        val cameraHeading = normalizeRad(tagPosition.yaw + tagTranslation.yaw)
+
+
 
 
         return Pose(
-                translatedVec.x,
-                translatedVec.y,
-                tagTranslation.y, //this isn't really the value but it doesn't matter so...
-                tagRotation.radians,
+                translationVec.x,
+                translationVec.y,
+                tagPosition.z, //this isn't really the value but it doesn't matter so...
+                cameraHeading,
                 tagPosition.pitch,
                 tagPosition.roll
         )
