@@ -13,6 +13,9 @@ class ArmPositionOutput: LinearOpMode() {
         val arm = hardwareMap.get(DcMotorEx::class.java, "arm")
 
         arm.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
+        arm.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+
+        waitForStart()
 
         while (opModeIsActive()){
             telemetry.addData("Arm current position", arm.currentPosition)

@@ -57,9 +57,9 @@ class MecTeleOp : CommandOpMode() {
 
     override fun initialize() {
 
-//        arm = Arm(hardwareMap)
-//        claw = Claw(hardwareMap)
-//        carouselWheel = CarouselWheel(hardwareMap)
+        arm = Arm(hardwareMap)
+        claw = Claw(hardwareMap)
+        carouselWheel = CarouselWheel(hardwareMap)
 //        intake = Intake(hardwareMap)
 
 
@@ -78,11 +78,13 @@ class MecTeleOp : CommandOpMode() {
         val manipulatorDPadUp = GamepadButton(manipulator, GamepadKeys.Button.DPAD_UP) //arm up
         val manipulatorDPadDown = GamepadButton(manipulator, GamepadKeys.Button.DPAD_DOWN) //arm down
 
-//        //Carousel wheel
-//        val manipulatorLeftTrigger = Trigger {gamepad2.left_stick_x > 0.5}
-//                .whenActive(carouselWheel::forward)
-//        val manipulatorRightTrigger = Trigger {gamepad2.right_trigger > 0.5}
-//                .whenActive(carouselWheel::back)
+        //Carousel wheel
+        val manipulatorLeftTrigger = Trigger {gamepad2.left_stick_x > 0.5}
+                .whenActive(carouselWheel::leftForward)
+                .whenInactive(carouselWheel::leftStop)
+        val manipulatorRightTrigger = Trigger {gamepad2.right_trigger > 0.5}
+                .whenActive(carouselWheel::rightForward)
+                .whenInactive(carouselWheel::rightStop)
 
         //Slow mode button
         slowModeButton
@@ -91,10 +93,10 @@ class MecTeleOp : CommandOpMode() {
 
 
 //        //Claw toggles
-//        manipulatorLeftBumper.toggleWhenPressed(
-//                claw::openClaw,
-//                claw::closeClaw
-//        )
+        manipulatorLeftBumper.toggleWhenPressed(
+                claw::openClaw,
+                claw::closeClaw
+        )
 
 
 //        //outtake
@@ -109,22 +111,34 @@ class MecTeleOp : CommandOpMode() {
 
         //arm
         manipulatorDPadUp
-                .whenPressed(Runnable {
-                    val nextPositionUpNum: Int = armCurrentPosition.ordinal + 1 //Get the next number up from the current
-                    if(nextPositionUpNum < armPositions.size){ //Check that it's within the valid positions
+//                .whenPressed(Runnable {
+//                    val nextPositionUpNum: Int = armCurrentPosition.ordinal + 1 //Get the next number up from the current
+//                    if(nextPositionUpNum < armPositions.size){ //Check that it's within the valid positions
 //                        arm.setArm(armPositions[nextPositionUpNum])  //Set the arm to that position
-                        armCurrentPosition = armPositions[nextPositionUpNum]  //Update the current arm position var
-                    }
+//                        armCurrentPosition = armPositions[nextPositionUpNum]  //Update the current arm position var
+//                    }
+//                })
+                .whenPressed(Runnable {
+                    arm.armPower(0.8)
+                })
+                .whenReleased(Runnable {
+                    arm.armPower(0.0)
                 })
 
         manipulatorDPadDown
-                .whenPressed(Runnable {
-                    val nextPositionDownNum: Int = armCurrentPosition.ordinal - 1 //Get the next number down from the current
-                    if(nextPositionDownNum >= 0){ //Check that it's within the valid positions
+//                .whenPressed(Runnable {
+//                    val nextPositionDownNum: Int = armCurrentPosition.ordinal - 1 //Get the next number down from the current
+//                    if(nextPositionDownNum >= 0){ //Check that it's within the valid positions
 //                        arm.setArm(armPositions[nextPositionDownNum]) //Set the arm to that position
-                        armCurrentPosition = armPositions[nextPositionDownNum] //Update the current arm position var
-                    }
+//                        armCurrentPosition = armPositions[nextPositionDownNum] //Update the current arm position var
+//                    }
+//                })
+                .whenPressed(Runnable {
+                    arm.armPower(-0.8)
+                }).whenReleased(Runnable {
+                    arm.armPower(0.0)
                 })
+
 
         //Get our motors from the hardware map
         leftFront = hardwareMap.get(DcMotorEx::class.java, "lf")

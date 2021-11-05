@@ -39,7 +39,7 @@ class TestAuto: AutoBase() {
                     telemetry.update()
                 }),
                 SleepCommand(2000),
-                SetArmPosition(arm, Arm.ArmPosition.MIDDLE_LEVEL)
+                SetArmPosition(arm, Arm.ArmPosition.BOTTOM_LEVEL)
 //                FollowTrajectoryCommand(drive,
 //                        drive.trajectoryBuilder(drive.poseEstimate)
 //                                .forward(10.0)

@@ -28,7 +28,7 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
     var coefficients = PIDCoefficients(0.02, 0.0, 0.0)
     
     @JvmField
-    var armGravityFeedforward: Double = 1.0 //TODO: Find this
+    var armGravityFeedforward: Double = 0.4 //TODO: Find this
 
     //TODO: Test this
     /*
@@ -48,13 +48,13 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
     companion object {
 
         //The tolerance of our controller in ticks
-        private const val positionTolerance = 7
+        private const val positionTolerance = 8
 
         //Encoder ticks per revolution of our motor
         private const val TICKS_PER_REV = 700.0
 
         //Distance in the encoder ticks from the bottom limit of the arms rotation to horizontal
-        private const val ARM_TO_HORIZONTAL_TICKS_OFFSET = 50.0
+        private const val ARM_TO_HORIZONTAL_TICKS_OFFSET = 98.0
     }
 
 
@@ -70,15 +70,15 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
     //Encoder positions of the arm motor for different levels
     enum class ArmPosition(val targetPosition: Int) {
         DOWN(0),
-        BOTTOM_LEVEL(12),
-        MIDDLE_LEVEL(51),
-        TOP_LEVEL(76)
+        BOTTOM_LEVEL(41),
+        MIDDLE_LEVEL(73),
+        TOP_LEVEL(364)
         //CAP_LEVEL(4000)
     }
 
     init{
         //We can raise this but to be safe we are leaving it here for now
-        armGravityController.setOutputBounds(-0.8, 0.8)
+        armGravityController.setOutputBounds(-0.7, 0.7)
         register()
     }
 
@@ -87,6 +87,7 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
         //On the first run set the zero power behavior and run mode
         if(firstRun){
             armMotor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+            armMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
             armMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
 
@@ -98,7 +99,7 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
                 val currentPosition = armMotor.currentPosition
 
                 //If the current position is within our tolerance then just apply the gravity ff
-                if(abs(armGravityController.targetPosition - currentPosition) <= 5){
+                if(abs(armGravityController.targetPosition - currentPosition) <= 7){
                     armMotor.power = findGravityFF(currentPosition.toDouble())
                 } else {
                     //Otherwise try to get back there
@@ -111,9 +112,14 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
 
                 //Check if the current position is within our tolerance range
                 if (abs(armGravityController.targetPosition - currentPosition) <= positionTolerance) {
+
                     //If it is, then make the new target the currentPosition
-                    armGravityController.targetPosition = currentPosition.toDouble()
-                    armState = ArmState.HOLDING //If we are at the target position, hold the arm
+                    if(currentPosition > 15){
+                        armGravityController.targetPosition = currentPosition.toDouble()
+                        armState = ArmState.HOLDING //If we are at the target position, hold the arm
+                    } else {
+                        armState = ArmState.STOPPED
+                    }
                 } else {
                     armMotor.power = armGravityController.update(currentPosition.toDouble()) //else, move towards the position
                 }
