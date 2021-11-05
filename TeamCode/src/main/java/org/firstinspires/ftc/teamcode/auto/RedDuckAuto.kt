@@ -26,6 +26,7 @@ class RedDuckAuto : AutoBase() {
     lateinit var goForward: Trajectory
     lateinit var goToCarousel: Trajectory
     lateinit var turnLeft: TrajectorySequence
+    lateinit var goToStorageUnit: Trajectory
 
     //The RR drive class
     lateinit var drive: SampleMecanumDrive
@@ -62,6 +63,10 @@ class RedDuckAuto : AutoBase() {
                 .lineToConstantHeading(Vector2d(-55.0, -60.0))
                 .build()
 
+        goToStorageUnit = drive.trajectoryBuilder(goToCarousel.end())
+                .lineToConstantHeading(Vector2d(-58.0, 35.0))
+                .build()
+
 
         telemetry.addLine("Initializing Subsystems...")
         telemetry.update()
@@ -79,7 +84,8 @@ class RedDuckAuto : AutoBase() {
                 SleepCommand(2000),
                 FollowTrajectoryCommand(drive, goForward),
                 FollowTrajectorySequenceCommand(drive, turnLeft),
-                FollowTrajectoryCommand(drive,goToCarousel)
+                FollowTrajectoryCommand(drive,goToCarousel),
+                FollowTrajectoryCommand(drive, goToStorageUnit)
         ))
 
         telemetry.addLine("Ready for start!")
