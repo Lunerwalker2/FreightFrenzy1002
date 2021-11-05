@@ -96,9 +96,12 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
             }
             ArmState.HOLDING -> { //If we are holding, keep the arm at the position it was stopped at
                 val currentPosition = armMotor.currentPosition
-                if(abs(armGravityController.targetPosition - currentPosition) <= 8){
+
+                //If the current position is within our tolerance then just apply the gravity ff
+                if(abs(armGravityController.targetPosition - currentPosition) <= 5){
                     armMotor.power = findGravityFF(currentPosition.toDouble())
                 } else {
+                    //Otherwise try to get back there
                     armMotor.power = armGravityController.update(armMotor.currentPosition.toDouble()) //Hold the
                 }
             }
