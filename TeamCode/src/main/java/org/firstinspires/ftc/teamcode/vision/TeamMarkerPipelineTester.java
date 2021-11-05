@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -9,6 +10,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera2;
 
+@Disabled
 @TeleOp(name="Team Marker Pipeline Tester")
 public class TeamMarkerPipelineTester extends LinearOpMode {
 

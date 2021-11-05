@@ -51,7 +51,7 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
         private const val positionTolerance = 7
 
         //Encoder ticks per revolution of our motor
-        private const val TICKS_PER_REV = 420.0
+        private const val TICKS_PER_REV = 700.0
 
         //Distance in the encoder ticks from the bottom limit of the arms rotation to horizontal
         private const val ARM_TO_HORIZONTAL_TICKS_OFFSET = 50.0
