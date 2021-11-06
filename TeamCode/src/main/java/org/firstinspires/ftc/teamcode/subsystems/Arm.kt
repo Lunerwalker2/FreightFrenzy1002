@@ -6,11 +6,14 @@ import com.acmerobotics.roadrunner.control.PIDFController
 import com.arcrobotics.ftclib.command.SubsystemBase
 import com.qualcomm.robotcore.hardware.*
 import com.qualcomm.robotcore.util.Range
+import org.firstinspires.ftc.robotcore.external.Telemetry
 import kotlin.math.abs
 import kotlin.math.cos
 
 @Config
-class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
+class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry?) : SubsystemBase() {
+
+    constructor(hardwareMap: HardwareMap) : this(hardwareMap, null)
 
     //Calling the constructor of the superclass already registers this subsystem
 
@@ -91,6 +94,8 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
             armMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
 
+        telemetry?.addData("Arm current state", armState)
+
         when (armState) {
             ArmState.STOPPED -> { //if we are stopped, set it to 0.
                 armMotor.power = 0.0
@@ -123,11 +128,15 @@ class Arm(private val hardwareMap: HardwareMap) : SubsystemBase() {
                 } else {
                     armMotor.power = armGravityController.update(currentPosition.toDouble()) //else, move towards the position
                 }
+                telemetry?.addData("Arm current position", currentPosition)
+                telemetry?.addData("Arm target position", armGravityController.targetPosition)
+
             }
             ArmState.MOVING_MANUAL -> { //If we are in manual movement, set the arm to that power
                 armMotor.power = power
             }
         }
+        telemetry?.addData("Arm current power", armMotor.power)
 
     }
 

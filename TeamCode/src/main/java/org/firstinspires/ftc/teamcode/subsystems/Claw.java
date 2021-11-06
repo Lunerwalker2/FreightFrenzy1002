@@ -4,20 +4,30 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class Claw extends SubsystemBase {
 
 
     private final Servo clawServo;
 
-    //Since the hardware map should be set
+    private Telemetry telemetry;
+
     public Claw(HardwareMap hardwareMap){
+        this(hardwareMap, null);
+    }
+
+    public Claw(HardwareMap hardwareMap, Telemetry telemetry){
         super(); //registers this subsystem
         clawServo = hardwareMap.get(Servo.class, "claw");
+        this.telemetry = telemetry;
     }
 
     @Override
     public void periodic(){
-
+        if(telemetry != null){
+            telemetry.addData("Servo closed", (clawServo.getPosition() == 0.6));
+        }
     }
 
     public void openClaw(){

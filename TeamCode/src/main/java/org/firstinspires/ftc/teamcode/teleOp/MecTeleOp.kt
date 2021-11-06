@@ -38,29 +38,34 @@ class MecTeleOp : CommandOpMode() {
     lateinit var carouselWheel: CarouselWheel
     lateinit var claw: Claw
 
+    //Buttons/triggers
+    lateinit var slowModeButton: GamepadButton
+    lateinit var leftCarouselTrigger: Trigger
+    lateinit var rightCarouselTrigger: Trigger
+
+
+
+
     //We could go and use the rr drive class but meh I'd like to show the math anyway
     private lateinit var leftFront: DcMotorEx
     private lateinit var leftBack: DcMotorEx
     private lateinit var rightFront: DcMotorEx
     private lateinit var rightBack: DcMotorEx
-
     //Drive power multiplier for slow mode
     private var powerMultiplier = 1.0
 
 
     //Define an array of the arm stages so that we can increment and decrement the position
     val armPositions: Array<Arm.ArmPosition> = Arm.ArmPosition.values()
-
     //Hold the current position of the arm
     var armCurrentPosition = Arm.ArmPosition.DOWN
 
 
     override fun initialize() {
 
-        arm = Arm(hardwareMap)
+        arm = Arm(hardwareMap, telemetry)
         claw = Claw(hardwareMap)
         carouselWheel = CarouselWheel(hardwareMap)
-//        intake = Intake(hardwareMap)
 
 
         //Define our gamepads with ftclib things
@@ -69,48 +74,45 @@ class MecTeleOp : CommandOpMode() {
 
 
         //Driver controls
-        val slowModeButton = GamepadButton(driver, GamepadKeys.Button.LEFT_BUMPER) //button to enable slow mode
+        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(Runnable {
+                    powerMultiplier = 0.6
+                })
+                .whenReleased(Runnable {
+                    powerMultiplier = 1.0
+                })
 
         //Manipulator Controls TODO: practice with these
         val manipulatorLeftBumper = GamepadButton(manipulator, GamepadKeys.Button.LEFT_BUMPER) //outtake button
-        val manipulatorRightBumper = GamepadButton(manipulator, GamepadKeys.Button.RIGHT_BUMPER) //intake button
 
         val manipulatorDPadUp = GamepadButton(manipulator, GamepadKeys.Button.DPAD_UP) //arm up
         val manipulatorDPadDown = GamepadButton(manipulator, GamepadKeys.Button.DPAD_DOWN) //arm down
 
         //Carousel wheel
-        val manipulatorLeftTrigger = Trigger {gamepad2.left_stick_x > 0.5}
+        leftCarouselTrigger = Trigger {gamepad2.left_trigger > 0.2}
                 .whenActive(carouselWheel::leftForward)
                 .whenInactive(carouselWheel::leftStop)
-        val manipulatorRightTrigger = Trigger {gamepad2.right_trigger > 0.5}
+        rightCarouselTrigger = Trigger {gamepad2.right_trigger > 0.2}
                 .whenActive(carouselWheel::rightForward)
                 .whenInactive(carouselWheel::rightStop)
 
         //Slow mode button
-        slowModeButton
-                .whenPressed( Runnable { powerMultiplier = 0.6}) //When pressed, set the power to 0.6
-                .whenReleased( Runnable { powerMultiplier = 1.0}) //When it's released, set it back to normal
 
-
-//        //Claw toggles
-        manipulatorLeftBumper.toggleWhenPressed(
-                claw::openClaw,
-                claw::closeClaw
-        )
-
-
-//        //outtake
-//        manipulatorLeftBumper
-//                .whenPressed(intake::outtake) //Outtake when pressed
-//                .whenReleased(intake::stop) //Stop when released
-//
-//        //intake
-//        manipulatorRightBumper
-//                .whenPressed(intake::intake) //Intake when pressed
-//                .whenReleased(intake::stop) //Stop when released
+        //Claw toggles
+        manipulator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .toggleWhenPressed(
+                        claw::openClaw,
+                        claw::closeClaw
+                )
 
         //arm
-        manipulatorDPadUp
+        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                .whenPressed(Runnable {
+                    arm.armPower(0.8)
+                })
+                .whenReleased(Runnable {
+                    arm.armPower(0.0)
+                })
 //                .whenPressed(Runnable {
 //                    val nextPositionUpNum: Int = armCurrentPosition.ordinal + 1 //Get the next number up from the current
 //                    if(nextPositionUpNum < armPositions.size){ //Check that it's within the valid positions
@@ -118,14 +120,14 @@ class MecTeleOp : CommandOpMode() {
 //                        armCurrentPosition = armPositions[nextPositionUpNum]  //Update the current arm position var
 //                    }
 //                })
+
+
+        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(Runnable {
-                    arm.armPower(0.8)
-                })
-                .whenReleased(Runnable {
+                    arm.armPower(-0.8)
+                }).whenReleased(Runnable {
                     arm.armPower(0.0)
                 })
-
-        manipulatorDPadDown
 //                .whenPressed(Runnable {
 //                    val nextPositionDownNum: Int = armCurrentPosition.ordinal - 1 //Get the next number down from the current
 //                    if(nextPositionDownNum >= 0){ //Check that it's within the valid positions
@@ -133,11 +135,7 @@ class MecTeleOp : CommandOpMode() {
 //                        armCurrentPosition = armPositions[nextPositionDownNum] //Update the current arm position var
 //                    }
 //                })
-                .whenPressed(Runnable {
-                    arm.armPower(-0.8)
-                }).whenReleased(Runnable {
-                    arm.armPower(0.0)
-                })
+
 
 
         //Get our motors from the hardware map

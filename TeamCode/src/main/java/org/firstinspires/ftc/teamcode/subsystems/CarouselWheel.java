@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class CarouselWheel extends SubsystemBase {
 
 
@@ -14,8 +16,16 @@ public class CarouselWheel extends SubsystemBase {
     private double leftPower = 0.0; //the power for the wheel
     private double rightPower = 0.0;
 
+    private Telemetry telemetry;
+
     public CarouselWheel(HardwareMap hardwareMap){
+        this(hardwareMap, null);
+    }
+
+    public CarouselWheel(HardwareMap hardwareMap, Telemetry telemetry){
         super(); //Call the super class constructor to register with the scheduler
+
+        this.telemetry = telemetry;
 
         leftWheelMotor = hardwareMap.get(DcMotor.class, "leftCarouselMotor");
         rightWheelMotor = hardwareMap.get(DcMotor.class, "rightCarouselMotor");
@@ -31,6 +41,11 @@ public class CarouselWheel extends SubsystemBase {
     public void periodic(){
         leftWheelMotor.setPower(leftPower);
         rightWheelMotor.setPower(rightPower);
+
+        if(telemetry != null){
+            telemetry.addData("Left wheel activated", leftPower == 0.0);
+            telemetry.addData("Right wheel activated", rightPower == 0.0);
+        }
     }
 
 
