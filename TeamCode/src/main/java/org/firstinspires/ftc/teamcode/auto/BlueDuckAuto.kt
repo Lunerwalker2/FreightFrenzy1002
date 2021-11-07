@@ -7,12 +7,14 @@ import com.arcrobotics.ftclib.command.InstantCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
+import org.firstinspires.ftc.teamcode.commands.CarouselWheelCommand
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectoryCommand
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand
 import org.firstinspires.ftc.teamcode.commands.SleepCommand
 import org.firstinspires.ftc.teamcode.vision.HubLevel
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
+import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
 import java.lang.Math.toRadians
 
@@ -21,6 +23,7 @@ import java.lang.Math.toRadians
 @Autonomous(name = "Blue Duck Auto")
 class BlueDuckAuto : AutoBase() {
 
+    private lateinit var carouselWheel: CarouselWheel
 
     //Trajectories for use in auto
     lateinit var goForward: Trajectory
@@ -43,6 +46,7 @@ class BlueDuckAuto : AutoBase() {
         drive = SampleMecanumDrive(hardwareMap)
 
         drive.poseEstimate = startPose
+
 
         telemetry.addLine("Generating trajectories...")
         telemetry.update()
@@ -71,6 +75,8 @@ class BlueDuckAuto : AutoBase() {
 
         //Subsystems
 //        val arm = Arm(hardwareMap)
+        carouselWheel = CarouselWheel(hardwareMap)
+
 
 
         //Schedule our main program. All of these commands are run during start automatically
@@ -83,6 +89,7 @@ class BlueDuckAuto : AutoBase() {
                 FollowTrajectoryCommand(drive, goForward),
                 FollowTrajectorySequenceCommand(drive, turnLeft),
                 FollowTrajectoryCommand(drive,goToCarousel),
+                CarouselWheelCommand(carouselWheel, false, 4000),
                 FollowTrajectoryCommand(drive, goToStorageUnit),
         ))
 

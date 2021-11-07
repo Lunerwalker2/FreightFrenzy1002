@@ -7,12 +7,14 @@ import com.arcrobotics.ftclib.command.InstantCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
+import org.firstinspires.ftc.teamcode.commands.CarouselWheelCommand
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectoryCommand
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand
 import org.firstinspires.ftc.teamcode.commands.SleepCommand
 import org.firstinspires.ftc.teamcode.vision.HubLevel
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
+import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
 import java.lang.Math.toRadians
 
@@ -21,6 +23,8 @@ import java.lang.Math.toRadians
 @Autonomous(name = "Red Duck Auto")
 class RedDuckAuto : AutoBase() {
 
+
+    private lateinit var carouselWheel: CarouselWheel
 
     //Trajectories for use in auto
     lateinit var goForward: Trajectory
@@ -43,7 +47,6 @@ class RedDuckAuto : AutoBase() {
 
         //Make sure we set the current position estimate in rr as our starting position
         drive.poseEstimate = startPose
-
 
 
         telemetry.addLine("Generating trajectories...")
@@ -73,6 +76,7 @@ class RedDuckAuto : AutoBase() {
 
         //Subsystems
 //        val arm = Arm(hardwareMap)
+        carouselWheel = CarouselWheel(hardwareMap)
 
 
         //Schedule our main program. All of these commands are run during start automatically
@@ -85,6 +89,7 @@ class RedDuckAuto : AutoBase() {
                 FollowTrajectoryCommand(drive, goForward),
                 FollowTrajectorySequenceCommand(drive, turnLeft),
                 FollowTrajectoryCommand(drive,goToCarousel),
+                CarouselWheelCommand(carouselWheel, true, 4000),
                 FollowTrajectoryCommand(drive, goToStorageUnit)
         ))
 

@@ -94,6 +94,8 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
             armMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
 
+        val currentPosition = armMotor.currentPosition
+
         telemetry?.addData("Arm current state", armState)
 
         when (armState) {
@@ -101,42 +103,43 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
                 armMotor.power = 0.0
             }
             ArmState.HOLDING -> { //If we are holding, keep the arm at the position it was stopped at
-                val currentPosition = armMotor.currentPosition
 
                 //If the current position is within our tolerance then just apply the gravity ff
                 if(abs(armGravityController.targetPosition - currentPosition) <= 7){
                     armMotor.power = findGravityFF(currentPosition.toDouble())
                 } else {
                     //Otherwise try to get back there
-                    armMotor.power = armGravityController.update(armMotor.currentPosition.toDouble()) //Hold the
+                    armMotor.power = armGravityController.update(currentPosition.toDouble()) //Hold the
                 }
             }
             //If we are moving to a position, update the motor powers with the controller
             ArmState.MOVING_AUTO -> {
-                val currentPosition = armMotor.currentPosition
 
                 //Check if the current position is within our tolerance range
                 if (abs(armGravityController.targetPosition - currentPosition) <= positionTolerance) {
 
                     //If it is, then make the new target the currentPosition
                     if(currentPosition > 15){
-                        armGravityController.targetPosition = currentPosition.toDouble()
-                        armState = ArmState.HOLDING //If we are at the target position, hold the arm
+                        hold()
                     } else {
-                        armState = ArmState.STOPPED
+                        stop()
                     }
                 } else {
                     armMotor.power = armGravityController.update(currentPosition.toDouble()) //else, move towards the position
                 }
-                telemetry?.addData("Arm current position", currentPosition)
-                telemetry?.addData("Arm target position", armGravityController.targetPosition)
+
 
             }
             ArmState.MOVING_MANUAL -> { //If we are in manual movement, set the arm to that power
                 armMotor.power = power
             }
         }
-        telemetry?.addData("Arm current power", armMotor.power)
+
+        telemetry?.addData("Arm Target Position", armGravityController.targetPosition)
+        telemetry?.addData("Arm Current Position", currentPosition)
+        telemetry?.addData("Arm Current Power", armMotor.power)
+        telemetry?.addData("Arm Gravity FF Correction", findGravityFF(currentPosition.toDouble()))
+        telemetry?.addData("Arm Motor Over-current", armMotor.isOverCurrent)
 
     }
 

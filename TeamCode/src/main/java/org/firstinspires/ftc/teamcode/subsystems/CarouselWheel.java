@@ -43,18 +43,18 @@ public class CarouselWheel extends SubsystemBase {
         rightWheelMotor.setPower(rightPower);
 
         if(telemetry != null){
-            telemetry.addData("Left wheel activated", leftPower == 0.0);
-            telemetry.addData("Right wheel activated", rightPower == 0.0);
+            telemetry.addData("Left wheel activated", leftPower != 0.0);
+            telemetry.addData("Right wheel activated", rightPower != 0.0);
         }
     }
 
 
     public void leftForward(){
-        leftPower = 0.8;
+        leftPower = 0.4;
     }
 
     public void rightForward(){
-        rightPower = 0.8;
+        rightPower = 0.4;
     }
 
     public void leftStop(){
@@ -63,11 +63,6 @@ public class CarouselWheel extends SubsystemBase {
 
     public void rightStop(){
         rightPower = 0.0;
-    }
-
-    public void setPower(double power){
-        this.leftPower = power;
-        this.rightPower = power;
     }
 
 }

@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.teleOp
 
 import com.arcrobotics.ftclib.command.CommandOpMode
+import com.arcrobotics.ftclib.command.CommandScheduler
+import com.arcrobotics.ftclib.command.RunCommand
 import com.arcrobotics.ftclib.command.button.GamepadButton
 import com.arcrobotics.ftclib.command.button.Trigger
 import com.arcrobotics.ftclib.gamepad.GamepadEx
 import com.arcrobotics.ftclib.gamepad.GamepadKeys
+import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
@@ -33,17 +36,13 @@ MOST OF THIS IS NOT HOW THE SDK WORKS PLEASE DON'T TAKE THIS AS AN EXAMPLE OF TH
 class MecTeleOp : CommandOpMode() {
 
     //Subsystems
-    lateinit var arm: Arm
-//    lateinit var intake: Intake
-    lateinit var carouselWheel: CarouselWheel
-    lateinit var claw: Claw
+    private lateinit var arm: Arm
+    private lateinit var carouselWheel: CarouselWheel
+    private lateinit var claw: Claw
 
-    //Buttons/triggers
-    lateinit var slowModeButton: GamepadButton
-    lateinit var leftCarouselTrigger: Trigger
-    lateinit var rightCarouselTrigger: Trigger
-
-
+    // Buttons/triggers
+    private lateinit var leftCarouselTrigger: Trigger
+    private lateinit var rightCarouselTrigger: Trigger
 
 
     //We could go and use the rr drive class but meh I'd like to show the math anyway
@@ -51,21 +50,38 @@ class MecTeleOp : CommandOpMode() {
     private lateinit var leftBack: DcMotorEx
     private lateinit var rightFront: DcMotorEx
     private lateinit var rightBack: DcMotorEx
+
     //Drive power multiplier for slow mode
     private var powerMultiplier = 1.0
 
+    private val allHubs by lazy { hardwareMap.getAll(LynxModule::class.java) }
 
-    //Define an array of the arm stages so that we can increment and decrement the position
-    val armPositions: Array<Arm.ArmPosition> = Arm.ArmPosition.values()
-    //Hold the current position of the arm
-    var armCurrentPosition = Arm.ArmPosition.DOWN
+
+//    //Define an array of the arm stages so that we can increment and decrement the position
+//    val armPositions: Array<Arm.ArmPosition> = Arm.ArmPosition.values()
+//    //Hold the current position of the arm
+//    var armCurrentPosition = Arm.ArmPosition.DOWN
 
 
     override fun initialize() {
 
         arm = Arm(hardwareMap, telemetry)
-        claw = Claw(hardwareMap)
-        carouselWheel = CarouselWheel(hardwareMap)
+        claw = Claw(hardwareMap, telemetry)
+        carouselWheel = CarouselWheel(hardwareMap, telemetry)
+
+        //Set the bulk read mode to manual
+        for (module in allHubs) {
+            module.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
+        }
+
+        //Schedule a clear of the bulk cache each loop
+        schedule(RunCommand(
+                {
+                    for (module in allHubs) {
+                        module.clearBulkCache()
+                    }
+                }
+        ))
 
 
         //Define our gamepads with ftclib things
@@ -83,20 +99,15 @@ class MecTeleOp : CommandOpMode() {
                 })
 
         //Manipulator Controls TODO: practice with these
-        val manipulatorLeftBumper = GamepadButton(manipulator, GamepadKeys.Button.LEFT_BUMPER) //outtake button
 
-        val manipulatorDPadUp = GamepadButton(manipulator, GamepadKeys.Button.DPAD_UP) //arm up
-        val manipulatorDPadDown = GamepadButton(manipulator, GamepadKeys.Button.DPAD_DOWN) //arm down
 
         //Carousel wheel
-        leftCarouselTrigger = Trigger {gamepad2.left_trigger > 0.2}
+        leftCarouselTrigger = Trigger { gamepad2.left_trigger > 0.2 }
                 .whenActive(carouselWheel::leftForward)
                 .whenInactive(carouselWheel::leftStop)
-        rightCarouselTrigger = Trigger {gamepad2.right_trigger > 0.2}
+        rightCarouselTrigger = Trigger { gamepad2.right_trigger > 0.2 }
                 .whenActive(carouselWheel::rightForward)
                 .whenInactive(carouselWheel::rightStop)
-
-        //Slow mode button
 
         //Claw toggles
         manipulator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
@@ -124,7 +135,7 @@ class MecTeleOp : CommandOpMode() {
 
         manipulator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(Runnable {
-                    arm.armPower(-0.8)
+                    arm.armPower(-0.5)
                 }).whenReleased(Runnable {
                     arm.armPower(0.0)
                 })
@@ -135,7 +146,6 @@ class MecTeleOp : CommandOpMode() {
 //                        armCurrentPosition = armPositions[nextPositionDownNum] //Update the current arm position var
 //                    }
 //                })
-
 
 
         //Get our motors from the hardware map
@@ -184,15 +194,13 @@ class MecTeleOp : CommandOpMode() {
         super.run()
 
 
+        //Telemetry for most things are handled in the subsystems
         telemetry.addData("Slow Mode Enabled", (powerMultiplier != 1.0))
-        telemetry.addData("Arm Level: ", armCurrentPosition)
-        telemetry.update()
+
 
         /* Thanks to FTCLib handling all the things we just did above automatically,
         we barely need to do anything here, except the drive base.
          */
-
-
 
         val y = -gamepad1.left_stick_y.toDouble()
         val x = gamepad1.left_stick_x.toDouble()
@@ -217,6 +225,7 @@ class MecTeleOp : CommandOpMode() {
         rightFront.power = frontRightPower * powerMultiplier
         rightBack.power = backRightPower * powerMultiplier
 
+        telemetry.update()
 
     }
 
