@@ -169,34 +169,29 @@ class AprilTagLocalizer(
     private fun findCameraPoseFromTag(tagTranslation: AprilTagPose): Pose {
 
 
-        var rangeToTarget = sqrt(tagTranslation.x.pow(2) + tagTranslation.y.pow(2)
-        + tagTranslation.z.pow(2))
+        var rangeToTarget = sqrt(tagTranslation.x.pow(2) + tagTranslation.z.pow(2))
+//        + tagTranslation.z.pow(2))
         val azimuthToTargetRad = asin(tagTranslation.x / tagTranslation.z)
-        val elevationToTargetRad = asin(-tagTranslation.y / tagTranslation.z)
+//        val elevationToTargetRad = asin(-tagTranslation.y / tagTranslation.z)
 
-        rangeToTarget *= FEET_PER_METER * 12.0 //convert to inches
+        rangeToTarget *= (FEET_PER_METER * 12.0) //convert to inches
 
-        val rangeToTarget2d = rangeToTarget * cos(elevationToTargetRad)
+//        val rangeToTarget2d = rangeToTarget * cos(elevationToTargetRad)
 
-
-        val fieldXToTarget = rangeToTarget2d * cos(azimuthToTargetRad)
-        val fieldYToTarget = rangeToTarget2d * sin(azimuthToTargetRad)
+        val fieldXToTarget: Double = rangeToTarget * cos(normalizeRad(azimuthToTargetRad + tagPosition.yaw))
+        val fieldYToTarget: Double = rangeToTarget * sin(normalizeRad(azimuthToTargetRad + tagPosition.yaw))
 
         //FTCLib vector class
         var translationVec = Vector2d(fieldXToTarget, fieldYToTarget)
 
         //Rotates vector by the translation yaw to tag (i think?)
-        translationVec = translationVec.rotateBy(Math.toDegrees(tagTranslation.yaw))
+//        translationVec = translationVec.rotateBy(Math.toDegrees(tagTranslation.yaw))
 
         //Now I think we add it to the tag position?
         translationVec = translationVec.plus(Vector2d(tagPosition.x, tagPosition.y))
 
-
         //Find the camera's heading on the field by adding the tag heading to the yaw (i think)
-        val cameraHeading = normalizeRad(tagPosition.yaw + tagTranslation.yaw - Math.PI)
-
-
-
+        val cameraHeading = normalizeRad(tagPosition.yaw + azimuthToTargetRad)
 
         return Pose(
                 translationVec.x,

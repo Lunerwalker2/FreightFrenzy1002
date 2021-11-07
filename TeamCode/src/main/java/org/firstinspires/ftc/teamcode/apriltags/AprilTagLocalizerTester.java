@@ -59,6 +59,7 @@ public class AprilTagLocalizerTester extends LinearOpMode {
         //Create our localizer with the tag position, tag size, and the cameras
         localizer = new AprilTagLocalizer(
                 0.096044, //3.78125 in tag
+//                0.09525, //3.75 in
                 tagPosition,
                 new AprilTagLocalizer.WebcamProfile(
                         frontWebcam,
