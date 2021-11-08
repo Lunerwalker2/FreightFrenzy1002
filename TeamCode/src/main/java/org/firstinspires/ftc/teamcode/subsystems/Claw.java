@@ -10,8 +10,8 @@ public class Claw extends SubsystemBase {
 
 
     private final Servo clawServo;
-
     private Telemetry telemetry;
+    private boolean isClosed = false;
 
     public Claw(HardwareMap hardwareMap){
         this(hardwareMap, null);
@@ -26,16 +26,18 @@ public class Claw extends SubsystemBase {
     @Override
     public void periodic(){
         if(telemetry != null){
-            telemetry.addData("Servo closed", (clawServo.getPosition() == 0.6));
+            telemetry.addData("Servo closed", isClosed);
         }
     }
 
     public void openClaw(){
         clawServo.setPosition(0.2);
+        isClosed = false;
     }
 
     public void closeClaw(){
         clawServo.setPosition(0.6);
+        isClosed = true;
     }
 
 

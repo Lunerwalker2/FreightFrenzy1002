@@ -16,8 +16,6 @@ abstract class AutoBase : CommandOpMode() {
      */
     val allHubs by lazy { hardwareMap.getAll(LynxModule::class.java) }
 
-
-
     override fun initialize() {
         //Set the mode to manual since we can clear this every loop (see the caching ex. in the samples)
         for (module in allHubs) {
