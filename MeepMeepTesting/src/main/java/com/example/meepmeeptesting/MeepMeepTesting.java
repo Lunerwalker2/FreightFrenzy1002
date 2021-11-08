@@ -37,10 +37,11 @@ public class MeepMeepTesting {
 
     public static void main(String[] args) {
 
+        System.setProperty("sun.java2d.opengl", "true");
 
         MeepMeep mm = new MeepMeep(600);
 
-        RoadRunnerBotEntity bot = new DefaultBotBuilder(mm)
+        RoadRunnerBotEntity duckRoute = new DefaultBotBuilder(mm)
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 17)
                 .setColorScheme(new ColorSchemeRedDark())
                 .followTrajectorySequence(drive ->
@@ -50,35 +51,24 @@ public class MeepMeepTesting {
                                 .lineToConstantHeading(new Vector2d(-55.0, 60.0))
                                 .waitSeconds(2)
                                 .lineToConstantHeading(new Vector2d(-58.0, 35.0))
+                                .build()
+                );
 
-//                                .setReversed(true)
-//                                .lineTo(new Vector2d(-56, 58))
-//                                .addDisplacementMarker(() -> {
-//                                    System.out.println("Carousel spinning!");
-//                                })
-//                                .waitSeconds(3)
-//                                .setReversed(false)
-//                                .setVelConstraint(getVelocityConstraint(30, MAX_ANG_VEL, TRACK_WIDTH))
-//                                .lineTo(new Vector2d(-10, 48))
-//                                .UNSTABLE_addTemporalMarkerOffset(-1.0, () -> {
-//                                    if (HUB_LEVEL == 0) System.out.println("Moving Arm to Level 1");
-//                                    else if (HUB_LEVEL == 1)
-//                                        System.out.println("Moving Arm to Level 2");
-//                                    else System.out.println("Moving Arm to Level 3");
-//                                })
-//                                .resetVelConstraint()
-//                                .turn(toRadians(-90))
-//                                .forward(5)
-//                                .addDisplacementMarker(() -> {
-//                                    System.out.println("Dropping freight");
-//                                })
-//                                .waitSeconds(3)
-//                                .back(8)
-//                                .waitSeconds(2)
-//                                .turn(toRadians(90))
-//                                .splineTo(new Vector2d(12, 45), 0)
-//                                .forward(40)
-
+        RoadRunnerBotEntity hubDuckRoute = new DefaultBotBuilder(mm)
+                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 17)
+                .setColorScheme(new ColorSchemeRedDark())
+                .followTrajectorySequence(drive ->
+                        drive.trajectorySequenceBuilder(new Pose2d(-33.6, 64, toRadians(-90.0)))
+                                .forward(10)
+                                .turn(toRadians(45.0))
+                                .lineToConstantHeading(new Vector2d(-32.0, 42.0))
+                                .forward(6)
+                                .waitSeconds(3)
+                                .back(8)
+                                .turn(toRadians(180))
+                                .lineToLinearHeading(new Pose2d(-55.0, 60.0, toRadians(90)))
+                                .waitSeconds(2)
+                                .lineToConstantHeading(new Vector2d(-58.0, 35.0))
                                 .build()
                 );
 
@@ -86,7 +76,8 @@ public class MeepMeepTesting {
                 .setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)
                 .setTheme(new ColorSchemeRedDark())
                 .setBackgroundAlpha(0.95f)
-                .addEntity(bot)
+                .addEntity(duckRoute)
+                .addEntity(hubDuckRoute)
                 .start();
 
     }
