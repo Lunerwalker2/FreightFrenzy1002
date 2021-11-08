@@ -18,14 +18,10 @@ public class AprilTagLocalizerTester extends LinearOpMode {
 
 
     FtcDashboard dashboard = FtcDashboard.getInstance();
-
     AprilTagLocalizer localizer;
-
     OpenCvCamera frontWebcam;
 //    OpenCvCamera backWebcam;
-
     private AprilTagLocalizer.Pose tagPosition = new AprilTagLocalizer.Pose(0, 0, 0, 0, 90, 0);
-
 
     @Override
     public void runOpMode() {
@@ -34,8 +30,6 @@ public class AprilTagLocalizerTester extends LinearOpMode {
         Canvas field;
         TelemetryPacket packet;
         TelemetryPacket initPacket = new TelemetryPacket();
-
-
 
         //In this case we only have 1 webcam so we don't need to split the viewport
 

@@ -92,8 +92,6 @@ class AprilTagLocalizer(
 
                 //Check if it's null
                 if (list != null) {
-
-
                     if (list.size == 0) {
                         it.key.decimationParameters.numFramesWithoutDetection++
 
@@ -117,7 +115,6 @@ class AprilTagLocalizer(
                             it.value.setDecimation(it.key.decimationParameters.DECIMATION_HIGH)
 
                         }
-
                         /*
                     Loop through each detection and update the camera position for each.
                     Make sure to set the first one as the camera position because it is still null
@@ -126,19 +123,15 @@ class AprilTagLocalizer(
 
                         for (detection in list) {
 
-
                             //Make a var to hold the given camera translation according to this detection
 //                            val currentDetectionCameraTranslation = Pose.covertAprilTagPoseToPose(detection.pose)
 
                             val currentCameraFieldPosition = findCameraPoseFromTag(detection.pose)
 
-
-
                             if (isFirstDetectionOfUpdate) {
                                 cameraPosition = currentCameraFieldPosition.copy()
                                 isFirstDetectionOfUpdate = false
                             } else {
-
                                 /*Average the camera position for this detection with the current
                                 pose using an assertion operator
                                    We do this because kotlin requires a null safe call and this operator means
@@ -149,7 +142,6 @@ class AprilTagLocalizer(
                             }
                         }
                     }
-
                 }
             }
         }
@@ -169,17 +161,17 @@ class AprilTagLocalizer(
     private fun findCameraPoseFromTag(tagTranslation: AprilTagPose): Pose {
 
 
-        var rangeToTarget = sqrt(tagTranslation.x.pow(2) + tagTranslation.z.pow(2))
-//        + tagTranslation.z.pow(2))
-        val azimuthToTargetRad = asin(tagTranslation.x / tagTranslation.z)
-//        val elevationToTargetRad = asin(-tagTranslation.y / tagTranslation.z)
+        var rangeToTarget: Double = sqrt(tagTranslation.x.pow(2) + tagTranslation.z.pow(2))
+        val azimuthToTargetRad: Double = asin(tagTranslation.x / tagTranslation.z)
 
         rangeToTarget *= (FEET_PER_METER * 12.0) //convert to inches
 
-//        val rangeToTarget2d = rangeToTarget * cos(elevationToTargetRad)
+        //Find the camera's heading on the field by adding the tag heading to the yaw (i think)
+        val cameraHeading: Double = normalizeRad(tagPosition.yaw + azimuthToTargetRad)
 
-        val fieldXToTarget: Double = rangeToTarget * cos(normalizeRad(azimuthToTargetRad + tagPosition.yaw))
-        val fieldYToTarget: Double = rangeToTarget * sin(normalizeRad(azimuthToTargetRad + tagPosition.yaw))
+        val fieldXToTarget: Double = rangeToTarget * cos(cameraHeading)
+        val fieldYToTarget: Double = fieldXToTarget / tan(cameraHeading) //find this using x because why not
+//        val fieldYToTarget: Double = rangeToTarget * sin(normalizeRad(azimuthToTargetRad + tagPosition.yaw))
 
         //FTCLib vector class
         var translationVec = Vector2d(fieldXToTarget, fieldYToTarget)
@@ -190,8 +182,6 @@ class AprilTagLocalizer(
         //Now I think we add it to the tag position?
         translationVec = translationVec.plus(Vector2d(tagPosition.x, tagPosition.y))
 
-        //Find the camera's heading on the field by adding the tag heading to the yaw (i think)
-        val cameraHeading = normalizeRad(tagPosition.yaw + azimuthToTargetRad)
 
         return Pose(
                 translationVec.x,
@@ -209,9 +199,7 @@ class AprilTagLocalizer(
 //                tagTranslation.pitch,
 //                tagTranslation.roll
 //        )
-
     }
-
 
     /**
      * Allows for pausing the streams if they aren't being used, not required but might help CPU usage?
@@ -245,7 +233,6 @@ class AprilTagLocalizer(
         }
     }
 
-
     /**
      * Opens the cameras async and starts their streams. This is an expensive operation,
      * so be careful. By default this streams in upright.
@@ -267,7 +254,6 @@ class AprilTagLocalizer(
         }
     }
 
-
     /**
      * Closes all camera devices (non-async) and ends the streams. This is an expensive operation and might take
      * a while to complete.
@@ -281,12 +267,11 @@ class AprilTagLocalizer(
         }
     }
 
-
     /**
      * Returns a multi-line string that contains performance information about the pipeline(s).
      */
     fun getPipelineTelemetryInfo(): String {
-        val builder: StringBuilder = StringBuilder()
+        val builder = StringBuilder()
         var count = 0
         pipelineMap.forEach {
             builder.append("Webcam $count Pipeline FPS: ${it.key.camera.fps} \n")
@@ -301,17 +286,12 @@ class AprilTagLocalizer(
     /**
      * Returns true if the pipeline is currently paused (not if it is stopped or not started).
      */
-    fun isPaused(): Boolean {
-        return localizerState == LocalizerState.PAUSED
-    }
+    fun isPaused(): Boolean = localizerState == LocalizerState.PAUSED
 
     /**
      * Returns true if the pipeline is currently stopped (not if it is paused or not started).
      */
-    fun isStopped(): Boolean {
-        return localizerState == LocalizerState.STOPPED
-    }
-
+    fun isStopped(): Boolean = localizerState == LocalizerState.STOPPED
 
     /**
      * Represents the internal state of the localizer
@@ -437,8 +417,8 @@ class AprilTagLocalizer(
                                      3.0f,
                                      1.0f,
                                      4
-                             ))
-
+                             )
+    )
 
     companion object {
         const val FEET_PER_METER = 3.28084
