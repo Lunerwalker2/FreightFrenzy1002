@@ -19,7 +19,7 @@ public class MB1242Testing extends LinearOpMode {
 
         while(opModeIsActive()){
             distanceSensor.initiateRangeCommand();
-            //Wait at least 100ms
+            //Wait at least 100ms to allow the sound to dissipate
             sleep(100);
             telemetry.addData("Range (cm)", distanceSensor.readRangeValueCm());
             telemetry.update();
