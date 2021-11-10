@@ -1,42 +1,49 @@
 package org.firstinspires.ftc.teamcode.auto
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
-import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.acmerobotics.roadrunner.trajectory.Trajectory
+import com.arcrobotics.ftclib.command.CommandOpMode
 import com.arcrobotics.ftclib.command.InstantCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectoryCommand
-import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand
 import org.firstinspires.ftc.teamcode.commands.SleepCommand
 import org.firstinspires.ftc.teamcode.vision.HubLevel
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
+import org.firstinspires.ftc.teamcode.subsystems.Arm
+import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
 import java.lang.Math.toRadians
 
 
-
+/*
+ * Lots of comments are omitted from this class mainly because they are/would be mostly the same as the
+ * corresponding blue alliance one.
+ *
+ * The blue alliance autos are where we are usually doing dev since as of now that's the only side
+ * we have taped out, so the red autos will be a bit behind with changes.
+ */
 @Disabled
-@Autonomous(name = "Blue Hub & Duck Auto")
-class BlueDuckHubParkAuto : AutoBase() {
+@Autonomous(name="Red Hub & Duck Auto")
+class RedHubDuckAuto : AutoBase() {
 
     //Vision
     private val markerDetector = TeamMarkerDetector(hardwareMap)
-    lateinit var hubLevel: HubLevel
+    private lateinit var hubLevel: HubLevel
 
+    private lateinit var carouselWheel: CarouselWheel
+    private lateinit var arm: Arm
 
     //Trajectories for use in auto
-    lateinit var goForward: Trajectory
-    lateinit var goToCarousel: Trajectory
-    lateinit var turnRight: TrajectorySequence
+    private lateinit var goForward: Trajectory
 
     //The RR drive class
-    lateinit var drive: SampleMecanumDrive
+    private lateinit var drive: SampleMecanumDrive
 
     //Our starting position
-    private val startPose = Pose2d(-42.0, 54.5, toRadians(-90.0))
+    private val startPose = Pose2d(-33.6, -64.0, toRadians(90.0))
+
 
 
     override fun initialize() {
@@ -49,22 +56,19 @@ class BlueDuckHubParkAuto : AutoBase() {
         drive.poseEstimate = startPose
 
 
+        telemetry.addLine("Generating trajectories...")
+        telemetry.update()
+
         //Generating trajectories is an expensive task, so we do it in init
         goForward = drive.trajectoryBuilder(startPose)
                 .forward(30.0)
                 .build()
 
-        turnRight = drive.trajectorySequenceBuilder(goForward.end())
-                .turn(toRadians(90.0))
-                .build()
 
-        goToCarousel = drive.trajectoryBuilder(turnRight.end())
-                .lineToConstantHeading(Vector2d(-42.0, 24.5))
-                .build()
-
-
-        //Subsystems
-//        val arm = Arm(hardwareMap)
+        telemetry.addLine("Initializing Subsystems...")
+        telemetry.update()
+        arm = Arm(hardwareMap)
+        carouselWheel = CarouselWheel(hardwareMap)
 
 
         //Initialize our vision object to get ready for the pipeline
@@ -95,13 +99,8 @@ class BlueDuckHubParkAuto : AutoBase() {
                 }),
                 SleepCommand(2000),
                 FollowTrajectoryCommand(drive, goForward),
-                FollowTrajectorySequenceCommand(drive,turnRight),
-                FollowTrajectoryCommand(drive,goToCarousel)
-//                FollowTrajectoryCommand(drive,
-//                        drive.trajectoryBuilder(drive.poseEstimate)
-//                                .lineToConstantHeading(Vector2d(-52.0, 20.0))
-//                )
-        ))
+
+                ))
 
 
     }

@@ -38,6 +38,7 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
 
         System.setProperty("sun.java2d.opengl", "true");
+        System.out.println("\u2b1b / \u2b1c");
 
         MeepMeep mm = new MeepMeep(600);
 
@@ -61,7 +62,7 @@ public class MeepMeepTesting {
                         drive.trajectorySequenceBuilder(new Pose2d(-33.6, 64, toRadians(-90.0)))
                                 .forward(10)
                                 .turn(toRadians(45.0))
-                                .lineToConstantHeading(new Vector2d(-32.0, 42.0))
+                                .splineToConstantHeading(new Vector2d(-32.0, 42.0), toRadians(-90.0)) //ew Vector2d(-32.0, 42.0)
                                 .forward(6)
                                 .waitSeconds(3)
                                 .back(8)

@@ -4,29 +4,36 @@ import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.acmerobotics.roadrunner.trajectory.Trajectory
 import com.arcrobotics.ftclib.command.InstantCommand
+import com.arcrobotics.ftclib.command.ParallelCommandGroup
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import org.firstinspires.ftc.teamcode.commands.CarouselWheelCommand
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectoryCommand
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand
 import org.firstinspires.ftc.teamcode.commands.SleepCommand
+import org.firstinspires.ftc.teamcode.vision.HubLevel
+import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
+import org.firstinspires.ftc.teamcode.subsystems.Arm
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
 import java.lang.Math.toRadians
 
 
 
-@Autonomous(name = "Blue Duck Auto")
-class BlueDuckAuto : AutoBase() {
+@Disabled
+@Autonomous(name = "Blue Hub & Duck Auto")
+class BlueHubDuckAuto : AutoBase() {
+
+    //Vision
+    private val markerDetector = TeamMarkerDetector(hardwareMap)
+    private lateinit var hubLevel: HubLevel
 
     private lateinit var carouselWheel: CarouselWheel
+    private lateinit var arm: Arm
 
     //Trajectories for use in auto
     private lateinit var goForward: Trajectory
-    private lateinit var goToCarousel: Trajectory
-    private lateinit var turnRight: TrajectorySequence
-    private lateinit var goToStorageUnit: Trajectory
 
     //The RR drive class
     private lateinit var drive: SampleMecanumDrive
@@ -34,10 +41,13 @@ class BlueDuckAuto : AutoBase() {
     //Our starting position
     private val startPose = Pose2d(-33.6, 64.0, toRadians(-90.0))
 
+
+
     override fun initialize() {
         super.initialize()
 
         //Make sure we set the current position estimate in rr as our starting position
+
 
         drive = SampleMecanumDrive(hardwareMap)
         drive.poseEstimate = startPose
@@ -48,48 +58,46 @@ class BlueDuckAuto : AutoBase() {
 
         //Generating trajectories is an expensive task, so we do it in init
         goForward = drive.trajectoryBuilder(startPose)
-                .forward(10.0)
+                .forward(30.0)
                 .build()
-
-        turnRight = drive.trajectorySequenceBuilder(goForward.end())
-                .turn(toRadians(-90.0))
-                .build()
-
-        goToCarousel = drive.trajectoryBuilder(turnRight.end())
-                .lineToConstantHeading(Vector2d(-55.0, 60.0))
-                .build()
-
-        goToStorageUnit = drive.trajectoryBuilder(goToCarousel.end())
-                .lineToConstantHeading(Vector2d(-58.0, 35.0))
-                .build()
-
 
 
         telemetry.addLine("Initializing Subsystems...")
         telemetry.update()
-
-        //Subsystems
-//        val arm = Arm(hardwareMap)
+        arm = Arm(hardwareMap)
         carouselWheel = CarouselWheel(hardwareMap)
 
 
+        //Initialize our vision object to get ready for the pipeline
+        markerDetector.init()
+
+
+
+        //Start the video stream
+        markerDetector.startStream()
+
+        //Use an init loop to keep checking the hub level from vision
+        while (!isStarted && !isStopRequested) {
+            hubLevel = markerDetector.teamMarkerPipeline.hubLevel
+
+            telemetry.addData("Current Hub Level", hubLevel)
+            telemetry.update()
+        }
+
+        //Make sure we stop the stream
+        markerDetector.endStream()
 
         //Schedule our main program. All of these commands are run during start automatically
         schedule(SequentialCommandGroup(
                 InstantCommand({
                     telemetry.addLine("The program started!")
+                    telemetry.addLine("Detected hub level: $hubLevel")
                     telemetry.update()
                 }),
                 SleepCommand(2000),
                 FollowTrajectoryCommand(drive, goForward),
-                FollowTrajectorySequenceCommand(drive, turnRight),
-                FollowTrajectoryCommand(drive,goToCarousel),
-                CarouselWheelCommand(carouselWheel, false, 4000),
-                FollowTrajectoryCommand(drive, goToStorageUnit),
-        ))
 
-        telemetry.addLine("Ready for start!")
-        telemetry.update()
+        ))
 
 
     }

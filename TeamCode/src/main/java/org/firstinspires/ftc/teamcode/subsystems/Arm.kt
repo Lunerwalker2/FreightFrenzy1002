@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.SubsystemBase
 import com.qualcomm.robotcore.hardware.*
 import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.robotcore.external.Telemetry
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import kotlin.math.abs
 import kotlin.math.cos
 
@@ -17,7 +18,7 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
 
     //Calling the constructor of the superclass already registers this subsystem
 
-    private val armMotor by lazy {hardwareMap.get(DcMotorEx::class.java, "arm")}
+    private val armMotor by lazy { hardwareMap.get(DcMotorEx::class.java, "arm") }
 
 
     var armState = ArmState.STOPPED
@@ -29,7 +30,7 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
     //Equivalent of doing public static in java.
     @JvmField
     var coefficients = PIDCoefficients(0.02, 0.0, 0.0)
-    
+
     @JvmField
     var armGravityFeedforward: Double = 0.4 //TODO: Find this
 
@@ -47,14 +48,14 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
                 findGravityFF(position)
             }
     )
-    
+
     companion object {
 
         //The tolerance of our controller in ticks
         private const val positionTolerance = 8
 
         //Encoder ticks per revolution of our motor
-        private const val TICKS_PER_REV = 700.0
+        private const val TICKS_PER_REV = 2100.0
 
         //Distance in the encoder ticks from the bottom limit of the arms rotation to horizontal
         private const val ARM_TO_HORIZONTAL_TICKS_OFFSET = 98.0
@@ -76,10 +77,9 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
         BOTTOM_LEVEL(41),
         MIDDLE_LEVEL(73),
         TOP_LEVEL(364)
-        //CAP_LEVEL(4000)
     }
 
-    init{
+    init {
         //We can raise this but to be safe we are leaving it here for now
         armGravityController.setOutputBounds(-0.7, 0.7)
         register()
@@ -88,7 +88,7 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
 
     override fun periodic() {
         //On the first run set the zero power behavior and run mode
-        if(firstRun){
+        if (firstRun) {
             armMotor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
             armMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
             armMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
@@ -105,7 +105,7 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
             ArmState.HOLDING -> { //If we are holding, keep the arm at the position it was stopped at
 
                 //If the current position is within our tolerance then just apply the gravity ff
-                if(abs(armGravityController.targetPosition - currentPosition) <= 7){
+                if (abs(armGravityController.targetPosition - currentPosition) <= 7) {
                     armMotor.power = findGravityFF(currentPosition.toDouble())
                 } else {
                     //Otherwise try to get back there
@@ -119,7 +119,7 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
                 if (abs(armGravityController.targetPosition - currentPosition) <= positionTolerance) {
 
                     //If it is, then make the new target the currentPosition
-                    if(currentPosition > 15){
+                    if (currentPosition > 15) {
                         hold()
                     } else {
                         stop()
@@ -134,26 +134,8 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
                 armMotor.power = power
             }
         }
+        compileTelemetry(currentPosition)
 
-        telemetry?.addData("Arm Target Position", armGravityController.targetPosition)
-        telemetry?.addData("Arm Current Position", currentPosition)
-        telemetry?.addData("Arm Current Power", armMotor.power)
-        telemetry?.addData("Arm Gravity FF Correction", findGravityFF(currentPosition.toDouble()))
-        telemetry?.addData("Arm Motor Over-current", armMotor.isOverCurrent)
-
-    }
-
-    private fun findGravityFF(position: Double): Double {
-        //Find the angle of the arm in degrees
-
-        /*
-        The arm starts at lower than 0 degrees so we do have to subtract the difference
-        between that and the actual 0 position of the arm in ticks. Otherwise the controller
-        would think that the arm started perfectly horizontal.
-         */
-
-        val angle = (position - ARM_TO_HORIZONTAL_TICKS_OFFSET) / TICKS_PER_REV * 360.0
-        return cos(angle) * armGravityFeedforward
     }
 
 
@@ -167,7 +149,6 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
     fun setArm(position: ArmPosition) {
         armGravityController.targetPosition = position.targetPosition.toDouble()
         armState = ArmState.MOVING_AUTO
-
     }
 
     //Holds the arm at the current angle
@@ -182,5 +163,48 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
         armState = ArmState.STOPPED
     }
 
+
+    private fun findGravityFF(position: Double): Double {
+        //Find the angle of the arm in degrees
+
+        /*
+        The arm starts at lower than 0 degrees so we do have to subtract the difference
+        between that and the actual 0 position of the arm in ticks. Otherwise the controller
+        would think that the arm started perfectly horizontal.
+         */
+        return cos(findArmAngle(position)) * armGravityFeedforward
+    }
+
+    private fun findArmAngle(position: Double): Double {
+        return (position - ARM_TO_HORIZONTAL_TICKS_OFFSET) / TICKS_PER_REV * 360.0
+    }
+
+    private fun compileTelemetry(currentPosition: Int){
+        telemetry?.addData("Arm Target Position/Angle", "%d / %.2f", currentPosition, findArmAngle(currentPosition.toDouble()))
+        telemetry?.addData("Arm Current Position/Angle", "%d / %.2f", currentPosition, findArmAngle(currentPosition.toDouble()))
+        telemetry?.addData("Arm Current Power", "%.4f", armMotor.power)
+        telemetry?.addData("Arm Gravity FF Correction", "%.4f", findGravityFF(currentPosition.toDouble()))
+        //Represent the amperage draw out of the amperage alert with ascii art for fun
+        telemetry?.addData("Arm Motor Current Draw") {
+            val amperage = armMotor.getCurrent(CurrentUnit.AMPS)
+            val numWhiteSquares = Range.scale(
+                    amperage,
+                    0.0,
+                    armMotor.getCurrentAlert(CurrentUnit.AMPS),
+                    0.0,
+                    10.0
+            ).toInt()
+            val builder = StringBuilder()
+            builder.append("[")
+            for(i in 0..10){
+                if(i < numWhiteSquares) builder.append("\u2b1b")
+                else builder.append("\u2b1c")
+            }
+            builder.append("] (%.4f A)".format(amperage))
+            builder.toString()
+        }
+        telemetry?.addData("Arm Motor Over-current", armMotor.isOverCurrent)
+
+    }
 
 }

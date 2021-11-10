@@ -22,6 +22,9 @@ import kotlin.collections.ArrayList
 import kotlin.math.abs
 import kotlin.math.max
 
+import org.firstinspires.ftc.teamcode.util.Extensions
+import org.firstinspires.ftc.teamcode.util.Extensions.Companion.sendLine
+
 /*
 I'm using a lot of FTCLib classes in this because the framework exists for auto, so might as well.
 
@@ -65,10 +68,14 @@ class MecTeleOp : CommandOpMode() {
 
     override fun initialize() {
 
+        //Extension functions pog see Extensions.kt in util package
+        telemetry.sendLine("Initializing Subsystems...")
+
         arm = Arm(hardwareMap, telemetry)
         claw = Claw(hardwareMap, telemetry)
         carouselWheel = CarouselWheel(hardwareMap, telemetry)
 
+        telemetry.sendLine("Setting bulk cache mode....")
         //Set the bulk read mode to manual
         for (module in allHubs) {
             module.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
@@ -84,6 +91,7 @@ class MecTeleOp : CommandOpMode() {
         ))
 
 
+        telemetry.sendLine("Setting up gamepads...")
         //Define our gamepads with ftclib things
         val driver = GamepadEx(gamepad1)
         val manipulator = GamepadEx(gamepad2)
@@ -148,6 +156,7 @@ class MecTeleOp : CommandOpMode() {
 //                })
 
 
+        telemetry.sendLine("Setting up drive hardware...")
         //Get our motors from the hardware map
         leftFront = hardwareMap.get(DcMotorEx::class.java, "lf")
         leftBack = hardwareMap.get(DcMotorEx::class.java, "lb")
@@ -187,6 +196,8 @@ class MecTeleOp : CommandOpMode() {
         //Reverse the left side motors
         leftFront.direction = DcMotorSimple.Direction.REVERSE
         leftBack.direction = DcMotorSimple.Direction.REVERSE
+
+        telemetry.sendLine("Ready for start!")
 
     }
 

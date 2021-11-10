@@ -27,13 +27,13 @@ class RedDuckAuto : AutoBase() {
     private lateinit var carouselWheel: CarouselWheel
 
     //Trajectories for use in auto
-    lateinit var goForward: Trajectory
-    lateinit var goToCarousel: Trajectory
-    lateinit var turnLeft: TrajectorySequence
-    lateinit var goToStorageUnit: Trajectory
+    private lateinit var goForward: Trajectory
+    private lateinit var goToCarousel: Trajectory
+    private lateinit var turnLeft: TrajectorySequence
+    private lateinit var goToStorageUnit: Trajectory
 
     //The RR drive class
-    lateinit var drive: SampleMecanumDrive
+    private lateinit var drive: SampleMecanumDrive
 
     //Our starting position
     private val startPose = Pose2d(-33.6, -64.0, toRadians(90.0))
@@ -44,8 +44,6 @@ class RedDuckAuto : AutoBase() {
 
 
         drive = SampleMecanumDrive(hardwareMap)
-
-        //Make sure we set the current position estimate in rr as our starting position
         drive.poseEstimate = startPose
 
 
@@ -59,7 +57,7 @@ class RedDuckAuto : AutoBase() {
                 .build()
 
         turnLeft = drive.trajectorySequenceBuilder(goForward.end())
-                .turn(toRadians(-90.0))
+                .turn(toRadians(90.0))
                 .build()
 
         goToCarousel = drive.trajectoryBuilder(turnLeft.end())
@@ -67,7 +65,7 @@ class RedDuckAuto : AutoBase() {
                 .build()
 
         goToStorageUnit = drive.trajectoryBuilder(goToCarousel.end())
-                .lineToConstantHeading(Vector2d(-58.0, 35.0))
+                .lineToConstantHeading(Vector2d(-58.0, -35.0))
                 .build()
 
 
