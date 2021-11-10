@@ -26,8 +26,8 @@ import static java.lang.Math.toRadians;
 public class MeepMeepTesting {
 
 
-    public static double MAX_VEL = 40;
-    public static double MAX_ACCEL = 40;
+    public static double MAX_VEL = 30;
+    public static double MAX_ACCEL = 30;
     public static double MAX_ANG_VEL = toRadians(180);
     public static double MAX_ANG_ACCEL = toRadians(180);
     public static double TRACK_WIDTH = 14.7;
@@ -55,21 +55,37 @@ public class MeepMeepTesting {
                                 .build()
                 );
 
-        RoadRunnerBotEntity hubDuckRoute = new DefaultBotBuilder(mm)
+        RoadRunnerBotEntity blueHubDuckRoute = new DefaultBotBuilder(mm)
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 17)
                 .setColorScheme(new ColorSchemeRedDark())
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-33.6, 64, toRadians(-90.0)))
-                                .forward(10)
+                                .lineToConstantHeading(new Vector2d(-32.0, 42.0))
                                 .turn(toRadians(45.0))
-                                .splineToConstantHeading(new Vector2d(-32.0, 42.0), toRadians(-90.0)) //ew Vector2d(-32.0, 42.0)
                                 .forward(6)
                                 .waitSeconds(3)
                                 .back(8)
-                                .turn(toRadians(180))
+                                .turn(toRadians(135))
                                 .lineToLinearHeading(new Pose2d(-55.0, 60.0, toRadians(90)))
                                 .waitSeconds(2)
                                 .lineToConstantHeading(new Vector2d(-58.0, 35.0))
+                                .build()
+                );
+
+        RoadRunnerBotEntity redHubDuckRoute = new DefaultBotBuilder(mm)
+                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 17)
+                .setColorScheme(new ColorSchemeRedDark())
+                .followTrajectorySequence(drive ->
+                        drive.trajectorySequenceBuilder(new Pose2d(-33.6, -64, toRadians(90.0)))
+                                .lineToConstantHeading(new Vector2d(-32.0, -42.0))
+                                .turn(toRadians(-45.0))
+                                .forward(6)
+                                .waitSeconds(3)
+                                .back(8)
+                                .turn(toRadians(-135))
+                                .lineToLinearHeading(new Pose2d(-55.0, -60.0, toRadians(-90)))
+                                .waitSeconds(2)
+                                .lineToConstantHeading(new Vector2d(-58.0, -35.0))
                                 .build()
                 );
 
@@ -78,7 +94,8 @@ public class MeepMeepTesting {
                 .setTheme(new ColorSchemeRedDark())
                 .setBackgroundAlpha(0.95f)
                 .addEntity(duckRoute)
-                .addEntity(hubDuckRoute)
+                .addEntity(blueHubDuckRoute)
+                .addEntity(redHubDuckRoute)
                 .start();
 
     }
