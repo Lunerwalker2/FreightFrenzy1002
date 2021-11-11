@@ -35,6 +35,9 @@ public class MeepMeepTesting {
     public static int HUB_LEVEL = (int) (Math.random() * 2);
 
 
+    //blue side psoe of carousel wheel -62, 64
+    //7.5 towards front, 9 to the right
+
     public static void main(String[] args) {
 
         System.setProperty("sun.java2d.opengl", "true");
@@ -49,7 +52,7 @@ public class MeepMeepTesting {
                         drive.trajectorySequenceBuilder(new Pose2d(-33.6, 64, toRadians(-90.0)))
                                 .forward(10)
                                 .turn(toRadians(-90))
-                                .lineToConstantHeading(new Vector2d(-55.0, 60.0))
+                                .lineToConstantHeading(new Vector2d(-54.5, 55.0))
                                 .waitSeconds(2)
                                 .lineToConstantHeading(new Vector2d(-58.0, 35.0))
                                 .build()
@@ -66,7 +69,7 @@ public class MeepMeepTesting {
                                 .waitSeconds(3)
                                 .back(8)
                                 .turn(toRadians(135))
-                                .lineToLinearHeading(new Pose2d(-55.0, 60.0, toRadians(90)))
+                                .lineToLinearHeading(new Pose2d(-54.5, 55.0, toRadians(90)))
                                 .waitSeconds(2)
                                 .lineToConstantHeading(new Vector2d(-58.0, 35.0))
                                 .build()
@@ -83,7 +86,7 @@ public class MeepMeepTesting {
                                 .waitSeconds(3)
                                 .back(8)
                                 .turn(toRadians(-135))
-                                .lineToLinearHeading(new Pose2d(-55.0, -60.0, toRadians(-90)))
+                                .lineToLinearHeading(new Pose2d(-54.5, -55.0, toRadians(-90)))
                                 .waitSeconds(2)
                                 .lineToConstantHeading(new Vector2d(-58.0, -35.0))
                                 .build()
