@@ -23,17 +23,32 @@ package org.firstinspires.ftc.teamcode.apriltags
 
 import com.arcrobotics.ftclib.geometry.*
 import com.qualcomm.robotcore.util.RobotLog
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.openftc.apriltag.AprilTagDetection
 import org.openftc.apriltag.AprilTagPose
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraRotation
+import java.lang.Math.toDegrees
 import java.lang.RuntimeException
 import java.lang.StringBuilder
 import kotlin.math.*
 
 /**
  * Localizer that manages different pipelines and webcams to localization with april tags.
- * Provide a tag size of the tag to detect and its location and rotation on the field xy plane.
+ * Provide a tag size of the tag to detect and its location and rotation on the field.
+ *
+ * Look at the SDK vuforia examples for how to set the tag position; rotation is in rx, ry, rz.
+ * This corresponds tor rx = roll, ry = pitch, and rx = heading/yaw
+ *
+ * Tag rotation in degrees
+ *
+ * A tag standing normal to the ground directly facing the pipes in the middle and not twisted at all has
+ * x: 0, y: 0, z: 0, yaw: 90, pitch: 0, roll: 90; a tag facing the red alliance would have roll: 0
  *
  * Big thanks to OpenFTC for creating the april tag plugin and also the examples for how to use them.
  * None of this would be possible without their great work.
@@ -49,7 +64,7 @@ class AprilTagLocalizer(
 
     private val pipelineMap = HashMap<WebcamProfile, AprilTagDetectionPipeline>()
     private var localizerState = LocalizerState.NOT_STARTED
-
+    private val openGlTagPose: OpenGLMatrix
 
     init {
         if (webcams.isNotEmpty()) {//Fill our map with new pipelines for each webcam
@@ -64,6 +79,19 @@ class AprilTagLocalizer(
                 it.camera.setPipeline(pipeline)
                 pipelineMap.put(it, pipeline)
             }
+            openGlTagPose = OpenGLMatrix.translation(
+                    (tagPosition.x * INCHES_PER_METER).toFloat(),
+                    (tagPosition.y.toFloat() * INCHES_PER_METER).toFloat(),
+                    (tagPosition.z.toFloat() * INCHES_PER_METER).toFloat()
+            ).multiplied(Orientation.getRotationMatrix(
+                    AxesReference.EXTRINSIC,
+                    AxesOrder.XYZ,
+                    AngleUnit.DEGREES,
+                    tagPosition.roll.toFloat(), //rx
+                    tagPosition.pitch.toFloat(), //ry
+                    tagPosition.yaw.toFloat() //rz
+            ))
+
         } else {
             throw RuntimeException("Localizer must be given at least 1 camera!")
         }
@@ -73,7 +101,7 @@ class AprilTagLocalizer(
      * Runs an update of the localizer. Sees if there is any new detections from the cameras.
      * Returns the average of the camera position from all cameras if there are detections, null otherwise.
      *
-     * Distances are returned in inches
+     * Distances are returned in inches, rotation in degrees
      */
     fun update(): Pose? {
         //Create a position that will be changed if there are detections and null otherwise
@@ -123,11 +151,10 @@ class AprilTagLocalizer(
 
                         for (detection in list) {
 
-                            //Make a var to hold the given camera translation according to this detection
-//                            val currentDetectionCameraTranslation = Pose.covertAprilTagPoseToPose(detection.pose)
-
+                            //Make a var to hold the given camera pose according to this detection
                             val currentCameraFieldPosition = findCameraPoseFromTag(detection.pose)
 
+                            //Make sure the first run gives the average pose an initial value
                             if (isFirstDetectionOfUpdate) {
                                 cameraPosition = currentCameraFieldPosition.copy()
                                 isFirstDetectionOfUpdate = false
@@ -136,7 +163,7 @@ class AprilTagLocalizer(
                                 pose using an assertion operator
                                    We do this because kotlin requires a null safe call and this operator means
                                    the program will throw an assertion error on this line if somehow
-                                   it is null, which is impossible here but you never know
+                                   it is null, which is something we would want to know.
                                  */
                                 cameraPosition!!.averageWith(currentCameraFieldPosition)
                             }
@@ -161,6 +188,30 @@ class AprilTagLocalizer(
     private fun findCameraPoseFromTag(tagTranslation: AprilTagPose): Pose {
 
 
+        val result: OpenGLMatrix = openGlTagPose.multiplied(
+                OpenGLMatrix.translation(
+                        (tagTranslation.x * INCHES_PER_METER).toFloat(),
+                        (tagTranslation.y * INCHES_PER_METER).toFloat(),
+                        (tagTranslation.z * INCHES_PER_METER).toFloat()
+                ).multiplied(Orientation.getRotationMatrix(
+                        AxesReference.EXTRINSIC,
+                        AxesOrder.XYZ,
+                        AngleUnit.RADIANS,
+                        tagTranslation.roll.toFloat(),
+                        tagTranslation.pitch.toFloat(),
+                        tagTranslation.yaw.toFloat()
+                )).inverted()
+        )
+
+        val translation: VectorF = result.translation
+        val rotation: Orientation = Orientation.getOrientation(
+                result,
+                AxesReference.EXTRINSIC,
+                AxesOrder.XYZ,
+                AngleUnit.RADIANS
+        )
+
+        /*
         var rangeToTarget: Double = sqrt(tagTranslation.x.pow(2) + tagTranslation.z.pow(2))
         val azimuthToTargetRad: Double = asin(tagTranslation.x / tagTranslation.z)
 
@@ -171,34 +222,23 @@ class AprilTagLocalizer(
 
         val fieldXToTarget: Double = rangeToTarget * cos(cameraHeading)
         val fieldYToTarget: Double = fieldXToTarget / tan(cameraHeading) //find this using x because why not
-//        val fieldYToTarget: Double = rangeToTarget * sin(normalizeRad(azimuthToTargetRad + tagPosition.yaw))
 
         //FTCLib vector class
         var translationVec = Vector2d(fieldXToTarget, fieldYToTarget)
 
-        //Rotates vector by the translation yaw to tag (i think?)
-//        translationVec = translationVec.rotateBy(Math.toDegrees(tagTranslation.yaw))
-
         //Now I think we add it to the tag position?
         translationVec = translationVec.plus(Vector2d(tagPosition.x, tagPosition.y))
+        */
 
 
         return Pose(
-                translationVec.x,
-                translationVec.y,
-                tagPosition.z, //this isn't really the value but it doesn't matter so...
-                cameraHeading,
-                tagPosition.pitch,
-                tagPosition.roll
+                translation[0].toDouble(), //x
+                translation[1].toDouble(), //y
+                translation[2].toDouble(), //z
+                rotation.thirdAngle.toDouble(), //yaw rz
+                rotation.secondAngle.toDouble(), //pitch ry
+                rotation.firstAngle.toDouble() //roll rx
         )
-//        return Pose(
-//                tagTranslation.x,
-//                tagTranslation.z,
-//                tagTranslation.y,
-//                tagTranslation.yaw,
-//                tagTranslation.pitch,
-//                tagTranslation.roll
-//        )
     }
 
     /**
@@ -340,21 +380,10 @@ class AprilTagLocalizer(
     ) {
 
         /**
-         * Adds the given pose to the current pose.
-         */
-        fun addTo(pose: Pose) {
-            x += pose.x
-            y += pose.y
-            z += pose.z
-            yaw = normalizeRad(yaw + pose.yaw)
-            pitch = normalizeRad(pitch + pose.pitch)
-            roll = normalizeRad(roll + pose.roll)
-        }
-
-
-        /**
          * Sets this position to be the average of the current position and the given one for all
          * components.
+         *
+         * IN RADIANS
          */
         fun averageWith(nextPose: Pose) {
             x = (x + nextPose.x) / 2.0
@@ -363,42 +392,6 @@ class AprilTagLocalizer(
             yaw = normalizeRad((yaw + nextPose.yaw) / 2.0)
             pitch = normalizeRad((pitch + nextPose.pitch) / 2.0)
             roll = normalizeRad((roll + nextPose.roll) / 2.0)
-        }
-
-        companion object {
-
-            /**
-             * Returns a new Pose object that has all the distance measurements converted
-             * from meters to inches.
-             */
-            fun convertMetersToInches(inchesPose: Pose): Pose {
-                return Pose(
-                        inchesPose.x * FEET_PER_METER,
-                        inchesPose.y * FEET_PER_METER,
-                        inchesPose.z * FEET_PER_METER,
-                        inchesPose.yaw,
-                        inchesPose.pitch,
-                        inchesPose.roll,
-                )
-            }
-
-            /**
-             * Converts the april tag pose class of the plugin to the inner pose class
-             * found here.
-             *
-             * Keep in mind that the april tag pose represents a translation and rotation from a tag,
-             * not an absolute position in the field, and the resulting pose object will be the same.
-             */
-            fun covertAprilTagPoseToPose(aprilTagPose: AprilTagPose): Pose {
-                return Pose(
-                        aprilTagPose.x,
-                        aprilTagPose.y,
-                        aprilTagPose.z,
-                        aprilTagPose.yaw,
-                        aprilTagPose.pitch,
-                        aprilTagPose.roll
-                )
-            }
         }
     }
 
@@ -422,6 +415,7 @@ class AprilTagLocalizer(
 
     companion object {
         const val FEET_PER_METER = 3.28084
+        const val INCHES_PER_METER = FEET_PER_METER * 12.0
 
         /**
          * Normalizes the given angle in degrees to the range of -179 to 180
