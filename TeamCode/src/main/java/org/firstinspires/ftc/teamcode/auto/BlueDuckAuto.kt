@@ -4,7 +4,9 @@ import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.acmerobotics.roadrunner.trajectory.Trajectory
 import com.arcrobotics.ftclib.command.InstantCommand
+import com.arcrobotics.ftclib.command.ParallelRaceGroup
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
+import com.arcrobotics.ftclib.command.WaitCommand
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.commands.CarouselWheelCommand
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectoryCommand
@@ -12,15 +14,16 @@ import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand
 import org.firstinspires.ftc.teamcode.commands.SleepCommand
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
+import org.firstinspires.ftc.teamcode.subsystems.Claw
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
 import java.lang.Math.toRadians
-
 
 
 @Autonomous(name = "Blue Duck Auto")
 class BlueDuckAuto : AutoBase() {
 
     private lateinit var carouselWheel: CarouselWheel
+    private lateinit var claw: Claw
 
     //Trajectories for use in auto
     private lateinit var goForward: Trajectory
@@ -56,7 +59,7 @@ class BlueDuckAuto : AutoBase() {
                 .build()
 
         goToCarousel = drive.trajectoryBuilder(turnRight.end())
-                .lineToConstantHeading(Vector2d(-55.0, 60.0))
+                .lineToConstantHeading(Vector2d(-53.0, 56.5))
                 .build()
 
         goToStorageUnit = drive.trajectoryBuilder(goToCarousel.end())
@@ -71,7 +74,7 @@ class BlueDuckAuto : AutoBase() {
         //Subsystems
 //        val arm = Arm(hardwareMap)
         carouselWheel = CarouselWheel(hardwareMap)
-
+        claw = Claw(hardwareMap)
 
 
         //Schedule our main program. All of these commands are run during start automatically
@@ -80,11 +83,14 @@ class BlueDuckAuto : AutoBase() {
                     telemetry.addLine("The program started!")
                     telemetry.update()
                 }),
-                SleepCommand(2000),
+                ParallelRaceGroup(
+                        WaitCommand(2000),
+                        InstantCommand(claw::closeClaw, claw)
+                ),
                 FollowTrajectoryCommand(drive, goForward),
                 FollowTrajectorySequenceCommand(drive, turnRight),
-                FollowTrajectoryCommand(drive,goToCarousel),
-                CarouselWheelCommand(carouselWheel, false, 4000),
+                FollowTrajectoryCommand(drive, goToCarousel),
+                CarouselWheelCommand(carouselWheel, false, 5000),
                 FollowTrajectoryCommand(drive, goToStorageUnit),
         ))
 

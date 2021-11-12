@@ -3,14 +3,10 @@ package org.firstinspires.ftc.teamcode.auto
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.acmerobotics.roadrunner.trajectory.Trajectory
-import com.arcrobotics.ftclib.command.InstantCommand
-import com.arcrobotics.ftclib.command.ParallelCommandGroup
-import com.arcrobotics.ftclib.command.SequentialCommandGroup
+import com.arcrobotics.ftclib.command.*
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
-import org.firstinspires.ftc.teamcode.commands.FollowTrajectoryCommand
-import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand
-import org.firstinspires.ftc.teamcode.commands.SleepCommand
+import org.firstinspires.ftc.teamcode.commands.*
 import org.firstinspires.ftc.teamcode.vision.HubLevel
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
@@ -67,31 +63,31 @@ class BlueHubDuckAuto : AutoBase() {
 
         //Generating trajectories is an expensive task, so we do it in init
         goForward = drive.trajectoryBuilder(startPose)
-                .lineToConstantHeading(Vector2d(-32.0, -42.0))
+                .lineToConstantHeading(Vector2d(-32.0, 40.0))
                 .build()
 
         turnToHub = drive.trajectorySequenceBuilder(goForward.end())
-                .turn(toRadians(-45.0))
-                .build()
-
-        goToHub = drive.trajectoryBuilder(turnToHub.end())
-                .forward(6.0)
-                .build()
-
-        backFromHub = drive.trajectoryBuilder(goToHub.end())
-                .back(8.0)
-                .build()
-
-        turnToFaceWall = drive.trajectorySequenceBuilder(backFromHub.end())
                 .turn(toRadians(-135.0))
                 .build()
 
+        goToHub = drive.trajectoryBuilder(turnToHub.end())
+                .back(6.0)
+                .build()
+
+        backFromHub = drive.trajectoryBuilder(goToHub.end())
+                .forward(8.0)
+                .build()
+
+        turnToFaceWall = drive.trajectorySequenceBuilder(backFromHub.end())
+                .turn(toRadians(-45.0))
+                .build()
+
         goToCarousel = drive.trajectoryBuilder(turnToFaceWall.end())
-                .lineToLinearHeading(Pose2d(-55.0, -60.0, toRadians(-90.0)))
+                .lineToLinearHeading(Pose2d(-53.0, 56.5, toRadians(90.0)))
                 .build()
 
         goToStorageUnit = drive.trajectoryBuilder(goToCarousel.end())
-                .lineToConstantHeading(Vector2d(-58.0, -35.0))
+                .lineToConstantHeading(Vector2d(-58.0, 35.0))
                 .build()
 
 
@@ -129,8 +125,28 @@ class BlueHubDuckAuto : AutoBase() {
                     telemetry.addLine("Detected hub level: $hubLevel")
                     telemetry.update()
                 }),
-                SleepCommand(2000),
+                ParallelRaceGroup(
+                        WaitCommand(2000),
+                        InstantCommand(claw::closeClaw, claw)
+                ),
                 FollowTrajectoryCommand(drive, goForward),
+                FollowTrajectorySequenceCommand(drive, turnToHub),
+                FollowTrajectoryCommand(drive, goToHub),
+                WaitCommand(500),
+                ArmToScoringPositionCommand(arm),
+                WaitCommand(500),
+                InstantCommand(claw::openClaw, claw),
+                WaitCommand(1500),
+                ParallelDeadlineGroup(
+                        WaitCommand(3000),
+                        InstantCommand(claw::closeClaw),
+                        InstantCommand({arm.armPower(-0.3)}).whenFinished { arm.armPower(0.0) }
+                ),
+                FollowTrajectoryCommand(drive, backFromHub),
+                FollowTrajectorySequenceCommand(drive, turnToFaceWall),
+                FollowTrajectoryCommand(drive, goToCarousel),
+                CarouselWheelCommand(carouselWheel, true, 5000),
+                FollowTrajectoryCommand(drive, goToStorageUnit)
 
         ))
 

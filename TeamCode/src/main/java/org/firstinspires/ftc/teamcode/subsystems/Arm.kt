@@ -59,6 +59,10 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
 
         //Distance in the encoder ticks from the bottom limit of the arms rotation to horizontal
         private const val ARM_TO_HORIZONTAL_TICKS_OFFSET = 98.0
+
+        fun getTicksPerRev(): Double {
+            return TICKS_PER_REV
+        }
     }
 
 
@@ -94,7 +98,7 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
             armMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
 
-        val currentPosition = armMotor.currentPosition
+        val currentPosition = getArmPosition()
 
         telemetry?.addData("Arm current state", armState)
 
@@ -134,7 +138,7 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
                 armMotor.power = power
             }
         }
-        compileTelemetry(currentPosition)
+        compileTelemetry(currentPosition.toInt())
 
     }
 
@@ -162,6 +166,13 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
     fun stop() {
         armState = ArmState.STOPPED
     }
+
+    fun getArmPosition(): Double {
+        return armMotor.currentPosition.toDouble()
+    }
+
+
+
 
 
     private fun findGravityFF(position: Double): Double {
