@@ -35,7 +35,7 @@ there's no reason to not use it in teleop as well.
 MOST OF THIS IS NOT HOW THE SDK WORKS PLEASE DON'T TAKE THIS AS AN EXAMPLE OF THAT.
  */
 
-@TeleOp
+@TeleOp(name="Main TeleOp", group = "TeleOp")
 class MecTeleOp : CommandOpMode() {
 
     //Subsystems

@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
 import java.lang.Math.toRadians
 
 
-@Autonomous(name = "Blue Duck Auto")
+@Autonomous(name = "Blue Duck Auto", group = "Duck Auto")
 class BlueDuckAuto : AutoBase() {
 
     private lateinit var carouselWheel: CarouselWheel
@@ -59,11 +59,11 @@ class BlueDuckAuto : AutoBase() {
                 .build()
 
         goToCarousel = drive.trajectoryBuilder(turnRight.end())
-                .lineToConstantHeading(Vector2d(-53.0, 56.5))
+                .lineToConstantHeading(Vector2d(-62.0, 61.0))
                 .build()
 
         goToStorageUnit = drive.trajectoryBuilder(goToCarousel.end())
-                .lineToConstantHeading(Vector2d(-58.0, 35.0))
+                .lineToConstantHeading(Vector2d(-60.0, 35.0))
                 .build()
 
 

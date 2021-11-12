@@ -23,7 +23,7 @@ import java.lang.Math.toRadians
 
 
 
-@Autonomous(name = "Red Duck Auto")
+@Autonomous(name = "Red Duck Auto", group = "Duck Auto")
 class RedDuckAuto : AutoBase() {
 
 
@@ -65,11 +65,11 @@ class RedDuckAuto : AutoBase() {
                 .build()
 
         goToCarousel = drive.trajectoryBuilder(turnLeft.end())
-                .lineToConstantHeading(Vector2d(-53.0, -56.5))
+                .lineToConstantHeading(Vector2d(-62.0, -61.0))
                 .build()
 
         goToStorageUnit = drive.trajectoryBuilder(goToCarousel.end())
-                .lineToConstantHeading(Vector2d(-58.0, -35.0))
+                .lineToConstantHeading(Vector2d(-60.0, -35.0))
                 .build()
 
 

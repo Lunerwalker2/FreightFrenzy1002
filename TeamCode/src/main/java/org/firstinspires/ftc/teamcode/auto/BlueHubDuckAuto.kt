@@ -19,7 +19,7 @@ import java.lang.Math.toRadians
 
 
 @Disabled
-@Autonomous(name = "Blue Hub & Duck Auto")
+@Autonomous(name = "Blue Hub & Duck Auto", group = "Hub Auto")
 class BlueHubDuckAuto : AutoBase() {
 
     //Vision

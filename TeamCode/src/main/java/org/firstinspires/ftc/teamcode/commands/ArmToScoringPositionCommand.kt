@@ -9,7 +9,7 @@ class ArmToScoringPositionCommand(private val arm: Arm): CommandBase() {
 
     init {
         val ticksPerDeg: Double = Arm.getTicksPerRev() / 360.0
-        scoringPosition = ticksPerDeg * 165
+        scoringPosition = ticksPerDeg * 165.0
     }
 
     override fun initialize() {
