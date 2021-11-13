@@ -71,7 +71,7 @@ class RedHubDuckAuto : AutoBase() {
                 .build()
 
         turnToHub = drive.trajectorySequenceBuilder(goForward.end())
-                .turn(toRadians(135.0))
+                .turn(toRadians(132.0))
                 .build()
 
         goToHub = drive.trajectoryBuilder(turnToHub.end())
@@ -87,11 +87,11 @@ class RedHubDuckAuto : AutoBase() {
                 .build()
 
         goToCarousel = drive.trajectoryBuilder(turnToFaceWall.end())
-                .lineToLinearHeading(Pose2d(-62.0, -61.0, toRadians(-90.0)))
+                .lineToLinearHeading(Pose2d(-63.5, -63.5, toRadians(-90.0)))
                 .build()
 
         goToStorageUnit = drive.trajectoryBuilder(goToCarousel.end())
-                .lineToConstantHeading(Vector2d(-60.0, -35.0))
+                .lineToConstantHeading(Vector2d(-63.0, -40.0))
                 .build()
 
 
@@ -135,23 +135,25 @@ class RedHubDuckAuto : AutoBase() {
                 }),
                 InstantCommand(claw::closeClaw, claw),
                 WaitCommand(2000),
-                FollowTrajectoryCommand(drive, goForward, 200),
-                FollowTrajectorySequenceCommand(drive, turnToHub, 300),
+                FollowTrajectoryCommand(drive, goForward),
+                FollowTrajectorySequenceCommand(drive, turnToHub),
                 FollowTrajectoryCommand(drive, goToHub),
-                WaitCommand(500),
-                ArmToScoringPositionCommand(arm),
-                WaitCommand(2000),
+                WaitCommand(100),
+                SetArmPosition(arm, Arm.ArmPosition.SCORING_LEVEL),
+                WaitCommand(1000),
                 InstantCommand(claw::openClaw, claw),
                 WaitCommand(1500),
                 InstantCommand(claw::closeClaw, claw),
-                InstantCommand({ arm.armPower(-0.3) }, arm),
-                WaitCommand(2000),
-                InstantCommand({ arm.armPower(0.0) }, arm),
+                InstantCommand({arm.armPower(-0.4)}, arm),
+                WaitCommand(3000),
+                InstantCommand(arm::stop, arm),
                 FollowTrajectoryCommand(drive, backFromHub),
                 FollowTrajectorySequenceCommand(drive, turnToFaceWall),
                 FollowTrajectoryCommand(drive, goToCarousel),
                 WaitCommand(100),
-                CarouselWheelCommand(carouselWheel, false, 5000),
+                InstantCommand({carouselWheel.rightPower(0.4)}, carouselWheel),
+                WaitCommand(5000),
+                InstantCommand({carouselWheel.rightStop()}),
                 FollowTrajectoryCommand(drive, goToStorageUnit)
         ))
 

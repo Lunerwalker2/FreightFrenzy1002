@@ -30,7 +30,7 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
     //The annotations mean it can be seen by ftc dashboard (in kotlin)
     //Equivalent of doing public static in java.
     @JvmField
-    var coefficients = PIDCoefficients(0.02, 0.0, 0.0)
+    var coefficients = PIDCoefficients(0.002, 0.0, 0.0)
 
     @JvmField
     var armGravityFeedforward: Double = 0.4 //TODO: Find this
@@ -79,14 +79,15 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
     //Encoder positions of the arm motor for different levels
     enum class ArmPosition(val targetPosition: Int) {
         DOWN(0),
-        BOTTOM_LEVEL(41),
-        MIDDLE_LEVEL(73),
-        TOP_LEVEL(364)
+        SCORING_LEVEL(1077),
+//        BOTTOM_LEVEL(41),
+//        MIDDLE_LEVEL(73),
+//        TOP_LEVEL(364)
     }
 
     init {
         //We can raise this but to be safe we are leaving it here for now
-        armGravityController.setOutputBounds(-0.7, 0.7)
+        armGravityController.setOutputBounds(-0.4, 0.6)
         register()
     }
 
@@ -97,6 +98,7 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
             armMotor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
             armMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
             armMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+            firstRun = false
         }
 
         val currentPosition = getArmPosition()
@@ -132,8 +134,6 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
                 } else {
                     armMotor.power = armGravityController.update(currentPosition) //else, move towards the position
                 }
-
-
             }
             ArmState.MOVING_MANUAL -> { //If we are in manual movement, set the arm to that power
                 armMotor.power = power

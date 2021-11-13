@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commands
 
 import com.arcrobotics.ftclib.command.CommandBase
 import org.firstinspires.ftc.teamcode.subsystems.Arm
+import java.lang.Math.abs
 
 /*
 Command that moves the arm autonomously to a given level.
@@ -17,6 +18,10 @@ class SetArmPosition(private val arm: Arm, private val armPosition: Arm.ArmPosit
     }
 
     override fun isFinished(): Boolean {
-        return arm.armState != Arm.ArmState.MOVING_AUTO
+        return abs(arm.getArmPosition() - armPosition.targetPosition) <= 40
+    }
+
+    override fun end(interrupted: Boolean) {
+        arm.stop()
     }
 }

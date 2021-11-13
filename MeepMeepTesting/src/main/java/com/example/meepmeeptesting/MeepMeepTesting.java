@@ -80,6 +80,7 @@ public class MeepMeepTesting {
                 .setColorScheme(new ColorSchemeRedDark())
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-33.6, -64, toRadians(90.0)))
+                                .turn(toRadians(90.0))
                                 .lineToConstantHeading(new Vector2d(-30.0, -40.0))
                                 .turn(toRadians(135.0))
                                 .back(6)

@@ -55,15 +55,15 @@ class MecTeleOp : CommandOpMode() {
     private lateinit var rightBack: DcMotorEx
 
     //Drive power multiplier for slow mode
-    private var powerMultiplier = 1.0
+    private var powerMultiplier = 0.9
 
     private val allHubs by lazy { hardwareMap.getAll(LynxModule::class.java) }
 
 
 //    //Define an array of the arm stages so that we can increment and decrement the position
-//    val armPositions: Array<Arm.ArmPosition> = Arm.ArmPosition.values()
+    val armPositions: Array<Arm.ArmPosition> = Arm.ArmPosition.values()
 //    //Hold the current position of the arm
-//    var armCurrentPosition = Arm.ArmPosition.DOWN
+    var armCurrentPosition = Arm.ArmPosition.DOWN
 
 
     override fun initialize() {
@@ -100,10 +100,10 @@ class MecTeleOp : CommandOpMode() {
         //Driver controls
         driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(Runnable {
-                    powerMultiplier = 0.6
+                    powerMultiplier = 0.5
                 })
                 .whenReleased(Runnable {
-                    powerMultiplier = 1.0
+                    powerMultiplier = 0.9
                 })
 
         //Manipulator Controls TODO: practice with these
@@ -126,34 +126,34 @@ class MecTeleOp : CommandOpMode() {
 
         //arm
         manipulator.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                .whenPressed(Runnable {
-                    arm.armPower(0.8)
-                })
-                .whenReleased(Runnable {
-                    arm.armPower(0.0)
-                })
 //                .whenPressed(Runnable {
-//                    val nextPositionUpNum: Int = armCurrentPosition.ordinal + 1 //Get the next number up from the current
-//                    if(nextPositionUpNum < armPositions.size){ //Check that it's within the valid positions
-//                        arm.setArm(armPositions[nextPositionUpNum])  //Set the arm to that position
-//                        armCurrentPosition = armPositions[nextPositionUpNum]  //Update the current arm position var
-//                    }
+//                    arm.armPower(0.6)
 //                })
+//                .whenReleased(Runnable {
+//                    arm.armPower(0.6)
+//                })
+                .whenPressed(Runnable {
+                    val nextPositionUpNum: Int = armCurrentPosition.ordinal + 1 //Get the next number up from the current
+                    if(nextPositionUpNum < armPositions.size){ //Check that it's within the valid positions
+                        arm.setArm(armPositions[nextPositionUpNum])  //Set the arm to that position
+                        armCurrentPosition = armPositions[nextPositionUpNum]  //Update the current arm position var
+                    }
+                })
 
 
         manipulator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(Runnable {
-                    arm.armPower(-0.4)
-                }).whenReleased(Runnable {
-                    arm.armPower(0.0)
-                })
 //                .whenPressed(Runnable {
-//                    val nextPositionDownNum: Int = armCurrentPosition.ordinal - 1 //Get the next number down from the current
-//                    if(nextPositionDownNum >= 0){ //Check that it's within the valid positions
-//                        arm.setArm(armPositions[nextPositionDownNum]) //Set the arm to that position
-//                        armCurrentPosition = armPositions[nextPositionDownNum] //Update the current arm position var
-//                    }
+//                    arm.armPower(-0.4)
+//                }).whenReleased(Runnable {
+//                    arm.armPower(0.0)
 //                })
+                .whenPressed(Runnable {
+                    val nextPositionDownNum: Int = armCurrentPosition.ordinal - 1 //Get the next number down from the current
+                    if(nextPositionDownNum >= 0){ //Check that it's within the valid positions
+                        arm.setArm(armPositions[nextPositionDownNum]) //Set the arm to that position
+                        armCurrentPosition = armPositions[nextPositionDownNum] //Update the current arm position var
+                    }
+                })
 
 
         telemetry.sendLine("Setting up drive hardware...")
@@ -206,7 +206,7 @@ class MecTeleOp : CommandOpMode() {
 
 
         //Telemetry for most things are handled in the subsystems
-        telemetry.addData("Slow Mode Enabled", (powerMultiplier != 1.0))
+        telemetry.addData("Slow Mode Enabled", (powerMultiplier != 0.9))
 
 
         /* Thanks to FTCLib handling all the things we just did above automatically,
