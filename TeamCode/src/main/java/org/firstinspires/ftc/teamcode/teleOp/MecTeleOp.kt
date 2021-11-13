@@ -143,7 +143,7 @@ class MecTeleOp : CommandOpMode() {
 
         manipulator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(Runnable {
-                    arm.armPower(-0.5)
+                    arm.armPower(-0.4)
                 }).whenReleased(Runnable {
                     arm.armPower(0.0)
                 })

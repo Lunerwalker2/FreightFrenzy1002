@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.control.PIDFController
 import com.arcrobotics.ftclib.command.SubsystemBase
 import com.qualcomm.robotcore.hardware.*
 import com.qualcomm.robotcore.util.Range
+import org.firstinspires.ftc.robotcore.external.Func
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import kotlin.math.abs
@@ -52,13 +53,13 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
     companion object {
 
         //The tolerance of our controller in ticks
-        private const val positionTolerance = 8
+        private const val positionTolerance = 10
 
         //Encoder ticks per revolution of our motor
         private const val TICKS_PER_REV = 2100.0
 
         //Distance in the encoder ticks from the bottom limit of the arms rotation to horizontal
-        private const val ARM_TO_HORIZONTAL_TICKS_OFFSET = 98.0
+        private const val ARM_TO_HORIZONTAL_TICKS_OFFSET = 324.0
 
         fun getTicksPerRev(): Double {
             return TICKS_PER_REV
@@ -109,11 +110,11 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
             ArmState.HOLDING -> { //If we are holding, keep the arm at the position it was stopped at
 
                 //If the current position is within our tolerance then just apply the gravity ff
-                if (abs(armGravityController.targetPosition - currentPosition) <= 7) {
-                    armMotor.power = findGravityFF(currentPosition.toDouble())
+                if (abs(armGravityController.targetPosition - currentPosition) <= positionTolerance) {
+                    armMotor.power = findGravityFF(currentPosition)
                 } else {
                     //Otherwise try to get back there
-                    armMotor.power = armGravityController.update(currentPosition.toDouble()) //Hold the
+                    armMotor.power = armGravityController.update(currentPosition)
                 }
             }
             //If we are moving to a position, update the motor powers with the controller
@@ -129,7 +130,7 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
                         stop()
                     }
                 } else {
-                    armMotor.power = armGravityController.update(currentPosition.toDouble()) //else, move towards the position
+                    armMotor.power = armGravityController.update(currentPosition) //else, move towards the position
                 }
 
 
@@ -172,9 +173,6 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
     }
 
 
-
-
-
     private fun findGravityFF(position: Double): Double {
         //Find the angle of the arm in degrees
 
@@ -190,13 +188,13 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
         return (position - ARM_TO_HORIZONTAL_TICKS_OFFSET) / TICKS_PER_REV * 360.0
     }
 
-    private fun compileTelemetry(currentPosition: Int){
+    private fun compileTelemetry(currentPosition: Int) {
         telemetry?.addData("Arm Target Position/Angle", "%d / %.2f", currentPosition, findArmAngle(currentPosition.toDouble()))
         telemetry?.addData("Arm Current Position/Angle", "%d / %.2f", currentPosition, findArmAngle(currentPosition.toDouble()))
         telemetry?.addData("Arm Current Power", "%.4f", armMotor.power)
         telemetry?.addData("Arm Gravity FF Correction", "%.4f", findGravityFF(currentPosition.toDouble()))
         //Represent the amperage draw out of the amperage alert with ascii art for fun
-        telemetry?.addData("Arm Motor Current Draw") {
+        telemetry?.addData("Arm Motor Current Draw", Func {
             val amperage = armMotor.getCurrent(CurrentUnit.AMPS)
             val numWhiteSquares = Range.scale(
                     amperage,
@@ -207,13 +205,14 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
             ).toInt()
             val builder = StringBuilder()
             builder.append("[")
-            for(i in 0..10){
-                if(i < numWhiteSquares) builder.append("\u2b1b")
+            for (i in 0..10) {
+                if (i < numWhiteSquares) builder.append("\u2b1b")
                 else builder.append("\u2b1c")
             }
             builder.append("] (%.4f A)".format(amperage))
             builder.toString()
-        }
+        }.value()
+        )
         telemetry?.addData("Arm Motor Over-current", armMotor.isOverCurrent)
 
     }

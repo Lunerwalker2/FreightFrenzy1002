@@ -24,13 +24,13 @@ import java.lang.Math.toRadians
  * The blue alliance autos are where we are usually doing dev since as of now that's the only side
  * we have taped out, so the red autos will be a bit behind with changes.
  */
-@Disabled
-@Autonomous(name="Red Hub & Duck Auto", group = "Hub Auto")
+//@Disabled
+@Autonomous(name = "Red Hub & Duck Auto", group = "Hub Auto")
 class RedHubDuckAuto : AutoBase() {
 
     //Vision
-    private val markerDetector = TeamMarkerDetector(hardwareMap)
-    private lateinit var hubLevel: HubLevel
+    private lateinit var markerDetector: TeamMarkerDetector
+    private var hubLevel: HubLevel = HubLevel.TOP
 
     private lateinit var carouselWheel: CarouselWheel
     private lateinit var arm: Arm
@@ -79,7 +79,7 @@ class RedHubDuckAuto : AutoBase() {
                 .build()
 
         backFromHub = drive.trajectoryBuilder(goToHub.end())
-                .forward(8.0)
+                .forward(4.0)
                 .build()
 
         turnToFaceWall = drive.trajectorySequenceBuilder(backFromHub.end())
@@ -87,11 +87,11 @@ class RedHubDuckAuto : AutoBase() {
                 .build()
 
         goToCarousel = drive.trajectoryBuilder(turnToFaceWall.end())
-                .lineToLinearHeading(Pose2d(-53.0, -56.5, toRadians(-90.0)))
+                .lineToLinearHeading(Pose2d(-62.0, -61.0, toRadians(-90.0)))
                 .build()
 
         goToStorageUnit = drive.trajectoryBuilder(goToCarousel.end())
-                .lineToConstantHeading(Vector2d(-58.0, -35.0))
+                .lineToConstantHeading(Vector2d(-60.0, -35.0))
                 .build()
 
 
@@ -103,6 +103,8 @@ class RedHubDuckAuto : AutoBase() {
         claw = Claw(hardwareMap)
 
 
+        markerDetector = TeamMarkerDetector(hardwareMap)
+        /*
         //Initialize our vision object to get ready for the pipeline
         markerDetector.init()
 
@@ -122,6 +124,8 @@ class RedHubDuckAuto : AutoBase() {
         //Make sure we stop the stream
         markerDetector.endStream()
 
+        */
+
         //Schedule our main program. All of these commands are run during start automatically
         schedule(SequentialCommandGroup(
                 InstantCommand({
@@ -129,29 +133,27 @@ class RedHubDuckAuto : AutoBase() {
                     telemetry.addLine("Detected hub level: $hubLevel")
                     telemetry.update()
                 }),
-                ParallelRaceGroup(
-                        WaitCommand(2000),
-                        InstantCommand(claw::closeClaw, claw)
-                ),
-                FollowTrajectoryCommand(drive, goForward),
-                FollowTrajectorySequenceCommand(drive, turnToHub),
+                InstantCommand(claw::closeClaw, claw),
+                WaitCommand(2000),
+                FollowTrajectoryCommand(drive, goForward, 200),
+                FollowTrajectorySequenceCommand(drive, turnToHub, 300),
                 FollowTrajectoryCommand(drive, goToHub),
                 WaitCommand(500),
                 ArmToScoringPositionCommand(arm),
-                WaitCommand(500),
+                WaitCommand(2000),
                 InstantCommand(claw::openClaw, claw),
                 WaitCommand(1500),
-                ParallelDeadlineGroup(
-                        WaitCommand(3000),
-                        InstantCommand(claw::closeClaw),
-                        InstantCommand({arm.armPower(-0.3)}).whenFinished { arm.armPower(0.0) }
-                ),
+                InstantCommand(claw::closeClaw, claw),
+                InstantCommand({ arm.armPower(-0.3) }, arm),
+                WaitCommand(2000),
+                InstantCommand({ arm.armPower(0.0) }, arm),
                 FollowTrajectoryCommand(drive, backFromHub),
                 FollowTrajectorySequenceCommand(drive, turnToFaceWall),
                 FollowTrajectoryCommand(drive, goToCarousel),
-                CarouselWheelCommand(carouselWheel, true, 5000),
+                WaitCommand(100),
+                CarouselWheelCommand(carouselWheel, false, 5000),
                 FollowTrajectoryCommand(drive, goToStorageUnit)
-                ))
+        ))
 
 
     }

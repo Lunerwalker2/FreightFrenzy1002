@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.InstantCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
+import org.firstinspires.ftc.teamcode.commands.ArmToScoringPositionCommand
 import org.firstinspires.ftc.teamcode.commands.SetArmPosition
 import org.firstinspires.ftc.teamcode.commands.SleepCommand
 import org.firstinspires.ftc.teamcode.commands.TestMessageCommand
@@ -20,7 +21,7 @@ import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector
 @Autonomous(name="Test command auto")
 class TestAuto: AutoBase() {
 
-    lateinit var arm: Arm
+    private lateinit var arm: Arm
 
 
     override fun initialize() {
@@ -31,19 +32,13 @@ class TestAuto: AutoBase() {
 
         arm = Arm(hardwareMap)
 
-        waitForStart()
-
         schedule(SequentialCommandGroup(
                 InstantCommand({
                     telemetry.addLine("The program started!")
                     telemetry.update()
                 }),
                 SleepCommand(2000),
-                SetArmPosition(arm, Arm.ArmPosition.BOTTOM_LEVEL)
-//                FollowTrajectoryCommand(drive,
-//                        drive.trajectoryBuilder(drive.poseEstimate)
-//                                .forward(10.0)
-//                )
+                ArmToScoringPositionCommand(arm)
         ))
 
     }
