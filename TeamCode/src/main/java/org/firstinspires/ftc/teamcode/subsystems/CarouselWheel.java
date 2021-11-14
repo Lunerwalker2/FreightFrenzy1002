@@ -53,8 +53,16 @@ public class CarouselWheel extends SubsystemBase {
         leftPower = -0.4;
     }
 
+    public void leftBack(){
+        leftPower = 0.4;
+    }
+
     public void rightForward(){
         rightPower = -0.4;
+    }
+
+    public void rightBack(){
+        rightPower = 0.4;
     }
 
     public void leftStop(){

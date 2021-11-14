@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.commands.CarouselWheelCommand
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectoryCommand
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand
-import org.firstinspires.ftc.teamcode.commands.SleepCommand
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
 import org.firstinspires.ftc.teamcode.subsystems.Claw

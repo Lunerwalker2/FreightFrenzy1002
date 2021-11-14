@@ -25,7 +25,7 @@ class FollowTrajectoryCommand(private val drive: SampleMecanumDrive,
     //Update our drive powers
     override fun execute() {
         drive.update()
-        if(!drive.isBusy){
+        if(!drive.isBusy && !trajDone){
             timer.reset()
             trajDone = true
         }
