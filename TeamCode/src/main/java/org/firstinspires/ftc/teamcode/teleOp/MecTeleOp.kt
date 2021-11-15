@@ -39,9 +39,7 @@ MOST OF THIS IS NOT HOW THE SDK WORKS PLEASE DON'T TAKE THIS AS AN EXAMPLE OF TH
 class MecTeleOp : CommandOpMode() {
 
     //Subsystems
-    private lateinit var arm: Arm
     private lateinit var carouselWheel: CarouselWheel
-    private lateinit var claw: Claw
 
     // Buttons/triggers
     private lateinit var leftCarouselTrigger: Trigger
@@ -71,8 +69,6 @@ class MecTeleOp : CommandOpMode() {
         //Extension functions pog see Extensions.kt in util package
         telemetry.sendLine("Initializing Subsystems...")
 
-        arm = Arm(hardwareMap, telemetry)
-        claw = Claw(hardwareMap, telemetry)
         carouselWheel = CarouselWheel(hardwareMap, telemetry)
 
         telemetry.sendLine("Setting bulk cache mode....")
@@ -117,21 +113,9 @@ class MecTeleOp : CommandOpMode() {
                 .whenActive(carouselWheel::rightForward)
                 .whenInactive(carouselWheel::rightStop)
 
-        //Claw toggles
-        manipulator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .toggleWhenPressed(
-                        claw::openClaw,
-                        claw::closeClaw
-                )
 
         //arm
         manipulator.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                .whenPressed(Runnable {
-                    arm.armPower(0.8)
-                })
-                .whenReleased(Runnable {
-                    arm.armPower(0.0)
-                })
 //                .whenPressed(Runnable {
 //                    val nextPositionUpNum: Int = armCurrentPosition.ordinal + 1 //Get the next number up from the current
 //                    if(nextPositionUpNum < armPositions.size){ //Check that it's within the valid positions
@@ -142,11 +126,6 @@ class MecTeleOp : CommandOpMode() {
 
 
         manipulator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(Runnable {
-                    arm.armPower(-0.4)
-                }).whenReleased(Runnable {
-                    arm.armPower(0.0)
-                })
 //                .whenPressed(Runnable {
 //                    val nextPositionDownNum: Int = armCurrentPosition.ordinal - 1 //Get the next number down from the current
 //                    if(nextPositionDownNum >= 0){ //Check that it's within the valid positions

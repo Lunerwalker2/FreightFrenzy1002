@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto
+package org.firstinspires.ftc.teamcode.auto.duck
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.ParallelRaceGroup
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
 import com.arcrobotics.ftclib.command.WaitCommand
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import org.firstinspires.ftc.teamcode.auto.AutoBase
 import org.firstinspires.ftc.teamcode.commands.CarouselWheelCommand
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectoryCommand
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand

@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.auto
+package org.firstinspires.ftc.teamcode.auto.duck
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.acmerobotics.roadrunner.trajectory.Trajectory
 import com.arcrobotics.ftclib.command.*
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
+import org.firstinspires.ftc.teamcode.auto.AutoBase
 import org.firstinspires.ftc.teamcode.commands.*
 import org.firstinspires.ftc.teamcode.vision.HubLevel
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector
