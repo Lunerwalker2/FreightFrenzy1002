@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.teleOp.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.teamcode.util.MB1242;
 
+@TeleOp
 public class MB1242Testing extends LinearOpMode {
 
 
@@ -19,10 +22,10 @@ public class MB1242Testing extends LinearOpMode {
         if(isStopRequested()) return;
 
         while(opModeIsActive()){
-            distanceSensor.initiateRangeCommand();
+            distanceSensor.ping();
             //Wait at least 100ms to allow the sound to dissipate
             sleep(100);
-            telemetry.addData("Range (cm)", distanceSensor.readRangeValueCm());
+            telemetry.addData("Range (cm)", distanceSensor.readRange());
             telemetry.update();
         }
     }

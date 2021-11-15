@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleOp
 
 import com.arcrobotics.ftclib.command.CommandOpMode
-import com.arcrobotics.ftclib.command.CommandScheduler
 import com.arcrobotics.ftclib.command.RunCommand
-import com.arcrobotics.ftclib.command.button.GamepadButton
 import com.arcrobotics.ftclib.command.button.Trigger
 import com.arcrobotics.ftclib.gamepad.GamepadEx
 import com.arcrobotics.ftclib.gamepad.GamepadKeys
@@ -13,16 +11,10 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
-import org.firstinspires.ftc.teamcode.subsystems.Arm
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
-import org.firstinspires.ftc.teamcode.subsystems.Claw
-import org.firstinspires.ftc.teamcode.subsystems.Intake
-import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.abs
 import kotlin.math.max
 
-import org.firstinspires.ftc.teamcode.util.Extensions
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.sendLine
 
 /*
@@ -56,12 +48,6 @@ class MecTeleOp : CommandOpMode() {
     private var powerMultiplier = 1.0
 
     private val allHubs by lazy { hardwareMap.getAll(LynxModule::class.java) }
-
-
-//    //Define an array of the arm stages so that we can increment and decrement the position
-//    val armPositions: Array<Arm.ArmPosition> = Arm.ArmPosition.values()
-//    //Hold the current position of the arm
-//    var armCurrentPosition = Arm.ArmPosition.DOWN
 
 
     override fun initialize() {
@@ -112,27 +98,6 @@ class MecTeleOp : CommandOpMode() {
         rightCarouselTrigger = Trigger { gamepad2.right_trigger > 0.2 }
                 .whenActive(carouselWheel::rightForward)
                 .whenInactive(carouselWheel::rightStop)
-
-
-        //arm
-        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-//                .whenPressed(Runnable {
-//                    val nextPositionUpNum: Int = armCurrentPosition.ordinal + 1 //Get the next number up from the current
-//                    if(nextPositionUpNum < armPositions.size){ //Check that it's within the valid positions
-//                        arm.setArm(armPositions[nextPositionUpNum])  //Set the arm to that position
-//                        armCurrentPosition = armPositions[nextPositionUpNum]  //Update the current arm position var
-//                    }
-//                })
-
-
-        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-//                .whenPressed(Runnable {
-//                    val nextPositionDownNum: Int = armCurrentPosition.ordinal - 1 //Get the next number down from the current
-//                    if(nextPositionDownNum >= 0){ //Check that it's within the valid positions
-//                        arm.setArm(armPositions[nextPositionDownNum]) //Set the arm to that position
-//                        armCurrentPosition = armPositions[nextPositionDownNum] //Update the current arm position var
-//                    }
-//                })
 
 
         telemetry.sendLine("Setting up drive hardware...")
