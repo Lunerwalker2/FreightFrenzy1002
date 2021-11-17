@@ -19,7 +19,7 @@ class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetr
 
     //The two TOF Distance sensors on the sides.
     private val rightSensor: Rev2mDistanceSensor
-    private val leftSensor: Rev2mDistanceSensor
+//    private val leftSensor: Rev2mDistanceSensor
 
     //Timer object for the delay
     private val delayTimer = ElapsedTime()
@@ -39,6 +39,7 @@ class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetr
     init {
         //Get the sensors from the hardware map
         forwardSensor = hardwareMap.get(MB1242::class.java, "forwardSensor")
+        rightSensor = hardwareMap.get(Rev2mDistanceSensor::class.java, "rightSensor")
     }
 
     override fun periodic() {
