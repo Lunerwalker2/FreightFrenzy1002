@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.configuration.annotations.DevicePropertie
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 import com.qualcomm.robotcore.util.TypeConversion;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 
 @I2cDeviceType
 @DeviceProperties(
@@ -50,6 +52,10 @@ public class MB1242 extends I2cDeviceSynchDevice<I2cDeviceSynch> {
      */
     public short readRange(){
         return TypeConversion.byteArrayToShort(deviceClient.read(0xE1, 2));
+    }
+
+    public double readRange(DistanceUnit unit){
+        return unit.fromCm(readRange());
     }
 
 

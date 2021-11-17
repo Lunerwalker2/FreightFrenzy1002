@@ -8,7 +8,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.util.MB1242
 
-
+/*
+When we do SubsystemBase() in kotlin here, it calls the super() constructor.
+ */
 class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetry: Telemetry?): SubsystemBase() {
 
 
@@ -19,7 +21,9 @@ class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetr
 
     //The two TOF Distance sensors on the sides.
     private val rightSensor: Rev2mDistanceSensor
+    //TODO: Uncomment this (cursor on line and then press Ctrl + /)
 //    private val leftSensor: Rev2mDistanceSensor
+
 
     //Timer object for the delay
     private val delayTimer = ElapsedTime()
@@ -31,7 +35,8 @@ class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetr
     private var takingRangeReading = false
 
     //Last read range in cm
-    private var currentRangeReading: Int = 0
+    //TODO: Add range variables for left and right
+    private var forwardRangeReading: Int = 0
 
     //Whether this is the first run of the program
     private var firstRun = true
@@ -40,14 +45,17 @@ class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetr
         //Get the sensors from the hardware map
         forwardSensor = hardwareMap.get(MB1242::class.java, "forwardSensor")
         rightSensor = hardwareMap.get(Rev2mDistanceSensor::class.java, "rightSensor")
+        //TODO: Add other rev 2m sensor called "leftSensor" in the hardware map
     }
 
+    //Gets updated constantly throughout auto.
     override fun periodic() {
         //Only take readings if we are supposed to, it's an unnecessary hardware call otherwise
         if(takingRangeReading){
             //Check if its been longer than our delay to properly let the sensor perform
             if(hasDelayExpired() && !firstRun){
-                currentRangeReading = forwardSensor.readRange().toInt()
+                forwardRangeReading = forwardSensor.readRange().toInt()
+                //TODO: Read and store the left and right sensors IN CENTIMETERS (DistanceUnit.CM)
                 forwardSensor.ping()
                 delayTimer.reset()
                 //If its the first run then run a range command to ensure the next reading has a value
@@ -57,6 +65,42 @@ class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetr
                 firstRun = false
             }
         }
+
+        //TODO: If   you want, add telemetry calls here with the following
+        telemetry?.addData("foo", 3);
+        //Telemetry is updated later on probably
+    }
+
+    /*
+    TODO: Make a function that takes a boolean representing the side of the field (i.e. boolean redSide)
+    TODO: and returns an array list with the forward reading in the first index and the side reading
+    TODO: in the second. Look at the hasDelayExpired to see how to properly read the mb1242. The
+    TODO: rev TOF sensor can just be directly read with no delay needed. DISTANCE IN CM
+     */
+    /*
+    fun getRanges(redSide: Boolean): ArrayList<Double> {
+        //Kotlin requires type consistency, so you might have to call .toDouble() on values which aren't
+        //doubles, unlike Java which implicitly casts primitives.
+    }
+     */
+
+
+
+
+    //TODO: Add get range methods for the left and right sensors
+
+    /**
+     * Read the current range value in cm, is only updated every 80ms so might be a little inaccurate
+     */
+    fun getForwardRange(): Int {
+        return forwardRangeReading
+    }
+
+    /**
+     * Returns the distance in the specified value
+     */
+    fun getForwardRange(distanceUnit: DistanceUnit): Double{
+        return distanceUnit.fromCm(forwardRangeReading.toDouble())
     }
 
 
@@ -68,20 +112,6 @@ class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetr
     //Stop taking range readings
     fun stopReading(){
         takingRangeReading = false
-    }
-
-    /**
-     * Read the current range value in cm, is only updated every 80ms so might be a little inaccurate
-     */
-    fun getCurrentRange(): Int {
-        return currentRangeReading
-    }
-
-    /**
-     * Returns the distance in the specified value
-     */
-    fun getCurrentRange(distanceUnit: DistanceUnit): Double{
-        return distanceUnit.fromCm(currentRangeReading.toDouble())
     }
 
 
@@ -96,7 +126,7 @@ class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetr
         forwardSensor.ping()
         val timer = ElapsedTime()
         while(timer.milliseconds() < 100);
-        return forwardSensor.readRange().toInt() != 20
+        return forwardSensor.readRange().toInt() != 20 //20cm is the minimum range, so we test with it
     }
 
 }
