@@ -35,10 +35,9 @@ class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetr
     private var takingRangeReading = false
 
     //Last read range in cm
-    //TODO: Add range variables for left and right
-    private var forwardRangeReading: Int = 0
-    private var leftRange = 0;
-    private var rightRange = 0;
+    private var forwardRangeReading = 0.0
+    private var leftRange = 0.0
+    private var rightRange = 0.0
 
     //Whether this is the first run of the program
     private var firstRun = true
@@ -47,7 +46,6 @@ class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetr
         //Get the sensors from the hardware map
         forwardSensor = hardwareMap.get(MB1242::class.java, "forwardSensor")
         rightSensor = hardwareMap.get(Rev2mDistanceSensor::class.java, "rightSensor")
-        //TODO: Add other rev 2m sensor called "leftSensor" in the hardware map
         leftSensor = hardwareMap.get(Rev2mDistanceSensor::class.java,"leftSensor")
     }
 
@@ -57,10 +55,10 @@ class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetr
         if(takingRangeReading){
             //Check if its been longer than our delay to properly let the sensor perform
             if(hasDelayExpired() && !firstRun){
-                forwardRangeReading = forwardSensor.readRange().toInt()
+                forwardRangeReading = forwardSensor.readRange().toDouble()
                 //TODO: Read and store the left and right sensors IN CENTIMETERS (DistanceUnit.CM)
-                rightRange = rightSensor.getDistance(DistanceUnit.CM).toInt()
-                leftRange = leftSensor.getDistance(DistanceUnit.CM).toInt()
+                rightRange = rightSensor.getDistance(DistanceUnit.CM)
+                leftRange = leftSensor.getDistance(DistanceUnit.CM)
                 forwardSensor.ping()
                 delayTimer.reset()
                 //If its the first run then run a range command to ensure the next reading has a value
@@ -76,35 +74,17 @@ class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetr
         //Telemetry is updated later on probably
     }
 
-    /*
-    TODO: Make a function that takes a boolean representing the side of the field (i.e. boolean redSide)
-    public boolean redSide(boolean redSide) {
-        if (redSide) {
-            redSide = true;
-        }
-        else if (!redSide) {
-            blueSide = true;
-        }
-        else {
-            System.out.println("you screwed up lmao");
-        }
-    }
-    TODO: and returns an array list with the forward reading in the first index and the side reading
-    TODO: in the second. Look at the hasDelayExpired to see how to properly read the mb1242. The
-    TODO: rev TOF sensor can just be directly read with no delay needed. DISTANCE IN CM
-     */
+
 
     fun getRanges(redSide: Boolean): ArrayList<Double> {
-        //Kotlin requires type consistency, so you might have to call .toDouble() on values which aren't
-        //doubles, unlike Java which implicitly casts primitives.
         val list = ArrayList<Double>();
 
-        list.add(forwardRangeReading.toDouble());
+        list.add(forwardRangeReading);
         if (redSide) {
-            list.add(rightRange.toDouble());
+            list.add(rightRange);
         }
         else {
-            list.add(leftRange.toDouble());
+            list.add(leftRange);
         }
 
         return list;
@@ -116,18 +96,18 @@ class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetr
 
 
     //TODO: Add get range methods for the left and right sensors
-    fun getLeftRange(): Int {
+    fun getLeftRange(): Double {
         return leftRange
     }
 
-    fun getRightRange(): Int {
+    fun getRightRange(): Double {
         return rightRange
     }
 
     /**
      * Read the current range value in cm, is only updated every 80ms so might be a little inaccurate
      */
-    fun getForwardRange(): Int {
+    fun getForwardRange(): Double {
         return forwardRangeReading
     }
 

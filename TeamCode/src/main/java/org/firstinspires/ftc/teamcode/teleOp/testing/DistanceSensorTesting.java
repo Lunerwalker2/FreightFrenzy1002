@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -15,11 +16,12 @@ import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 
 @TeleOp
-public class MB1242Testing extends LinearOpMode {
+public class DistanceSensorTesting extends LinearOpMode {
 
 
     private MB1242 forwardSensor;
     private Rev2mDistanceSensor leftSensor;
+    private Rev2mDistanceSensor rightSensor;
     private BNO055IMU imu;
 
     private boolean redSide = true;
@@ -29,6 +31,8 @@ public class MB1242Testing extends LinearOpMode {
     private final double rightOffset = 0;
 
     private double headingOffset = 0;
+
+    private ElapsedTime timer = new ElapsedTime();
 
 
     private double getRobotAngle(){
@@ -48,7 +52,8 @@ public class MB1242Testing extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         forwardSensor = hardwareMap.get(MB1242.class, "forwardSensor");
-        leftSensor = hardwareMap.get(Rev2mDistanceSensor.class, "rightSensor");
+        leftSensor = hardwareMap.get(Rev2mDistanceSensor.class, "leftSensor");
+        rightSensor = hardwareMap.get(Rev2mDistanceSensor.class, "rightSensor");
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -57,6 +62,8 @@ public class MB1242Testing extends LinearOpMode {
 
         waitForStart();
 
+        timer.reset();
+
         if(isStopRequested()) return;
 
         while(opModeIsActive()){
@@ -64,13 +71,15 @@ public class MB1242Testing extends LinearOpMode {
             if(gamepad1.dpad_left) redSide = true;
             else if(gamepad1.dpad_right) redSide = false;
 
-            forwardSensor.ping();
-            //Wait at least 100ms to allow the sound to dissipate
-            sleep(100);
+            //Wait at least 80ms to allow the sound to dissipate
+            if(timer.milliseconds() > 90) {
+                forwardSensor.ping();
+                timer.reset();
+            }
 
             double forwardReading = forwardSensor.readRange();
             double leftReading = leftSensor.getDistance(DistanceUnit.CM);
-            double rightReading = 0.0;
+            double rightReading = rightSensor.getDistance(DistanceUnit.CM);
             double heading = getRobotAngle();
 
             double correctedForwardDistance = forwardReading * Math.cos(heading);
@@ -82,7 +91,7 @@ public class MB1242Testing extends LinearOpMode {
             //Find the horizontal distance based on what side we are supposed to be on
             double y = (redSide) ? leftOffset - correctedLeftDistance : correctedRightDistance - rightOffset;
 
-            telemetry.addData("Field Side", "%.2f", (redSide) ? "Red" : "Blue");
+            telemetry.addData("Field Side", (redSide) ? "Red" : "Blue");
             telemetry.addData("Robot X (in)", "%.2f", DistanceUnit.INCH.fromCm(x));
             telemetry.addData("Robot Y (in)", DistanceUnit.INCH.fromCm(y));
             telemetry.addData("Robot Heading (rad)/(deg)", "%.2f / %.2f", heading, toDegrees(heading));
