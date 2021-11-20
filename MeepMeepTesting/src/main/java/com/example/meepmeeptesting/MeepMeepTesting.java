@@ -30,7 +30,7 @@ public class MeepMeepTesting {
     public static double MAX_ACCEL = 40;
     public static double MAX_ANG_VEL = toRadians(180);
     public static double MAX_ANG_ACCEL = toRadians(180);
-    public static double TRACK_WIDTH = 14.7;
+    public static double TRACK_WIDTH = 12;
 
     public static int HUB_LEVEL = (int) (Math.random() * 2);
 
@@ -46,7 +46,7 @@ public class MeepMeepTesting {
         MeepMeep mm = new MeepMeep(600);
 
         RoadRunnerBotEntity blueCycleRoute = new DefaultBotBuilder(mm)
-                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 12)
+                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
                 .setDimensions(12, 13)
                 .setColorScheme(new ColorSchemeBlueDark())
                 .followTrajectorySequence(drive ->
@@ -66,7 +66,7 @@ public class MeepMeepTesting {
                 );
 
         RoadRunnerBotEntity redCycleRoute = new DefaultBotBuilder(mm)
-                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 12)
+                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
                 .setDimensions(12, 13)
                 .setColorScheme(new ColorSchemeRedDark())
                 .followTrajectorySequence(drive ->
