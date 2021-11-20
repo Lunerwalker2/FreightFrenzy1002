@@ -13,20 +13,17 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /*
 Pipeline to find yellow cubes.
  */
 public class FreightPipeline extends OpenCvPipeline {
 
-    static class CubeFreight {
-        double distance;
-        double angle;
-    }
 
-
-    private Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
-    private Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6));
+    Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
+    Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6));
 
 
 
@@ -37,10 +34,13 @@ public class FreightPipeline extends OpenCvPipeline {
     Mat contoursOnPlainMat = new Mat();
 
 
-    ArrayList<CubeFreight> internalFreights = new ArrayList<>();
-    volatile ArrayList<CubeFreight> freights = new ArrayList<>();
+
+    ArrayList<MatOfPoint> contoursList = new ArrayList<>();
 
     static final int CB_THRESHOLD = 80;
+
+    static final int minimumRadius = 70;
+    static final int minimumSideLength = 70;
 
     static final Scalar TEAL = new Scalar(3, 148, 252);
     static final Scalar PURPLE = new Scalar(158, 52, 235);
@@ -48,13 +48,35 @@ public class FreightPipeline extends OpenCvPipeline {
     static final Scalar GREEN = new Scalar(0, 255, 0);
     static final Scalar BLUE = new Scalar(0, 0, 255);
 
+    float[][] circleRadii;
+    Point[] circleCenters;
+    Rect[] boundingRects;
+
     enum Stage {
-        FINAL,
-        CB,
-        THRESHOLD,
-        THRESHOLD_MORPH,
-        CANNY,
-        CONTOURS_ON_INPUT
+        FINAL("Contours/Bounding Boxes"),
+        CB("Extracted Cb"),
+        THRESHOLD("Binary Threshold"),
+        THRESHOLD_MORPH("Noise Reduction"),
+        CANNY("Canny Edge Detection"),
+        CONTOURS_ON_INPUT("Contours Drawn");
+
+        String text;
+
+        public void putText(Mat input){
+            Imgproc.putText(
+                    input,
+                    this.text,
+                    new Point(70, input.cols()+20),
+                    Imgproc.FONT_HERSHEY_SIMPLEX,
+                    1,
+                    new Scalar(235, 9, 54),
+                    5
+            );
+        }
+
+        Stage(String text){
+            this.text = text;
+        }
     }
 
     Stage[] stages = Stage.values();
@@ -72,23 +94,58 @@ public class FreightPipeline extends OpenCvPipeline {
         stageNum = nextStageNum;
     }
 
+    private void drawCircle(Mat input, int i){
+        if(isCircleLargeEnough(circleRadii[i][0])) {
+            Imgproc.circle(input, circleCenters[i], (int) circleRadii[i][0], TEAL, 3);
+        }
+    }
+
+    private void drawRectangle(Mat input, int i){
+        if(isRectangleLargeEnough(boundingRects[i])) {
+            Imgproc.rectangle(input, boundingRects[i].tl(), boundingRects[i].br(), PURPLE, 3);
+        }
+    }
+
+    private boolean isCircleLargeEnough(double radius){
+        double diameter = 2*radius;
+        return (diameter > minimumRadius);
+    }
+
+    private boolean isRectangleLargeEnough(Rect rect){
+        return (rect.height > minimumSideLength) && (rect.width > minimumSideLength);
+    }
+
+
     @Override
     public Mat processFrame(Mat input){
 
-        internalFreights.clear();
+        contoursList.clear();
 
-        for(MatOfPoint contour : findContours(input)){
-            Point[] contourArray = contour.toArray();
+        contoursList = findContours(input);
 
-            if(contourArray.length >= 15){
-                MatOfPoint2f areaPoints = new MatOfPoint2f(contourArray);
-                Rect rect = Imgproc.boundingRect(areaPoints);
+        MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contoursList.size()];
+        circleCenters = new Point[contoursList.size()];
+        circleRadii = new float[contoursList.size()][1];
+        boundingRects = new Rect[contoursList.size()];
 
-                internalFreights.add()
-            }
+        for (int i = 0; i < contoursList.size(); i++) {
+            contoursPoly[i] = new MatOfPoint2f();
+            Imgproc.approxPolyDP(new MatOfPoint2f(contoursList.get(i).toArray()), contoursPoly[i], 5, true);
+            boundingRects[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
+            circleCenters[i] = new Point();
+            Imgproc.minEnclosingCircle(contoursPoly[i], circleCenters[i], circleRadii[i]);
         }
 
-        freights = new ArrayList<>(internalFreights);
+        List<MatOfPoint> contoursPolyList = new ArrayList<>(contoursPoly.length);
+        for (MatOfPoint2f poly : contoursPoly) {
+            contoursPolyList.add(new MatOfPoint(poly.toArray()));
+        }
+
+        for (int i = 0; i < contoursList.size(); i++) {
+            Imgproc.drawContours(input, contoursPolyList, i, new Scalar(255, 186, 3), 2);
+            drawCircle(input, i);
+            drawRectangle(input, i);
+        }
 
         switch (stages[stageNum]){
             case CB:
@@ -104,6 +161,11 @@ public class FreightPipeline extends OpenCvPipeline {
             case CONTOURS_ON_INPUT:
                 return contoursOnPlainMat;
         }
+
+        Arrays.stream(contoursPoly).forEach(Mat::release);
+        contoursPolyList.forEach(Mat::release);
+        contoursList.forEach(Mat::release);
+        if(stages[stageNum] != Stage.FINAL) input.release();
 
         return input;
     }
