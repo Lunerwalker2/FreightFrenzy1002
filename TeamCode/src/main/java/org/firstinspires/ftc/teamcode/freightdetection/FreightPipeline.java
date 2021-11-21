@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.freightdetection;
 
-import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -27,20 +26,27 @@ public class FreightPipeline extends OpenCvPipeline {
 
 
 
-    Mat cbMat = new Mat();
+
+    Mat blurredMat = new Mat();
+    Mat extractedMat = new Mat();
+//    Mat cannyOutput = new Mat();
     Mat thresholdMat = new Mat();
     Mat morphedThreshold = new Mat();
-    Mat cannyOutput = new Mat();
     Mat contoursOnPlainMat = new Mat();
+
+    boolean detectingSilver = false;
 
 
 
     ArrayList<MatOfPoint> contoursList = new ArrayList<>();
 
     static final int CB_THRESHOLD = 80;
+    static final int GREY_THRESHOLD = 180;
 
-    static final int minimumRadius = 70;
-    static final int minimumSideLength = 70;
+    static final int minimumRadius = 50;
+    static final int maximumRadius = 150;
+    static final int minimumSideLength = 20;
+    static final int maximumSideLength = 200;
 
     static final Scalar TEAL = new Scalar(3, 148, 252);
     static final Scalar PURPLE = new Scalar(158, 52, 235);
@@ -53,24 +59,25 @@ public class FreightPipeline extends OpenCvPipeline {
     Rect[] boundingRects;
 
     enum Stage {
-        FINAL("Contours/Bounding Boxes"),
-        CB("Extracted Cb"),
+        FINAL("Final"),
+        BLURRED_INPUT("Noise Reduction"),
+        EXTRACTED_CHANNEL("Extracted Channel"),
         THRESHOLD("Binary Threshold"),
-        THRESHOLD_MORPH("Noise Reduction"),
-        CANNY("Canny Edge Detection"),
+        THRESHOLD_MORPH("Morphed Threshold"),
         CONTOURS_ON_INPUT("Contours Drawn");
 
-        String text;
+        private final String text;
+
 
         public void putText(Mat input){
             Imgproc.putText(
                     input,
                     this.text,
-                    new Point(70, input.cols()+20),
+                    new Point(70, 20),
                     Imgproc.FONT_HERSHEY_SIMPLEX,
-                    1,
+                    0.6,
                     new Scalar(235, 9, 54),
-                    5
+                    2
             );
         }
 
@@ -79,31 +86,41 @@ public class FreightPipeline extends OpenCvPipeline {
         }
     }
 
+    private Stage stageToRenderToViewport = Stage.FINAL;
     Stage[] stages = Stage.values();
 
     int stageNum = 0;
 
     @Override
     public void onViewportTapped() {
-        int nextStageNum = stageNum + 1;
 
-        if(nextStageNum >= stages.length){
+        int currentStageNum = stageToRenderToViewport.ordinal();
+
+        int nextStageNum = currentStageNum + 1;
+
+        if(nextStageNum >= stages.length)
+        {
             nextStageNum = 0;
         }
 
-        stageNum = nextStageNum;
+        stageToRenderToViewport = stages[nextStageNum];
     }
 
     private void drawCircle(Mat input, int i){
-        if(isCircleLargeEnough(circleRadii[i][0])) {
             Imgproc.circle(input, circleCenters[i], (int) circleRadii[i][0], TEAL, 3);
-        }
+            drawTagText(input, "Sphere", circleCenters[i]);
     }
 
     private void drawRectangle(Mat input, int i){
-        if(isRectangleLargeEnough(boundingRects[i])) {
             Imgproc.rectangle(input, boundingRects[i].tl(), boundingRects[i].br(), PURPLE, 3);
-        }
+            drawTagText(input, "Cube", centerOfRect(boundingRects[i]));
+    }
+
+    static Point centerOfRect(Rect rect){
+        return new Point(
+                (int) (rect.x + (rect.width / 2)),
+                (int) (rect.y + (rect.height / 2))
+        );
     }
 
     private boolean isCircleLargeEnough(double radius){
@@ -121,83 +138,157 @@ public class FreightPipeline extends OpenCvPipeline {
 
         contoursList.clear();
 
-        contoursList = findContours(input);
+        //do an initial blur
+        blur(input, blurredMat);
 
+        //extract either the alpha channel for balls or cb channel for cubes
+        if(detectingSilver) extractAlpha(blurredMat, extractedMat);
+        else extractCb(blurredMat, extractedMat);
+
+
+        //Use a threshold for now on both cases
+        if(detectingSilver){
+            Imgproc.threshold(extractedMat, thresholdMat, GREY_THRESHOLD, 255, Imgproc.THRESH_BINARY);
+        } else {
+            Imgproc.threshold(extractedMat, thresholdMat, CB_THRESHOLD, 255, Imgproc.THRESH_BINARY_INV);
+        }
+
+        //further reduce noise
+        morph(thresholdMat, morphedThreshold);
+
+        if(detectingSilver){
+            //find only the outer contours
+            Imgproc.findContours(thresholdMat, contoursList, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
+        } else {
+            //find yellow blobs, may have to morph mask more for this to work better
+            Imgproc.findContours(thresholdMat, contoursList, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        }
+
+        //draw the contours we find
+        input.copyTo(contoursOnPlainMat);
+        Imgproc.drawContours(contoursOnPlainMat, contoursList, -1, BLUE, 2, 8);
+
+        //make a list to hold polygon objects
         MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contoursList.size()];
-        circleCenters = new Point[contoursList.size()];
-        circleRadii = new float[contoursList.size()][1];
-        boundingRects = new Rect[contoursList.size()];
 
+        if(detectingSilver) {
+            circleCenters = new Point[contoursList.size()];
+            circleRadii = new float[contoursList.size()][1];
+        } else {
+            boundingRects = new Rect[contoursList.size()];
+        }
+
+        //Find shapes in the contours and make either rects or circles
         for (int i = 0; i < contoursList.size(); i++) {
             contoursPoly[i] = new MatOfPoint2f();
             Imgproc.approxPolyDP(new MatOfPoint2f(contoursList.get(i).toArray()), contoursPoly[i], 5, true);
-            boundingRects[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
-            circleCenters[i] = new Point();
-            Imgproc.minEnclosingCircle(contoursPoly[i], circleCenters[i], circleRadii[i]);
+            if(detectingSilver){
+                circleCenters[i] = new Point();
+                Imgproc.minEnclosingCircle(contoursPoly[i], circleCenters[i], circleRadii[i]);
+            } else {
+                boundingRects[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
+            }
         }
 
+        //Change the shapes into something we can draw
         List<MatOfPoint> contoursPolyList = new ArrayList<>(contoursPoly.length);
         for (MatOfPoint2f poly : contoursPoly) {
             contoursPolyList.add(new MatOfPoint(poly.toArray()));
         }
 
         for (int i = 0; i < contoursList.size(); i++) {
+            //Draw the shapes
             Imgproc.drawContours(input, contoursPolyList, i, new Scalar(255, 186, 3), 2);
-            drawCircle(input, i);
-            drawRectangle(input, i);
+            if(detectingSilver) {
+                //Check if the circle is big enough
+                if(isCircleLargeEnough(circleRadii[i][0])){
+                    drawCircle(input, i);
+                }
+            } else {
+                //Check if the rectangle is big enough
+                if(isRectangleLargeEnough(boundingRects[i])) {
+                    drawRectangle(input, i);
+                }
+            }
         }
 
-        switch (stages[stageNum]){
-            case CB:
-                return cbMat;
-            case FINAL:
-                return input;
-            case THRESHOLD:
-                return thresholdMat;
-            case THRESHOLD_MORPH:
-                return morphedThreshold;
-            case CANNY:
-                return cannyOutput;
-            case CONTOURS_ON_INPUT:
-                return contoursOnPlainMat;
-        }
-
+        //Make sure we release anything that's a mat, and the input frame if its not being returned
         Arrays.stream(contoursPoly).forEach(Mat::release);
         contoursPolyList.forEach(Mat::release);
         contoursList.forEach(Mat::release);
         if(stages[stageNum] != Stage.FINAL) input.release();
 
-        return input;
+        //Write on each mat and then return it
+        switch (stageToRenderToViewport){
+            case FINAL:
+                stageToRenderToViewport.putText(input);
+                return input;
+            case BLURRED_INPUT:
+                stageToRenderToViewport.putText(blurredMat);
+                return blurredMat;
+            case EXTRACTED_CHANNEL:
+                stageToRenderToViewport.putText(extractedMat);
+                return extractedMat;
+            case THRESHOLD:
+                stageToRenderToViewport.putText(thresholdMat);
+                return thresholdMat;
+            case THRESHOLD_MORPH:
+                stageToRenderToViewport.putText(morphedThreshold);
+                return morphedThreshold;
+            case CONTOURS_ON_INPUT:
+                stageToRenderToViewport.putText(contoursOnPlainMat);
+                return contoursOnPlainMat;
+            default:
+                return input;
+        }
+
     }
 
-    ArrayList<MatOfPoint> findContours(Mat input){
-        ArrayList<MatOfPoint> contoursList = new ArrayList<>();
+    void blur(Mat src, Mat dst){
+    //        Imgproc.GaussianBlur(
+    //                src,
+    //                dst,
+    //                new Size(5,5),
+    //                0,
+    //                0
+    //        );
+        Imgproc.bilateralFilter(
+                src,
+                dst,
+                4,
+                25,
+                15
+        );
+    }
 
-        //Extract the Cb channel of the frame
-        Imgproc.cvtColor(input, cbMat, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(cbMat, cbMat,2);
+    void morph(Mat src, Mat dst){
+        Imgproc.erode(src, dst, erodeElement);
+        Imgproc.erode(dst, dst, erodeElement);
 
-        //Threshold the channel and then use some noise reduction
-        Imgproc.Canny(cbMat, cannyOutput, CB_THRESHOLD, CB_THRESHOLD * 2.0);
+        Imgproc.dilate(dst, dst, dilateElement);
+        Imgproc.dilate(dst, dst, dilateElement);
+    }
 
-        //Not used but meh
-        Imgproc.threshold(cbMat, thresholdMat, CB_THRESHOLD, 255, Imgproc.THRESH_BINARY_INV);
+    void extractCb(Mat src, Mat dst){
+        Imgproc.cvtColor(src, dst, Imgproc.COLOR_RGB2YCrCb);
+        Core.extractChannel(dst, dst, 2);
+    }
 
-        Imgproc.erode(cannyOutput, morphedThreshold, erodeElement);
-        Imgproc.erode(morphedThreshold, morphedThreshold, erodeElement);
+    void extractAlpha(Mat src, Mat dst){
+        Imgproc.cvtColor(src, dst, Imgproc.COLOR_RGB2GRAY);
+        Core.extractChannel(dst, dst, 0);
+    }
 
-        Imgproc.dilate(morphedThreshold, morphedThreshold, dilateElement);
-        Imgproc.dilate(morphedThreshold, morphedThreshold, dilateElement);
-
-        //Find the contours
-        Imgproc.findContours(morphedThreshold, contoursList, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-
-        input.copyTo(contoursOnPlainMat);
-        Imgproc.drawContours(contoursOnPlainMat, contoursList, -1, BLUE, 2, 8);
-
-
-        return contoursList;
-
-
+    void drawTagText(Mat input, String text, Point point){
+        Imgproc.putText(
+                input, // The buffer we're drawing on
+                text, // The text we're drawing
+                new Point( // The anchor point for the text
+                        point.x-5,  // x anchor point
+                        point.y-10), // y anchor point
+                Imgproc.FONT_HERSHEY_PLAIN, // Font
+                1.2, // Font size
+                TEAL, // Font color
+                2); // Font thickness
     }
 }
