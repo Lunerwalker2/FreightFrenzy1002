@@ -35,6 +35,7 @@ public class MeepMeepTesting {
     public static int HUB_LEVEL = (int) (Math.random() * 2);
 
 
+    //large bot
     //blue side psoe of carousel wheel -62, 64
     //7.5 towards front, 9 to the right
 

@@ -88,7 +88,6 @@ class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetr
         }
 
         return list;
-
     }
 
 
@@ -115,7 +114,7 @@ class DistanceSensors(private val hardwareMap: HardwareMap, private val telemetr
      * Returns the distance in the specified value
      */
     fun getForwardRange(distanceUnit: DistanceUnit): Double{
-        return distanceUnit.fromCm(forwardRangeReading.toDouble())
+        return distanceUnit.fromCm(forwardRangeReading)
     }
 
 
