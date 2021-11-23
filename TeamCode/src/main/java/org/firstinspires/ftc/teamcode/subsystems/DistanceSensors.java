@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.util.MB1242;
 
-public class DistanceSensor extends SubsystemBase {
+public class DistanceSensors extends SubsystemBase {
 
 
     //forward sensor
@@ -30,7 +30,7 @@ public class DistanceSensor extends SubsystemBase {
 
     private boolean firstRun = true;
 
-    public DistanceSensor(HardwareMap hardwareMap){
+    public DistanceSensors(HardwareMap hardwareMap){
         super();
 
         //Get the sensors from the hardware map
@@ -59,5 +59,44 @@ public class DistanceSensor extends SubsystemBase {
                 firstRun = false;
             }
         }
+    }
+
+
+    //Get the left sensor range in cm
+    public double getLeftRange(DistanceUnit unit) {
+        return unit.fromCm(leftRange);
+    }
+
+    public double getRightRange(DistanceUnit unit) {
+        return unit.fromCm(rightRange);
+    }
+
+    public double getForwardRange(DistanceUnit unit) {
+        return forwardRangeReading;
+    }
+
+    //Start taking range readings
+    public void startReading() {
+        takingRangeReading = true;
+    }
+
+    //Stop taking range readings
+    public void stopReading() {
+        takingRangeReading = false;
+    }
+
+
+    //Tells if the delay timer has expired or not
+    public boolean hasDelayExpired() {
+        return delayTimer.milliseconds() >= readingDelayMs;
+    }
+
+
+    //Tests the sensor by running a range command and seeing if there's an output, takes at least 100ms
+    public boolean test() {
+        forwardSensor.ping();
+        ElapsedTime timer = new ElapsedTime();
+        while(timer.milliseconds() < 100);
+        return forwardSensor.readRange() != 20; //20cm is the minimum range, so we test with it
     }
 }
