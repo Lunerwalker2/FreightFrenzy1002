@@ -39,10 +39,12 @@ public class MeepMeepTesting {
     //blue side psoe of carousel wheel -62, 64
     //7.5 towards front, 9 to the right
 
+    private static final Pose2d blueStartingPosition = new Pose2d(6, 63.5, toRadians(90));
+    private static final Pose2d redStartingPosition = blueStartingPosition.copy(blueStartingPosition.getX(), -blueStartingPosition.getY(), -blueStartingPosition.getHeading());
+
     public static void main(String[] args) {
 
         System.setProperty("sun.java2d.opengl", "true");
-        System.out.println("\u2b1b / \u2b1c");
 
         MeepMeep mm = new MeepMeep(600);
 
@@ -51,7 +53,7 @@ public class MeepMeepTesting {
                 .setDimensions(12, 13)
                 .setColorScheme(new ColorSchemeBlueDark())
                 .followTrajectorySequence(drive ->
-                    drive.trajectorySequenceBuilder(new Pose2d(6, 63.5, toRadians(90)))
+                    drive.trajectorySequenceBuilder(blueStartingPosition)
                             .setReversed(true)
                             .splineTo(new Vector2d(-4, 38), toRadians(-115))
                             .setReversed(false)
@@ -59,7 +61,7 @@ public class MeepMeepTesting {
                             .splineTo(new Vector2d(20, 63.5), toRadians(3))
                             .splineTo(new Vector2d(50, 63.5), toRadians(0))
                             //Intake
-                            .waitSeconds(1.5)
+                            .waitSeconds(1.0)
                             .setReversed(true)
                             .splineTo(new Vector2d(20, 63.5), toRadians(180))
                             .splineTo(new Vector2d(-4, 40), toRadians(-115))
@@ -71,7 +73,7 @@ public class MeepMeepTesting {
                 .setDimensions(12, 13)
                 .setColorScheme(new ColorSchemeRedDark())
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(6, -63.5, toRadians(-90)))
+                        drive.trajectorySequenceBuilder(redStartingPosition)
                                 .setReversed(true)
                                 .splineTo(new Vector2d(-4, -38), toRadians(115))
                                 .setReversed(false)
@@ -79,7 +81,7 @@ public class MeepMeepTesting {
                                 .splineTo(new Vector2d(20, -63.5), toRadians(-3))
                                 .splineTo(new Vector2d(50, -63.5), toRadians(0))
                                 //Intake
-                                .waitSeconds(1.5)
+                                .waitSeconds(1.0)
                                 .setReversed(true)
                                 .splineTo(new Vector2d(20, -63.5), toRadians(-180))
                                 .splineTo(new Vector2d(-4, -40), toRadians(115))

@@ -19,10 +19,6 @@ public class MecDriveTeleOp extends LinearOpMode {
     DcMotorEx rb;
 
 
-    static final double VX_WEIGHT = 1;
-    static final double VY_WEIGHT = 1;
-    static final double OMEGA_WEIGHT = 1;
-
     double slowModeMult = 1.0;
 
     ArrayList<DcMotorEx> motors = new ArrayList<>();

@@ -35,7 +35,7 @@ public class RelocalizeCommand extends CommandBase {
 
     private Pose2d averagePosition = new Pose2d();
 
-    public RelocalizeCommand(Consumer<Pose2d> poseConsumer, DistanceSensors distanceSensors, DoubleSupplier headingSupplier, boolean redSide){
+    public RelocalizeCommand(Consumer<Pose2d> poseConsumer, DistanceSensors distanceSensors, DoubleSupplier headingSupplier, boolean redSide) {
         this(poseConsumer, distanceSensors, headingSupplier, redSide, 0);
         isUsingTimer = false;
     }
@@ -66,20 +66,28 @@ public class RelocalizeCommand extends CommandBase {
         //Find our current heading once so we dont have to keep reading it
         double heading = headingSupplier.getAsDouble();
 
+        //test for possible invalid values
+        if (distanceSensors.getForwardRange(DistanceUnit.INCH) < 8 ||
+                distanceSensors.getForwardRange(DistanceUnit.INCH) > 96 ||
+                distanceSensors.getLeftRange(DistanceUnit.INCH) < 3 ||
+                distanceSensors.getLeftRange(DistanceUnit.INCH) > 30 ||
+                distanceSensors.getRightRange(DistanceUnit.INCH) < 3 ||
+                distanceSensors.getRightRange(DistanceUnit.INCH) > 30) return;
+
         //Find our forward distance (x in field coordinates)
-        double x =
-                distanceSensors.getForwardRange(DistanceUnit.INCH) * Math.cos(heading);
+        double x = (FORWARD_SENSOR_OFFSET - distanceSensors.getForwardRange(DistanceUnit.INCH)) * Math.cos(heading);
 
         //Find our side distance (y in field coordinates)
         double y = (redSide) ?
                 (distanceSensors.getRightRange(DistanceUnit.INCH) * Math.cos(heading)) - RIGHT_SENSOR_OFFSET :
                 LEFT_SENSOR_OFFSET - (distanceSensors.getLeftRange(DistanceUnit.INCH) * Math.cos(heading));
 
+
         //Put them together in a position
         Pose2d currentPosition = new Pose2d(x, y, heading);
 
         //if its the first run we need to make sure we have an initial position for the average to work
-        if(firstRun){
+        if (firstRun) {
             averagePosition = new Pose2d(currentPosition.getX(), currentPosition.getY(), currentPosition.getHeading());
             firstRun = false;
         } else {
@@ -97,12 +105,12 @@ public class RelocalizeCommand extends CommandBase {
 
     //If we are using a timer, then see if its expired; otherwise, just return false.
     @Override
-    public boolean isFinished(){
+    public boolean isFinished() {
         return isUsingTimer && timer.milliseconds() > millis;
     }
 
     @Override
-    public void end(boolean interrupted){
+    public void end(boolean interrupted) {
         distanceSensors.stopReading();
     }
 
