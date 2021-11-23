@@ -40,13 +40,13 @@ public class FreightPipeline extends OpenCvPipeline {
 
     ArrayList<MatOfPoint> contoursList = new ArrayList<>();
 
-    static final int CB_THRESHOLD = 80;
-    static final int GREY_THRESHOLD = 180;
+    public static int CB_THRESHOLD = 80;
+    public static int GREY_THRESHOLD = 180;
 
-    static final int minimumRadius = 50;
-    static final int maximumRadius = 150;
-    static final int minimumSideLength = 20;
-    static final int maximumSideLength = 200;
+    public static int minimumRadius = 50;
+    public static int maximumRadius = 150;
+    public static int minimumSideLength = 20;
+    public static int maximumSideLength = 200;
 
     static final Scalar TEAL = new Scalar(3, 148, 252);
     static final Scalar PURPLE = new Scalar(158, 52, 235);
@@ -158,10 +158,10 @@ public class FreightPipeline extends OpenCvPipeline {
 
         if(detectingSilver){
             //find only the outer contours
-            Imgproc.findContours(thresholdMat, contoursList, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
+            Imgproc.findContours(morphedThreshold, contoursList, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
         } else {
             //find yellow blobs, may have to morph mask more for this to work better
-            Imgproc.findContours(thresholdMat, contoursList, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+            Imgproc.findContours(morphedThreshold, contoursList, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
         }
 
         //draw the contours we find
@@ -245,13 +245,6 @@ public class FreightPipeline extends OpenCvPipeline {
     }
 
     void blur(Mat src, Mat dst){
-    //        Imgproc.GaussianBlur(
-    //                src,
-    //                dst,
-    //                new Size(5,5),
-    //                0,
-    //                0
-    //        );
         Imgproc.bilateralFilter(
                 src,
                 dst,
@@ -259,6 +252,14 @@ public class FreightPipeline extends OpenCvPipeline {
                 25,
                 15
         );
+        Imgproc.GaussianBlur(
+                    src,
+                    dst,
+                    new Size(5,5),
+                    0,
+                    0
+            );
+
     }
 
     void morph(Mat src, Mat dst){
