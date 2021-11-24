@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.auto
 import com.arcrobotics.ftclib.command.CommandOpMode
 import com.arcrobotics.ftclib.command.CommandScheduler
 import com.arcrobotics.ftclib.command.RunCommand
+import com.arcrobotics.ftclib.command.WaitCommand
 import com.qualcomm.hardware.lynx.LynxModule
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 
@@ -15,6 +16,8 @@ abstract class AutoBase : CommandOpMode() {
     the hardware map is set in init.
      */
     val allHubs by lazy { hardwareMap.getAll(LynxModule::class.java) }
+
+    fun waitFor(millis: Long): WaitCommand = WaitCommand(millis);
 
     override fun initialize() {
         //Set the mode to manual since we can clear this every loop (see the caching ex. in the samples)
@@ -30,8 +33,6 @@ abstract class AutoBase : CommandOpMode() {
                     }
                 }
         ))
-
-
     }
 
 }

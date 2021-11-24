@@ -3,10 +3,7 @@ package org.firstinspires.ftc.teamcode.auto.duck
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.acmerobotics.roadrunner.trajectory.Trajectory
-import com.arcrobotics.ftclib.command.InstantCommand
-import com.arcrobotics.ftclib.command.ParallelRaceGroup
-import com.arcrobotics.ftclib.command.SequentialCommandGroup
-import com.arcrobotics.ftclib.command.WaitCommand
+import com.arcrobotics.ftclib.command.*
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.auto.AutoBase
 import org.firstinspires.ftc.teamcode.commands.CarouselWheelCommand
@@ -83,14 +80,11 @@ class BlueDuckAuto : AutoBase() {
                     telemetry.addLine("The program started!")
                     telemetry.update()
                 }),
-                ParallelRaceGroup(
-                        WaitCommand(2000),
-                        InstantCommand(claw::closeClaw, claw)
-                ),
+                InstantCommand(claw::closeClaw, claw).alongWith(waitFor(2000)),
                 FollowTrajectoryCommand(drive, goForward),
                 FollowTrajectorySequenceCommand(drive, turnRight),
                 FollowTrajectoryCommand(drive, goToCarousel),
-                CarouselWheelCommand(carouselWheel, false, 5000),
+                CarouselWheelCommand(carouselWheel, false).withTimeout(5000),
                 FollowTrajectoryCommand(drive, goToStorageUnit),
         ))
 

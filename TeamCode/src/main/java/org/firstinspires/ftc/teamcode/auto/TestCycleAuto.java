@@ -73,24 +73,21 @@ public class TestCycleAuto extends AutoBase {
 
         schedule(
                 new InstantCommand(() -> {
-                        telemetry.addLine("The program started!");
-                        telemetry.update();
+                    telemetry.addLine("The program started!");
+                    telemetry.update();
                 }),
                 new WaitCommand(1000),
                 new FollowTrajectoryCommand(drive, goForward, 0),
                 new FollowTrajectorySequenceCommand(drive, turnLeft, 0),
                 new FollowTrajectoryCommand(drive, goToWarehouse, 0),
-                new ParallelCommandGroup(
-                        new ParallelDeadlineGroup(
-                                new WaitCommand(300),
-                                new RelocalizeCommand(
-                                        (pose2d -> drive.setPoseEstimate(pose2d)),
-                                        distanceSensors,
-                                        () -> drive.getPoseEstimate().getHeading(),
-                                        false
-                                )
-                        ),
-                        new CarouselWheelCommand(carouselWheel, true, 2000)
+                new ParallelDeadlineGroup(
+                        new CarouselWheelCommand(carouselWheel, true).withTimeout(500),
+                        new RelocalizeCommand(
+                                (pose2d -> drive.setPoseEstimate(pose2d)),
+                                distanceSensors,
+                                () -> drive.getExternalHeading(),
+                                false
+                        )
                 ),
                 new FollowTrajectorySequenceCommand(drive, backToHub, 0)
         );

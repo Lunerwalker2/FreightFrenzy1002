@@ -133,8 +133,7 @@ class RedHubDuckAuto : AutoBase() {
                     telemetry.addLine("Detected hub level: $hubLevel")
                     telemetry.update()
                 }),
-                InstantCommand(claw::closeClaw, claw),
-                WaitCommand(2000),
+                InstantCommand(claw::closeClaw, claw).alongWith(waitFor(2000)),
                 FollowTrajectoryCommand(drive, goForward, 200),
                 FollowTrajectorySequenceCommand(drive, turnToHub, 300),
                 FollowTrajectoryCommand(drive, goToHub),

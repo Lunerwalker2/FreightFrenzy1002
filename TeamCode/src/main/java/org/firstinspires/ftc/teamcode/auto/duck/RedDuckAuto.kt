@@ -85,14 +85,11 @@ class RedDuckAuto : AutoBase() {
                     telemetry.addLine("The program started!")
                     telemetry.update()
                 }),
-                ParallelRaceGroup(
-                        WaitCommand(2000),
-                        InstantCommand(claw::closeClaw, claw)
-                ),
+                InstantCommand(claw::closeClaw, claw).alongWith(waitFor(2000)),
                 FollowTrajectoryCommand(drive, goForward),
                 FollowTrajectorySequenceCommand(drive, turnLeft),
                 FollowTrajectoryCommand(drive,goToCarousel),
-                CarouselWheelCommand(carouselWheel, true, 5000),
+                CarouselWheelCommand(carouselWheel, false).withTimeout(5000),
                 FollowTrajectoryCommand(drive, goToStorageUnit)
         ))
 

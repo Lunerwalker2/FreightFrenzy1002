@@ -28,29 +28,19 @@ public class RelocalizeCommand extends CommandBase {
     private final DoubleSupplier headingSupplier;
     private final Consumer<Pose2d> poseConsumer;
     private final boolean redSide;
-    private final ElapsedTime timer = new ElapsedTime();
-    private final int millis;
-    private boolean isUsingTimer;
     private boolean firstRun = true;
 
     private Pose2d averagePosition = new Pose2d();
 
-    public RelocalizeCommand(Consumer<Pose2d> poseConsumer, DistanceSensors distanceSensors, DoubleSupplier headingSupplier, boolean redSide) {
-        this(poseConsumer, distanceSensors, headingSupplier, redSide, 0);
-        isUsingTimer = false;
-    }
-
     /**
      * @param headingSupplier Supplier of the heading of the robot IN RADIANS.
      */
-    public RelocalizeCommand(Consumer<Pose2d> poseConsumer, DistanceSensors distanceSensors, DoubleSupplier headingSupplier, boolean redSide, int millis) {
+    public RelocalizeCommand(Consumer<Pose2d> poseConsumer, DistanceSensors distanceSensors, DoubleSupplier headingSupplier, boolean redSide) {
         super();
         this.distanceSensors = distanceSensors;
         this.headingSupplier = headingSupplier;
         this.poseConsumer = poseConsumer;
         this.redSide = redSide;
-        this.millis = millis;
-        this.isUsingTimer = true;
         addRequirements(distanceSensors);
     }
 
@@ -58,7 +48,6 @@ public class RelocalizeCommand extends CommandBase {
     public void initialize() {
         //Start taking range measurements from the sensors
         distanceSensors.startReading();
-        timer.reset();
     }
 
     @Override
@@ -106,7 +95,7 @@ public class RelocalizeCommand extends CommandBase {
     //If we are using a timer, then see if its expired; otherwise, just return false.
     @Override
     public boolean isFinished() {
-        return isUsingTimer && timer.milliseconds() > millis;
+        return false;
     }
 
     @Override
