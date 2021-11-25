@@ -46,8 +46,7 @@ public class DistanceSensors extends SubsystemBase {
         if(takingRangeReading){
             //Check if its been longer than our delay to properly let the sensor perform
             if(hasDelayExpired() && !firstRun){
-                forwardRangeReading = forwardSensor.readRange();
-                //TODO: Read and store the left and right sensors IN CENTIMETERS (DistanceUnit.CM)
+                forwardRangeReading = forwardSensor.getDistance(DistanceUnit.CM);
                 rightRange = rightSensor.getDistance(DistanceUnit.CM);
                 leftRange = leftSensor.getDistance(DistanceUnit.CM);
                 forwardSensor.ping();
@@ -97,6 +96,6 @@ public class DistanceSensors extends SubsystemBase {
         forwardSensor.ping();
         ElapsedTime timer = new ElapsedTime();
         while(timer.milliseconds() < 100);
-        return forwardSensor.readRange() != 20; //20cm is the minimum range, so we test with it
+        return forwardSensor.getDistance(DistanceUnit.CM) != 20; //20cm is the minimum range, so we test with it
     }
 }

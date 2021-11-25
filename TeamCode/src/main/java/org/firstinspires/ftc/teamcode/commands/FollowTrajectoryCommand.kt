@@ -11,11 +11,7 @@ Takes an RR trajectory and runs it asynchronously.
  */
 class FollowTrajectoryCommand(private val drive: SampleMecanumDrive,
                               private val trajectory: Trajectory,
-                              private val delayAtEndMs: Int = 0
 ) : CommandBase() {
-
-    private val timer = ElapsedTime()
-    private var trajDone = false
 
     //Start the follower
     override fun initialize() {
@@ -25,15 +21,11 @@ class FollowTrajectoryCommand(private val drive: SampleMecanumDrive,
     //Update our drive powers
     override fun execute() {
         drive.update()
-        if(!drive.isBusy && !trajDone){
-            timer.reset()
-            trajDone = true
-        }
     }
 
 
     //End when the trajectory is finished
     override fun isFinished(): Boolean {
-        return trajDone && timer.milliseconds() >= delayAtEndMs
+        return drive.isBusy
     }
 }

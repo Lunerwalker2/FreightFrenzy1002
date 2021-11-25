@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -71,25 +72,30 @@ public class TestCycleAuto extends AutoBase {
         distanceSensors = new DistanceSensors(hardwareMap);
         carouselWheel = new CarouselWheel(hardwareMap);
 
-        schedule(
-                new InstantCommand(() -> {
-                    telemetry.addLine("The program started!");
-                    telemetry.update();
-                }),
-                new WaitCommand(1000),
-                new FollowTrajectoryCommand(drive, goForward, 0),
-                new FollowTrajectorySequenceCommand(drive, turnLeft, 0),
-                new FollowTrajectoryCommand(drive, goToWarehouse, 0),
-                new ParallelDeadlineGroup(
-                        new CarouselWheelCommand(carouselWheel, true).withTimeout(500),
-                        new RelocalizeCommand(
-                                (pose2d -> drive.setPoseEstimate(pose2d)),
-                                distanceSensors,
-                                () -> drive.getExternalHeading(),
-                                false
-                        )
-                ),
-                new FollowTrajectorySequenceCommand(drive, backToHub, 0)
+        schedule(new SequentialCommandGroup(
+                        new InstantCommand(() -> {
+                            telemetry.addLine("The program started!");
+                            telemetry.update();
+                        }),
+                        new WaitCommand(1000),
+                        new FollowTrajectoryCommand(drive, goForward),
+                        new FollowTrajectorySequenceCommand(drive, turnLeft),
+                        new FollowTrajectoryCommand(drive, goToWarehouse).andThen(waitFor(400)),
+                        new ParallelDeadlineGroup(
+                                new CarouselWheelCommand(carouselWheel, true).withTimeout(500),
+                                new RelocalizeCommand(
+                                        (pose) -> drive.setPoseEstimate(new Pose2d(
+                                                pose.getX(),
+                                                pose.getY(),
+                                                pose.getHeading()
+                                        )),
+                                        distanceSensors,
+                                        () -> drive.getExternalHeading(),
+                                        false
+                                )
+                        ).andThen(waitFor(300)),
+                        new FollowTrajectorySequenceCommand(drive, backToHub)
+                )
         );
     }
 }

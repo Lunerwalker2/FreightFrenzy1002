@@ -12,12 +12,9 @@ Command to follow a RR trajectory sequence
 Comments omitted as they are identical to the regular trajectory command
  */
 class FollowTrajectorySequenceCommand(private val drive: SampleMecanumDrive,
-                                      private val trajectorySequence: TrajectorySequence,
-                                      private val delayAtEndMs: Int = 0
-) : CommandBase() {
+                                      private val trajectorySequence: TrajectorySequence
+                                      ) : CommandBase() {
 
-    private val timer = ElapsedTime()
-    private var trajDone = false
 
     override fun initialize() {
         drive.followTrajectorySequenceAsync(trajectorySequence)
@@ -25,14 +22,10 @@ class FollowTrajectorySequenceCommand(private val drive: SampleMecanumDrive,
 
     override fun execute() {
         drive.update()
-        if(!drive.isBusy && !trajDone){
-            timer.reset()
-            trajDone = true
-        }
     }
 
 
     override fun isFinished(): Boolean {
-        return trajDone && timer.milliseconds() >= delayAtEndMs
+        return drive.isBusy
     }
 }

@@ -52,7 +52,7 @@ public class RelocalizeCommand extends CommandBase {
 
     @Override
     public void execute() {
-        //Find our current heading once so we dont have to keep reading it
+        //Find our current heading once so we don't have to keep reading it
         double heading = headingSupplier.getAsDouble();
 
         //test for possible invalid values
@@ -92,11 +92,7 @@ public class RelocalizeCommand extends CommandBase {
         poseConsumer.accept(averagePosition);
     }
 
-    //If we are using a timer, then see if its expired; otherwise, just return false.
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
+    //Since this command will only be ended via cancellation, we dont need to specify an end condition
 
     @Override
     public void end(boolean interrupted) {

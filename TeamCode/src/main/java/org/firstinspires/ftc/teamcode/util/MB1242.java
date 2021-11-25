@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
         description = "ultrasonic distance sensor",
         xmlTag = "MB1242"
 )
-public class MB1242 extends I2cDeviceSynchDevice<I2cDeviceSynch> {
+public class MB1242 extends I2cDeviceSynchDevice<I2cDeviceSynch> implements DistanceSensor {
 
 
     @Override
@@ -47,15 +48,17 @@ public class MB1242 extends I2cDeviceSynchDevice<I2cDeviceSynch> {
         deviceClient.write(0xE0, TypeConversion.intToByteArray(0x51));
     }
 
-    /**
-     * Allow 100ms between pinging.
-     */
-    public short readRange(){
+
+    private short readRawRange(){
         return TypeConversion.byteArrayToShort(deviceClient.read(0xE1, 2));
     }
 
-    public double readRange(DistanceUnit unit){
-        return unit.fromCm(readRange());
+    /**
+     * Allow 100ms between pinging. Returns in centimeters
+     */
+    @Override
+    public double getDistance(DistanceUnit unit){
+        return unit.fromCm(readRawRange());
     }
 
 
