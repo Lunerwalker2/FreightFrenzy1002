@@ -36,7 +36,7 @@ public class TestCycleAuto extends AutoBase {
     private Trajectory goToWarehouse;
     private TrajectorySequence backToHub;
 
-    private Pose2d startPose = new Pose2d(6, 63, toRadians(-90));
+    private Pose2d startPose = new Pose2d(9.6, 64.0, toRadians(-90));
 
     @Override
     public void initialize() {
@@ -50,7 +50,7 @@ public class TestCycleAuto extends AutoBase {
         telemetry.update();
 
         goForward = drive.trajectoryBuilder(startPose)
-                .forward(8)
+                .forward(15)
                 .build();
 
         turnLeft = drive.trajectorySequenceBuilder(goForward.end())
@@ -58,7 +58,7 @@ public class TestCycleAuto extends AutoBase {
                 .build();
 
         goToWarehouse = drive.trajectoryBuilder(turnLeft.end())
-                .splineTo(new Vector2d(50, 60), toRadians(0))
+                .splineTo(new Vector2d(40, 58), toRadians(0))
                 .build();
 
         backToHub = drive.trajectorySequenceBuilder(goToWarehouse.end())

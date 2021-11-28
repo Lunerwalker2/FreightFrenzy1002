@@ -46,7 +46,7 @@ public class DistanceSensorTesting extends CommandOpMode {
     public void initialize() {
 
         drive = new SampleMecanumDrive(hardwareMap);
-        drive.setPoseEstimate(new Pose2d(0, 0, toRadians(0)));
+        drive.setPoseEstimate(new Pose2d(-33.6, 64.0, toRadians(-90.0)));
 
         distanceSensors = new DistanceSensors(hardwareMap);
 
