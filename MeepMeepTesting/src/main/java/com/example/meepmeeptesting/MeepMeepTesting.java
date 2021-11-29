@@ -73,7 +73,7 @@ public class MeepMeepTesting {
                                 .splineTo(new Vector2d(-4, 38), toRadians(-115))
                                 .waitSeconds(0.3)
                                 .setReversed(false)
-                                .splineToSplineHeading(new Pose2d(5, 57, toRadians(10)), toRadians(40))
+                                .splineToSplineHeading(new Pose2d(5, 57, toRadians(10)), toRadians(38))
                                 .addDisplacementMarker(() -> System.out.println("marker"))
                                 .splineToSplineHeading(new Pose2d(11, 62, toRadians(0)), toRadians(35))
                                 .addDisplacementMarker(() -> System.out.println("marker"))
@@ -85,9 +85,9 @@ public class MeepMeepTesting {
                                 //Intake
                                 .waitSeconds(1.0)
                                 .setReversed(true)
-                                .splineTo(new Vector2d(20, 63.5), toRadians(180))
-                                .splineToConstantHeading(new Vector2d(10, 60), toRadians(-105))
-                                .splineToSplineHeading(new Pose2d(-4, 40, toRadians(70)), toRadians(-115))
+                                .splineTo(new Vector2d(16, 63.5), toRadians(180))
+                                .splineToConstantHeading(new Vector2d(8, 60), toRadians(-120))
+                                .splineToSplineHeading(new Pose2d(-4, 38, toRadians(60)), toRadians(-120))
                                 .build()
                 );
 
