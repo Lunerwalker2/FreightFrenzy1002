@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleOp.testing;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -16,7 +17,10 @@ import org.firstinspires.ftc.teamcode.util.Extensions;
 
 import java.util.ArrayList;
 
+@TeleOp
 public class FieldRelativeDrive extends LinearOpMode {
+
+    boolean prevState = false;
 
     DcMotorEx lf;
     DcMotorEx lb;
@@ -30,8 +34,8 @@ public class FieldRelativeDrive extends LinearOpMode {
 
     ArrayList<DcMotorEx> motors = new ArrayList<>();
 
-    double getRobotAngle(){
-        double angle =  imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+    double getRobotAngle() {
+        double angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
         angle = AngleUnit.normalizeRadians(angle - offset);
         return angle;
     }
@@ -58,7 +62,7 @@ public class FieldRelativeDrive extends LinearOpMode {
         motors.add(rb);
 
         motors.forEach((motor) -> motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER));
-        motors.forEach((motor) -> motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE));
+        motors.forEach((motor) -> motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT));
 
         motors.forEach((motor) -> {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -70,35 +74,35 @@ public class FieldRelativeDrive extends LinearOpMode {
         lb.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-        while (!isStarted()){
-            telemetry.addLine("Current offset is "+offset);
+        while (!isStarted()) {
+            telemetry.addLine("Current offset is " + offset);
             telemetry.addLine("Press left bumper to reset to current heading");
             telemetry.update();
 
-            if(gamepad1.left_bumper) offset = getRobotAngle();
+            if (gamepad1.left_bumper) offset = getRobotAngle();
         }
 
 
-        while (opModeIsActive()){
-            if(isStopRequested()) return;
+        while (opModeIsActive()) {
+            if (isStopRequested()) return;
 
             double heading = getRobotAngle();
 
 
-            if(gamepad1.left_bumper) offset = heading;
-
+            if (gamepad1.left_bumper && !prevState) offset += heading;
+            prevState = gamepad1.left_bumper;
 
             double y = (Math.abs(gamepad1.left_stick_y) > 0.05) ? cubeInput(-gamepad1.left_stick_y, 0.52) : 0.0; // Remember, this is reversed!
             double x = (Math.abs(gamepad1.left_stick_x) > 0.05) ? cubeInput(gamepad1.left_stick_x * 1.1, 0.52) : 0.0; // Counteract imperfect strafing
-            double rx = (Math.abs(gamepad1.right_stick_x) > 0.05) ? cubeInput(gamepad1.right_stick_x, 6) : 0.0;
+            double rx = (Math.abs(gamepad1.right_stick_x) > 0.05) ? cubeInput(gamepad1.right_stick_x, 0.6) : 0.0;
 
             //Get the field centric inputs
 
             Pose2d pose = Extensions.Companion.toFieldRelative(new Pose2d(x, y, rx), heading);
 
+            x = pose.getX();
             y = pose.getY();
-            x = pose.getY();
-            rx= pose.getHeading();
+            rx = pose.getHeading();
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
@@ -129,9 +133,9 @@ public class FieldRelativeDrive extends LinearOpMode {
 
     }
 
-    double cubeInput(double input, double factor){
+    double cubeInput(double input, double factor) {
         double t = factor * Math.pow(input, 3);
-        double r = input * (1-factor);
-        return t+r;
+        double r = input * (1 - factor);
+        return t + r;
     }
 }
