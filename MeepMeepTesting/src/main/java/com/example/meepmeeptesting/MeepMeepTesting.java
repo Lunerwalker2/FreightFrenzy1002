@@ -65,7 +65,7 @@ public class MeepMeepTesting {
 
         RoadRunnerBotEntity blueCycleRoute = new DefaultBotBuilder(mm)
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
-                .setDimensions(12, 13)
+                .setDimensions(12, 17)
                 .setColorScheme(new ColorSchemeBlueDark())
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(blueStartingPosition)
@@ -73,20 +73,27 @@ public class MeepMeepTesting {
                                 .splineTo(new Vector2d(-4, 38), toRadians(-115))
                                 .waitSeconds(0.3)
                                 .setReversed(false)
-                                .splineTo(new Vector2d(16, 63), toRadians(10))
-                                .splineTo(new Vector2d(20, 63.5), toRadians(3))
-                                .splineTo(new Vector2d(50, 63.5), toRadians(0))
+                                .splineToSplineHeading(new Pose2d(5, 57, toRadians(10)), toRadians(40))
+                                .addDisplacementMarker(() -> System.out.println("marker"))
+                                .splineToSplineHeading(new Pose2d(11, 62, toRadians(0)), toRadians(35))
+                                .addDisplacementMarker(() -> System.out.println("marker"))
+                                .splineToConstantHeading(new Vector2d(18, 63.5), toRadians(0))
+                                .addDisplacementMarker(() -> System.out.println("marker"))
+//                                .splineTo(new Vector2d(20, 63.5), toRadians(2))
+//                                .addDisplacementMarker(() -> System.out.println("marker"))
+                                .splineToSplineHeading(new Pose2d(50, 63.5, toRadians(0)), toRadians(0))
                                 //Intake
                                 .waitSeconds(1.0)
                                 .setReversed(true)
                                 .splineTo(new Vector2d(20, 63.5), toRadians(180))
-                                .splineTo(new Vector2d(-4, 40), toRadians(-115))
+                                .splineToConstantHeading(new Vector2d(10, 60), toRadians(-105))
+                                .splineToSplineHeading(new Pose2d(-4, 40, toRadians(70)), toRadians(-115))
                                 .build()
                 );
 
         RoadRunnerBotEntity redCycleRoute = new DefaultBotBuilder(mm)
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
-                .setDimensions(12, 13)
+                .setDimensions(12, 17)
                 .setColorScheme(new ColorSchemeRedDark())
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(redStartingPosition)
@@ -159,7 +166,7 @@ public class MeepMeepTesting {
                 .setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)
                 .setTheme(new ColorSchemeRedDark())
                 .setBackgroundAlpha(0.95f)
-                .addEntity(blueTestCycle)
+//                .addEntity(blueTestCycle)
                 .addEntity(blueCycleRoute)
                 .addEntity(redCycleRoute)
                 .start();
