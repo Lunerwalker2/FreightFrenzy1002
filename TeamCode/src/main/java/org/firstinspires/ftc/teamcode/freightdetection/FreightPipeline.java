@@ -8,6 +8,8 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.features2d.SimpleBlobDetector;
+import org.opencv.features2d.SimpleBlobDetector_Params;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -29,7 +31,6 @@ public class FreightPipeline extends OpenCvPipeline {
 
     Mat blurredMat = new Mat();
     Mat extractedMat = new Mat();
-//    Mat cannyOutput = new Mat();
     Mat thresholdMat = new Mat();
     Mat morphedThreshold = new Mat();
     Mat contoursOnPlainMat = new Mat();
@@ -45,8 +46,8 @@ public class FreightPipeline extends OpenCvPipeline {
 
     public static int minimumRadius = 50;
     public static int maximumRadius = 150;
-    public static int minimumSideLength = 20;
-    public static int maximumSideLength = 200;
+    public static int minimumSideLength = 50;
+    public static int maximumSideLength = 145;
 
     static final Scalar TEAL = new Scalar(3, 148, 252);
     static final Scalar PURPLE = new Scalar(158, 52, 235);
@@ -129,7 +130,8 @@ public class FreightPipeline extends OpenCvPipeline {
     }
 
     private boolean isRectangleLargeEnough(Rect rect){
-        return (rect.height > minimumSideLength) && (rect.width > minimumSideLength);
+        return (rect.height > minimumSideLength) && (rect.width > minimumSideLength) &&
+                (rect.height < maximumSideLength) && (rect.width < maximumSideLength);
     }
 
 
@@ -285,8 +287,8 @@ public class FreightPipeline extends OpenCvPipeline {
                 input, // The buffer we're drawing on
                 text, // The text we're drawing
                 new Point( // The anchor point for the text
-                        point.x-5,  // x anchor point
-                        point.y-10), // y anchor point
+                        point.x-30,  // x anchor point
+                        point.y-50), // y anchor point
                 Imgproc.FONT_HERSHEY_PLAIN, // Font
                 1.2, // Font size
                 TEAL, // Font color
