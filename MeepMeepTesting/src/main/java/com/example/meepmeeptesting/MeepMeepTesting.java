@@ -14,6 +14,7 @@ import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
 import com.noahbres.meepmeep.core.entity.Entity;
 import com.noahbres.meepmeep.roadrunner.Constraints;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
+import com.noahbres.meepmeep.roadrunner.DriveShim;
 import com.noahbres.meepmeep.roadrunner.DriveTrainType;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequence;
@@ -70,24 +71,25 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(blueStartingPosition)
                                 .setReversed(true)
-                                .splineTo(new Vector2d(-4, 38), toRadians(-115))
+                                .splineTo(new Vector2d(-4.5, 40), toRadians(-112))
                                 .waitSeconds(0.3)
                                 .setReversed(false)
-                                .splineToSplineHeading(new Pose2d(5, 57, toRadians(10)), toRadians(38))
+                                .splineToSplineHeading(new Pose2d(9, 62, toRadians(10)), toRadians(21))
                                 .addDisplacementMarker(() -> System.out.println("marker"))
-                                .splineToSplineHeading(new Pose2d(11, 62, toRadians(0)), toRadians(35))
+                                .splineToSplineHeading(new Pose2d(19, 63.5, toRadians(0)), toRadians(0))
                                 .addDisplacementMarker(() -> System.out.println("marker"))
-                                .splineToConstantHeading(new Vector2d(18, 63.5), toRadians(0))
+                                .splineTo(new Vector2d(50, 63.5), toRadians(0))
                                 .addDisplacementMarker(() -> System.out.println("marker"))
-//                                .splineTo(new Vector2d(20, 63.5), toRadians(2))
-//                                .addDisplacementMarker(() -> System.out.println("marker"))
-                                .splineToSplineHeading(new Pose2d(50, 63.5, toRadians(0)), toRadians(0))
                                 //Intake
                                 .waitSeconds(1.0)
                                 .setReversed(true)
-                                .splineTo(new Vector2d(16, 63.5), toRadians(180))
-                                .splineToConstantHeading(new Vector2d(8, 60), toRadians(-120))
-                                .splineToSplineHeading(new Pose2d(-4, 38, toRadians(60)), toRadians(-120))
+                                .splineToSplineHeading(new Pose2d(19, 63.5, toRadians(0)), toRadians(180))
+                                .addDisplacementMarker(() -> System.out.println("marker"))
+                                .splineToSplineHeading(new Pose2d(9, 62, toRadians(10)), toRadians(-159))
+                                .addDisplacementMarker(() -> System.out.println("marker"))
+                                .splineToSplineHeading(new Pose2d(-4.5, 40, toRadians(75)), toRadians(-105))
+                                .addDisplacementMarker(() -> System.out.println("marker"))
+                                .setReversed(false)
                                 .build()
                 );
 
@@ -98,19 +100,29 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(redStartingPosition)
                                 .setReversed(true)
-                                .splineTo(new Vector2d(-4, -38), toRadians(115))
+                                .splineTo(new Vector2d(-4.5, -40), toRadians(112))
                                 .waitSeconds(0.3)
                                 .setReversed(false)
-                                .splineTo(new Vector2d(16, -63), toRadians(-10))
-                                .splineTo(new Vector2d(20, -63.5), toRadians(-3))
+                                .splineToSplineHeading(new Pose2d(9, -62, toRadians(-10)), toRadians(-21))
+                                .addDisplacementMarker(() -> System.out.println("marker"))
+                                .splineToSplineHeading(new Pose2d(19, -63.5, toRadians(0)), toRadians(0))
+                                .addDisplacementMarker(() -> System.out.println("marker"))
                                 .splineTo(new Vector2d(50, -63.5), toRadians(0))
+                                .addDisplacementMarker(() -> System.out.println("marker"))
                                 //Intake
                                 .waitSeconds(1.0)
                                 .setReversed(true)
-                                .splineTo(new Vector2d(20, -63.5), toRadians(-180))
-                                .splineTo(new Vector2d(-4, -40), toRadians(115))
+                                .splineToSplineHeading(new Pose2d(19, -63.5, toRadians(0)), toRadians(180))
+                                .addDisplacementMarker(() -> System.out.println("marker"))
+                                .splineToSplineHeading(new Pose2d(9, -62, toRadians(-10)), toRadians(159))
+                                .addDisplacementMarker(() -> System.out.println("marker"))
+                                .splineToSplineHeading(new Pose2d(-4.5, -40, toRadians(-75)), toRadians(105))
+                                .addDisplacementMarker(() -> System.out.println("marker"))
+                                .setReversed(false)
                                 .build()
                 );
+
+
 
 /*
         RoadRunnerBotEntity duckRoute = new DefaultBotBuilder(mm)
