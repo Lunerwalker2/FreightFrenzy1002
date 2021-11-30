@@ -1,21 +1,28 @@
 package org.firstinspires.ftc.teamcode.teleOp
 
+import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.arcrobotics.ftclib.command.CommandOpMode
 import com.arcrobotics.ftclib.command.RunCommand
 import com.arcrobotics.ftclib.command.button.Trigger
 import com.arcrobotics.ftclib.gamepad.GamepadEx
 import com.arcrobotics.ftclib.gamepad.GamepadKeys
+import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
+import org.firstinspires.ftc.teamcode.util.Extensions
 import kotlin.math.abs
 import kotlin.math.max
 
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.sendLine
+import org.firstinspires.ftc.teamcode.util.Extensions.Companion.toFieldRelative
 
 /*
 I'm using a lot of FTCLib classes in this because the framework exists for auto, so might as well.
@@ -44,6 +51,11 @@ class MecTeleOp : CommandOpMode() {
     private lateinit var rightFront: DcMotorEx
     private lateinit var rightBack: DcMotorEx
 
+    private lateinit var imu: BNO055IMU
+    var offset = 0.0
+
+    var prevState = false
+
     //Drive power multiplier for slow mode
     private var powerMultiplier = 1.0
 
@@ -51,6 +63,8 @@ class MecTeleOp : CommandOpMode() {
 
 
     override fun initialize() {
+
+        offset = Extensions.HEADING_SAVER
 
         //Extension functions pog see Extensions.kt in util package
         telemetry.sendLine("Initializing Subsystems...")
@@ -107,6 +121,11 @@ class MecTeleOp : CommandOpMode() {
         rightFront = hardwareMap.get(DcMotorEx::class.java, "rf")
         rightBack = hardwareMap.get(DcMotorEx::class.java, "rb")
 
+        imu = hardwareMap.get(BNO055IMU::class.java, "imu")
+        val parameters = BNO055IMU.Parameters()
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS
+        imu.initialize(parameters)
+
         //Create a list for easy iterations that don't take up much room
         val motors = listOf(leftFront, leftBack, rightFront, rightBack)
 
@@ -149,6 +168,13 @@ class MecTeleOp : CommandOpMode() {
         super.run()
 
 
+        val heading = getRobotAngle()
+
+        if (gamepad1.left_bumper && !prevState) offset += heading
+        prevState = gamepad1.left_bumper
+
+
+
         //Telemetry for most things are handled in the subsystems
         telemetry.addData("Slow Mode Enabled", (powerMultiplier != 1.0))
 
@@ -157,9 +183,17 @@ class MecTeleOp : CommandOpMode() {
         we barely need to do anything here, except the drive base.
          */
 
-        val y = -gamepad1.left_stick_y.toDouble()
-        val x = gamepad1.left_stick_x.toDouble()
-        val rx = gamepad1.right_stick_x.toDouble()
+        var y = -gamepad1.left_stick_y.toDouble()
+        var x = gamepad1.left_stick_x.toDouble()
+        var rx = gamepad1.right_stick_x.toDouble()
+
+
+        //Get the field centric inputs
+        val pose = toFieldRelative(Pose2d(x, y, rx), heading)
+
+        x = pose.x
+        y = pose.y
+        rx = pose.heading
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio, but only when
@@ -180,9 +214,18 @@ class MecTeleOp : CommandOpMode() {
         rightFront.power = frontRightPower * powerMultiplier
         rightBack.power = backRightPower * powerMultiplier
 
+        telemetry.addLine("Press the left bumper to re-zero the heading.")
+        telemetry.addData("Current Heading with offset", AngleUnit.DEGREES.fromRadians(getRobotAngle()))
+        telemetry.addData("Offset", AngleUnit.DEGREES.fromRadians(offset))
+
         telemetry.update()
 
     }
 
+    fun getRobotAngle(): Double {
+        var angle: Double = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle.toDouble()
+        angle = AngleUnit.normalizeRadians(angle - offset)
+        return angle
+    }
 
 }
