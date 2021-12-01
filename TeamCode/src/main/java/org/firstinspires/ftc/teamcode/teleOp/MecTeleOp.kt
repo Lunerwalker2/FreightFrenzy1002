@@ -34,7 +34,7 @@ there's no reason to not use it in teleop as well.
 MOST OF THIS IS NOT HOW THE SDK WORKS PLEASE DON'T TAKE THIS AS AN EXAMPLE OF THAT.
  */
 
-@TeleOp(name="Main TeleOp", group = "TeleOp")
+@TeleOp(name = "Main TeleOp", group = "TeleOp")
 class MecTeleOp : CommandOpMode() {
 
     //Subsystems
@@ -107,10 +107,15 @@ class MecTeleOp : CommandOpMode() {
 
         //Carousel wheel
         leftCarouselTrigger = Trigger { gamepad2.left_trigger > 0.2 }
-                .whenActive(carouselWheel::leftForward)
+                .whenActive(Runnable {
+                    carouselWheel.leftForward()
+                })
                 .whenInactive(carouselWheel::leftStop)
+
         rightCarouselTrigger = Trigger { gamepad2.right_trigger > 0.2 }
-                .whenActive(carouselWheel::rightForward)
+                .whenActive(Runnable {
+                    carouselWheel.rightForward()
+                })
                 .whenInactive(carouselWheel::rightStop)
 
 
@@ -161,7 +166,6 @@ class MecTeleOp : CommandOpMode() {
         leftBack.direction = DcMotorSimple.Direction.REVERSE
 
         telemetry.sendLine("Ready for start!")
-
     }
 
     override fun run() {
@@ -172,7 +176,6 @@ class MecTeleOp : CommandOpMode() {
 
         if (gamepad1.left_bumper && !prevState) offset += heading
         prevState = gamepad1.left_bumper
-
 
 
         //Telemetry for most things are handled in the subsystems

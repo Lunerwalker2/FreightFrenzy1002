@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -24,6 +25,12 @@ public class RelocalizeCommand extends CommandBase {
     private static final double FORWARD_SENSOR_OFFSET = 65.0;
     private static final double LEFT_SENSOR_OFFSET = 65.0;
     private static final double RIGHT_SENSOR_OFFSET = 65.0;
+
+    private static final Vector2d forwardSensorPosition = new Vector2d();
+    private static final Vector2d leftSensorPosition = new Vector2d();
+    private static final Vector2d rightSensorPosition = new Vector2d();
+
+
     private final DistanceSensors distanceSensors;
     private final DoubleSupplier headingSupplier;
     private final Consumer<Pose2d> poseConsumer;
@@ -64,12 +71,12 @@ public class RelocalizeCommand extends CommandBase {
                 distanceSensors.getRightRange(DistanceUnit.INCH) > 30) return;
 
         //Find our forward distance (x in field coordinates)
-        double x = (FORWARD_SENSOR_OFFSET - distanceSensors.getForwardRange(DistanceUnit.INCH)) * Math.cos(heading);
+        double x = (FORWARD_SENSOR_OFFSET - distanceSensors.getForwardRange(DistanceUnit.INCH));
 
         //Find our side distance (y in field coordinates)
         double y = (redSide) ?
-                (distanceSensors.getRightRange(DistanceUnit.INCH) * Math.cos(heading)) - RIGHT_SENSOR_OFFSET :
-                LEFT_SENSOR_OFFSET - (distanceSensors.getLeftRange(DistanceUnit.INCH) * Math.cos(heading));
+                (distanceSensors.getRightRange(DistanceUnit.INCH)) - RIGHT_SENSOR_OFFSET :
+                LEFT_SENSOR_OFFSET - (distanceSensors.getLeftRange(DistanceUnit.INCH));
 
 
         //Put them together in a position
