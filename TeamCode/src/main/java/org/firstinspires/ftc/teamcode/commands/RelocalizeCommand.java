@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.commands;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -22,10 +21,25 @@ ways of obtaining heading (for example three-wheel odometry which doesn't use th
  */
 public class RelocalizeCommand extends CommandBase {
 
-    private static final double FORWARD_SENSOR_OFFSET = 65.0;
-    private static final double LEFT_SENSOR_OFFSET = 65.0;
-    private static final double RIGHT_SENSOR_OFFSET = 65.0;
+    /*
+     * If the robot is sitting in the exact middle of the field (0,0)
+     * and facing straight down the x-axis (0 degrees), then the distances
+     * from each sensor to the wall they are pointing at would be the following
+     * in inches.
+     *
+     * //TODO: Find these
+     */
+    private static final double FORWARD_SENSOR_BASE_DISTANCE_TO_WALL = 65.0;
+    private static final double LEFT_SENSOR_BASE_DISTANCE_TO_WALL = 65.0;
+    private static final double RIGHT_SENSOR_BASE_DISTANCE_TO_WALL = 65.0;
 
+    /*
+     * These are the relative positions of each sensor from the center of the
+     * robot. They are relative because the actual coordinates doesn't matter,
+     * only the horizontal and vertical distances (eg, the abs value of the x and y).
+     *
+     * Inches
+     */
     private static final Vector2d forwardSensorPosition = new Vector2d();
     private static final Vector2d leftSensorPosition = new Vector2d();
     private static final Vector2d rightSensorPosition = new Vector2d();
@@ -34,7 +48,7 @@ public class RelocalizeCommand extends CommandBase {
     private final DistanceSensors distanceSensors;
     private final DoubleSupplier headingSupplier;
     private final Consumer<Pose2d> poseConsumer;
-    private final boolean redSide;
+    private final boolean leftSide;
     private boolean firstRun = true;
 
     private Pose2d averagePosition = new Pose2d();
@@ -42,20 +56,27 @@ public class RelocalizeCommand extends CommandBase {
     /**
      * @param headingSupplier Supplier of the heading of the robot IN RADIANS.
      */
-    public RelocalizeCommand(Consumer<Pose2d> poseConsumer, DistanceSensors distanceSensors, DoubleSupplier headingSupplier, boolean redSide) {
+    public RelocalizeCommand(Consumer<Pose2d> poseConsumer, DistanceSensors distanceSensors, DoubleSupplier headingSupplier, boolean leftSide) {
         super();
         this.distanceSensors = distanceSensors;
         this.headingSupplier = headingSupplier;
         this.poseConsumer = poseConsumer;
-        this.redSide = redSide;
+        this.leftSide = leftSide;
         addRequirements(distanceSensors);
     }
 
+    /*
+    Happens once when the command is scheduled.
+     */
     @Override
     public void initialize() {
         //Start taking range measurements from the sensors
         distanceSensors.startReading();
     }
+
+    /*
+    Happens repeatably until the command is no longer scheduled.
+     */
 
     @Override
     public void execute() {
@@ -63,20 +84,31 @@ public class RelocalizeCommand extends CommandBase {
         double heading = headingSupplier.getAsDouble();
 
         //test for possible invalid values
-        if (distanceSensors.getForwardRange(DistanceUnit.INCH) < 8 ||
-                distanceSensors.getForwardRange(DistanceUnit.INCH) > 96 ||
-                distanceSensors.getLeftRange(DistanceUnit.INCH) < 3 ||
-                distanceSensors.getLeftRange(DistanceUnit.INCH) > 30 ||
-                distanceSensors.getRightRange(DistanceUnit.INCH) < 3 ||
-                distanceSensors.getRightRange(DistanceUnit.INCH) > 30) return;
+        if (!isValidReadings(
+                distanceSensors.getForwardRange(DistanceUnit.INCH),
+                (leftSide) ?
+                        distanceSensors.getLeftRange(DistanceUnit.INCH) :
+                        distanceSensors.getRightRange(DistanceUnit.INCH))
+        ) return;
+
+        //Find the rotated distances
+        double[] rotatedDistances = findRotatedDistance(
+                distanceSensors.getForwardRange(DistanceUnit.INCH),
+                (leftSide) ?
+                        distanceSensors.getLeftRange(DistanceUnit.INCH) :
+                        distanceSensors.getRightRange(DistanceUnit.INCH),
+                heading,
+                leftSide
+        );
+
 
         //Find our forward distance (x in field coordinates)
-        double x = (FORWARD_SENSOR_OFFSET - distanceSensors.getForwardRange(DistanceUnit.INCH));
+        double x = (FORWARD_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[0]);
 
         //Find our side distance (y in field coordinates)
-        double y = (redSide) ?
-                (distanceSensors.getRightRange(DistanceUnit.INCH)) - RIGHT_SENSOR_OFFSET :
-                LEFT_SENSOR_OFFSET - (distanceSensors.getLeftRange(DistanceUnit.INCH));
+        double y = (leftSide) ?
+                rotatedDistances[1] - RIGHT_SENSOR_BASE_DISTANCE_TO_WALL :
+                LEFT_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[1];
 
 
         //Put them together in a position
@@ -104,6 +136,55 @@ public class RelocalizeCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         distanceSensors.stopReading();
+    }
+
+    /**
+     * Returns if the current range readings are valid or not
+     */
+    private static boolean isValidReadings(double front, double side) {
+        return (front < 8 ||
+                front > 96 ||
+                side < 3 ||
+                side > 30);
+    }
+
+    /**
+     * Function that runs the trig needed to correctly offset the distance sensor measurements by
+     * their horizontal and vertical positions on the robot.
+     * <p>
+     * The distance values given need to be the raw distance values from the sensors.
+     * <p>
+     * Heading is in pi to -pi range (left=+).
+     * <p>
+     * If left side is true, the left sensor will be used, and if false the right one.
+     *
+     * @param forwardDistance Forward distance sensor value, inches.
+     * @param sideDistance    Side distance sensor value, inches
+     * @param headingRad      Heading value, radians, euler
+     * @param leftSide        Side of the robot that the side sensor is on.
+     * @return Array with (forward, side) absolute distances of the robot to the field walls.
+     */
+    private static double[] findRotatedDistance(double forwardDistance, double sideDistance, double headingRad, boolean leftSide) {
+        double[] newDistances = new double[2];
+
+
+        //Rotate the vector with the sensor's position by the current heading
+        Vector2d rotatedForwardSensorPosition = forwardSensorPosition.rotated(headingRad);
+        //Do the same for the side sensor
+        Vector2d rotatedSideSensorPosition = (leftSide) ?
+                leftSensorPosition.rotated(headingRad) :
+                rightSensorPosition.rotated(headingRad);
+
+        //Now find the theoretical distances from the walls, assuming no offset from one of the axes.
+        //This is just the reportedDistance * cos(heading) for both.
+        double correctedForwardDistance = forwardDistance * Math.cos(headingRad);
+        double correctedSideDistance = sideDistance * Math.cos(headingRad);
+
+        //finally, offset the distances by their respective offsets to the robot center (on the axis they aren't on)
+        newDistances[0] = correctedForwardDistance + rotatedForwardSensorPosition.getY();
+        newDistances[1] = correctedSideDistance - rotatedSideSensorPosition.getY();
+
+        return newDistances;
     }
 
 
