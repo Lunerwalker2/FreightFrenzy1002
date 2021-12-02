@@ -179,8 +179,8 @@ class MecTeleOp : CommandOpMode() {
 
         val heading = getRobotAngle()
 
-        if (gamepad1.left_bumper && !prevState) offset += heading
-        prevState = gamepad1.left_bumper
+        if (gamepad1.a && !prevState) offset += heading
+        prevState = gamepad1.a
 
 
         //Telemetry for most things are handled in the subsystems
@@ -191,13 +191,13 @@ class MecTeleOp : CommandOpMode() {
         we barely need to do anything here, except the drive base.
          */
 
-        var y = if (abs(gamepad1.left_stick_y) > 0.05) (-gamepad1.left_stick_y).toDouble() else 0.0 // Remember, this is reversed!
-        var x = if (abs(gamepad1.left_stick_x) > 0.05) gamepad1.left_stick_x * 1.1 else 0.0 // Counteract imperfect strafing
-        var rx = if (abs(gamepad1.right_stick_x) > 0.05) gamepad1.right_stick_x.toDouble() else 0.0
+        var y = if (abs(gamepad1.left_stick_y) > 0.02) (-gamepad1.left_stick_y).toDouble() else 0.0 // Remember, this is reversed!
+        var x = if (abs(gamepad1.left_stick_x) > 0.02) gamepad1.left_stick_x * 1.1 else 0.0 // Counteract imperfect strafing
+        var rx = if (abs(gamepad1.right_stick_x) > 0.02) gamepad1.right_stick_x.toDouble() else 0.0
 
-        y = cubeInput(y, 0.52)
-        x = cubeInput(x, 0.52)
-        rx = cubeInput(rx, 0.6)
+        y = cubeInput(y, 0.4)
+        x = cubeInput(x, 0.4)
+        rx = cubeInput(rx, 0.4)
 
 
         //Get the field centric inputs
