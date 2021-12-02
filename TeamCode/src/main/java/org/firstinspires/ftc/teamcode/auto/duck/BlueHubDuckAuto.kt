@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.old.Arm
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
 import org.firstinspires.ftc.teamcode.subsystems.old.Claw
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
+import org.firstinspires.ftc.teamcode.util.Extensions.Companion.sendLine
 import java.lang.Math.toRadians
 
 
@@ -58,8 +59,7 @@ class BlueHubDuckAuto : AutoBase() {
         drive.poseEstimate = startPose
 
 
-        telemetry.addLine("Generating trajectories...")
-        telemetry.update()
+        telemetry.sendLine("Generating trajectories...")
 
         //Generating trajectories is an expensive task, so we do it in init
         goForward = drive.trajectoryBuilder(startPose)
@@ -91,8 +91,7 @@ class BlueHubDuckAuto : AutoBase() {
                 .build()
 
 
-        telemetry.addLine("Initializing Subsystems...")
-        telemetry.update()
+        telemetry.sendLine("Initializing Subsystems...")
 
         arm = Arm(hardwareMap)
         carouselWheel = CarouselWheel(hardwareMap)
@@ -144,8 +143,10 @@ class BlueHubDuckAuto : AutoBase() {
                 FollowTrajectoryCommand(drive, goToCarousel).andThen(waitFor(100)),
                 CarouselWheelCommand(carouselWheel, true).withTimeout(5000),
                 FollowTrajectoryCommand(drive, goToStorageUnit)
-
         ))
+
+        telemetry.sendLine("Ready for start!")
+
 
 
     }

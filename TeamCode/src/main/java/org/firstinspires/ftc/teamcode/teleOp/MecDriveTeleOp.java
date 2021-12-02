@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import static org.firstinspires.ftc.teamcode.util.Extensions.*;
 
 import java.util.ArrayList;
 
@@ -57,9 +58,14 @@ public class MecDriveTeleOp extends LinearOpMode {
         while (opModeIsActive()){
             if(isStopRequested()) return;
 
-            double y = (Math.abs(gamepad1.left_stick_y) > 0.05) ? cubeInput(-gamepad1.left_stick_y, 0.52) : 0.0; // Remember, this is reversed!
-            double x = (Math.abs(gamepad1.left_stick_x) > 0.05) ? cubeInput(gamepad1.left_stick_x * 1.1, 0.52) : 0.0; // Counteract imperfect strafing
-            double rx = (Math.abs(gamepad1.right_stick_x) > 0.05) ? cubeInput(gamepad1.right_stick_x, 0.52) : 0.0;
+            double y = (Math.abs(gamepad1.left_stick_y) > 0.05) ?  -gamepad1.left_stick_y : 0.0; // Remember, this is reversed!
+            double x = (Math.abs(gamepad1.left_stick_x) > 0.05) ? gamepad1.left_stick_x * 1.1 : 0.0; // Counteract imperfect strafing
+            double rx = (Math.abs(gamepad1.right_stick_x) > 0.05) ? gamepad1.right_stick_x : 0.0;
+
+            y = cubeInput(y, 0.52);
+            x = cubeInput(x, 0.52);
+            rx = cubeInput(rx, 0.6);
+
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
@@ -83,11 +89,5 @@ public class MecDriveTeleOp extends LinearOpMode {
         }
 
 
-    }
-
-    double cubeInput(double input, double factor){
-        double t = factor * Math.pow(input, 3);
-        double r = input * (1-factor);
-        return t+r;
     }
 }

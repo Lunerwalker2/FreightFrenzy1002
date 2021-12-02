@@ -30,10 +30,10 @@ public class CarouselWheel extends SubsystemBase {
         leftWheelMotor = hardwareMap.get(DcMotor.class, "leftCarouselMotor");
         rightWheelMotor = hardwareMap.get(DcMotor.class, "rightCarouselMotor");
 
-        leftWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        leftWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT); //Not really necessary
-        rightWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //Not really necessary
+        rightWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 
@@ -50,19 +50,27 @@ public class CarouselWheel extends SubsystemBase {
 
 
     public void leftForward(){
-        leftPower = -0.45;
-    }
-
-    public void leftBack(){
-        leftPower = 0.4;
+        leftPower = 0.6;
     }
 
     public void rightForward(){
-        rightPower = -0.45;
+        rightPower = 0.6;
     }
 
-    public void rightBack(){
-        rightPower = 0.4;
+    public void slowLeftForward(){
+        leftPower = 0.2;
+    }
+
+    public void slowRightForward(){
+        rightPower = 0.2;
+    }
+
+    public void fastLeftForward(){
+        leftPower = 0.8;
+    }
+
+    public void fastRightForward(){
+        rightPower = 0.8;
     }
 
     public void leftStop(){
@@ -73,20 +81,6 @@ public class CarouselWheel extends SubsystemBase {
         rightPower = 0.0;
     }
 
-    public void slowLeftForward(){
-        leftPower = -0.2;
-    }
 
-    public void slowLeftBack(){
-        leftPower = 0.2;
-    }
-
-    public void slowRightForward(){
-        rightPower = -0.2;
-    }
-
-    public void slowRightBack(){
-        rightPower = 0.2;
-    }
 
 }

@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
 import org.firstinspires.ftc.teamcode.subsystems.old.Claw
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
+import org.firstinspires.ftc.teamcode.util.Extensions.Companion.sendLine
 import java.lang.Math.toRadians
 
 
@@ -48,8 +49,7 @@ class RedDuckAuto : AutoBase() {
         drive.poseEstimate = startPose
 
 
-        telemetry.addLine("Generating trajectories...")
-        telemetry.update()
+        telemetry.sendLine("Generating trajectories...")
 
 
         //Generating trajectories is an expensive task, so we do it in init
@@ -70,8 +70,7 @@ class RedDuckAuto : AutoBase() {
                 .build()
 
 
-        telemetry.addLine("Initializing Subsystems...")
-        telemetry.update()
+        telemetry.sendLine("Initializing Subsystems...")
 
         //Subsystems
 //        val arm = Arm(hardwareMap)
@@ -93,8 +92,7 @@ class RedDuckAuto : AutoBase() {
                 FollowTrajectoryCommand(drive, goToStorageUnit)
         ))
 
-        telemetry.addLine("Ready for start!")
-        telemetry.update()
+        telemetry.sendLine("Ready for start!")
 
     }
 }

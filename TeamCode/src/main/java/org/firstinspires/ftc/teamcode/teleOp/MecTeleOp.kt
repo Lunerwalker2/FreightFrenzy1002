@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
 import org.firstinspires.ftc.teamcode.util.Extensions
+import org.firstinspires.ftc.teamcode.util.Extensions.Companion.cubeInput
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -78,6 +79,7 @@ class MecTeleOp : CommandOpMode() {
         }
 
         //Schedule a clear of the bulk cache each loop
+        //This command will reamin scheduled the entire loop
         schedule(RunCommand(
                 {
                     for (module in allHubs) {
@@ -107,14 +109,16 @@ class MecTeleOp : CommandOpMode() {
 
         //Carousel wheel
         leftCarouselTrigger = Trigger { gamepad2.left_trigger > 0.2 }
-                .whenActive(Runnable {
-                    carouselWheel.leftForward()
+                .whileActiveContinuous(Runnable {
+                    if (gamepad2.left_trigger < 0.9) carouselWheel.leftForward()
+                    else carouselWheel.fastLeftForward()
                 })
                 .whenInactive(carouselWheel::leftStop)
 
         rightCarouselTrigger = Trigger { gamepad2.right_trigger > 0.2 }
-                .whenActive(Runnable {
-                    carouselWheel.rightForward()
+                .whileActiveContinuous(Runnable {
+                    if (gamepad2.right_trigger < 0.9) carouselWheel.rightForward()
+                    else carouselWheel.fastRightForward()
                 })
                 .whenInactive(carouselWheel::rightStop)
 
@@ -125,6 +129,7 @@ class MecTeleOp : CommandOpMode() {
         leftBack = hardwareMap.get(DcMotorEx::class.java, "lb")
         rightFront = hardwareMap.get(DcMotorEx::class.java, "rf")
         rightBack = hardwareMap.get(DcMotorEx::class.java, "rb")
+
 
         imu = hardwareMap.get(BNO055IMU::class.java, "imu")
         val parameters = BNO055IMU.Parameters()
@@ -157,7 +162,7 @@ class MecTeleOp : CommandOpMode() {
          */
         motors.forEach {
             val motorConfigurationType: MotorConfigurationType = it.motorType.clone()
-            motorConfigurationType.achieveableMaxRPMFraction = 0.9
+            motorConfigurationType.achieveableMaxRPMFraction = 0.95
             it.motorType = motorConfigurationType
         }
 
@@ -186,9 +191,13 @@ class MecTeleOp : CommandOpMode() {
         we barely need to do anything here, except the drive base.
          */
 
-        var y = -gamepad1.left_stick_y.toDouble()
-        var x = gamepad1.left_stick_x.toDouble()
-        var rx = gamepad1.right_stick_x.toDouble()
+        var y = if (abs(gamepad1.left_stick_y) > 0.05) (-gamepad1.left_stick_y).toDouble() else 0.0 // Remember, this is reversed!
+        var x = if (abs(gamepad1.left_stick_x) > 0.05) gamepad1.left_stick_x * 1.1 else 0.0 // Counteract imperfect strafing
+        var rx = if (abs(gamepad1.right_stick_x) > 0.05) gamepad1.right_stick_x.toDouble() else 0.0
+
+        y = cubeInput(y, 0.52)
+        x = cubeInput(x, 0.52)
+        rx = cubeInput(rx, 0.6)
 
 
         //Get the field centric inputs
@@ -225,7 +234,7 @@ class MecTeleOp : CommandOpMode() {
 
     }
 
-    fun getRobotAngle(): Double {
+    private fun getRobotAngle(): Double {
         var angle: Double = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle.toDouble()
         angle = AngleUnit.normalizeRadians(angle - offset)
         return angle
