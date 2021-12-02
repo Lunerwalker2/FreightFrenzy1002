@@ -175,13 +175,24 @@ public class RelocalizeCommand extends CommandBase {
                 leftSensorPosition.rotated(headingRad) :
                 rightSensorPosition.rotated(headingRad);
 
-        //Now find the theoretical distances from the walls, assuming no offset from one of the axes.
-        //This is just the reportedDistance * cos(heading) for both.
+        /*
+        Now find the theoretical distances from the walls, assuming no offset from one of the axes.
+
+        This is just the reportedDistance * cos(heading) for both, since we know the
+        hypot (reported distance) and the angle (heading of robot)
+         */
+
         double correctedForwardDistance = forwardDistance * Math.cos(headingRad);
         double correctedSideDistance = sideDistance * Math.cos(headingRad);
 
-        //finally, offset the distances by their respective offsets to the robot center (on the axis they aren't on)
+        /*
+        Finally, offset the distances by their y components. This is because we defined each sensor
+        position in Q1, so the component needed is y for both of them.
+         */
+
+        //positive heading would cause the actual distance to be less, so add the offset
         newDistances[0] = correctedForwardDistance + rotatedForwardSensorPosition.getY();
+        //positive heading would cause the actual distance to be more, so subtract the offset
         newDistances[1] = correctedSideDistance - rotatedSideSensorPosition.getY();
 
         return newDistances;
