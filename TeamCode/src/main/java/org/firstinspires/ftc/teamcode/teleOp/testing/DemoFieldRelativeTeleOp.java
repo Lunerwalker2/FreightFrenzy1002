@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.teleOp.testing;
 
+import static org.firstinspires.ftc.teamcode.util.Extensions.cubeInput;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,15 +14,14 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.util.Extensions;
 
 import java.util.ArrayList;
 
 
-@Disabled
+
 @TeleOp
-public class FieldRelativeDrive extends LinearOpMode {
+public class DemoFieldRelativeTeleOp extends LinearOpMode {
 
     boolean prevState = false;
 
@@ -33,7 +33,7 @@ public class FieldRelativeDrive extends LinearOpMode {
     BNO055IMU imu;
     double offset = 0;
 
-    double slowModeMult = 1.0;
+    double slowModeMult = 0.6;
 
     ArrayList<DcMotorEx> motors = new ArrayList<>();
 
@@ -77,13 +77,7 @@ public class FieldRelativeDrive extends LinearOpMode {
         lb.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-        while (!isStarted()) {
-            telemetry.addLine("Current offset is " + offset);
-            telemetry.addLine("Press left bumper to reset to current heading");
-            telemetry.update();
-
-            if (gamepad1.left_bumper) offset = getRobotAngle();
-        }
+        waitForStart();
 
 
         while (opModeIsActive()) {
@@ -92,12 +86,17 @@ public class FieldRelativeDrive extends LinearOpMode {
             double heading = getRobotAngle();
 
 
-            if (gamepad1.left_bumper && !prevState) offset += heading;
-            prevState = gamepad1.left_bumper;
+            if (gamepad1.b && gamepad1.left_bumper && !prevState) offset += heading;
+            prevState = gamepad1.b && gamepad1.left_bumper;
 
-            double y = (Math.abs(gamepad1.left_stick_y) > 0.05) ? cubeInput(-gamepad1.left_stick_y, 0.52) : 0.0; // Remember, this is reversed!
-            double x = (Math.abs(gamepad1.left_stick_x) > 0.05) ? cubeInput(gamepad1.left_stick_x * 1.1, 0.52) : 0.0; // Counteract imperfect strafing
-            double rx = (Math.abs(gamepad1.right_stick_x) > 0.05) ? cubeInput(gamepad1.right_stick_x, 0.6) : 0.0;
+            double y = 0;
+            double x = 0;
+            double rx = gamepad1.right_stick_x;
+
+            if(gamepad1.dpad_up) y = 1.0;
+            else if(gamepad1.dpad_down) y = -1.0;
+            if(gamepad1.dpad_left) x = -1.0;
+            else if(gamepad1.dpad_right) x = 1.0;
 
             //Get the field centric inputs
 
@@ -116,9 +115,6 @@ public class FieldRelativeDrive extends LinearOpMode {
             double backLeftPower = (y - x + rx) / denominator;
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
-
-
-            slowModeMult = gamepad1.left_bumper ? 0.5 : 1; //If the left bumper is pressed, reduce the speed
 
 
             lf.setPower(frontLeftPower * slowModeMult);
