@@ -17,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
+import org.firstinspires.ftc.teamcode.subsystems.old.Arm
+import org.firstinspires.ftc.teamcode.subsystems.old.Claw
 import org.firstinspires.ftc.teamcode.util.Extensions
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.cubeInput
 import kotlin.math.abs
@@ -40,6 +42,8 @@ class MecTeleOp : CommandOpMode() {
 
     //Subsystems
     private lateinit var carouselWheel: CarouselWheel
+    private lateinit var arm: Arm
+    private lateinit var claw: Claw
 
     // Buttons/triggers
     private lateinit var leftCarouselTrigger: Trigger

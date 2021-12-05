@@ -20,7 +20,7 @@ public class DistanceSensors extends SubsystemBase {
     //Timer object for the delay
     private final ElapsedTime delayTimer = new ElapsedTime();
     //Delay in ms between pings,
-    private final int readingDelayMs = 80;
+    private final int readingDelayMs = 50;
     //Whether we should be active
     private boolean takingRangeReading = false;
     //Last read range in cm
