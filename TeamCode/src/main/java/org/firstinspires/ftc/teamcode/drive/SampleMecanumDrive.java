@@ -53,10 +53,10 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0); //7,0,0
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0); //8,0,0
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7.3, 0, 0); //7.3, 0, 0
 
-    public static double LATERAL_MULTIPLIER = 0.91585; //1.078905
+    public static double LATERAL_MULTIPLIER = 1.0; //12/4: 0.91585
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -72,7 +72,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-    private BNO055IMU imu;
+    public BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
@@ -304,7 +304,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         // Adjust the axis rotation rate as necessary
         // Rotate about the z axis is the default assuming your REV Hub/Control Hub is laying
         // flat on a surface
-
         return (double) imu.getAngularVelocity().zRotationRate;
     }
 

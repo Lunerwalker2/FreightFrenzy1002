@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.Objects;
@@ -21,7 +22,7 @@ import java.util.Objects;
  * <p>
  * Further fine tuning of MAX_ANG_VEL may be desired.
  */
-@Disabled
+//@Disabled
 //@Config
 @Autonomous(group = "drive")
 public class MaxAngularVeloTuner extends LinearOpMode {
@@ -58,6 +59,14 @@ public class MaxAngularVeloTuner extends LinearOpMode {
             Pose2d poseVelo = Objects.requireNonNull(drive.getPoseVelocity(), "poseVelocity() must not be null. Ensure that the getWheelVelocities() method has been overridden in your localizer.");
 
             maxAngVelocity = Math.max(poseVelo.getHeading(), maxAngVelocity);
+
+            AngularVelocity ang = drive.imu.getAngularVelocity();
+
+            telemetry.addData("Current IMU Ang Velo Deg X", Math.toDegrees(ang.xRotationRate));
+            telemetry.addData("Current IMU Ang Velo Deg Y", Math.toDegrees(ang.yRotationRate));
+            telemetry.addData("Current IMU Ang Velo Deg Z", Math.toDegrees(ang.zRotationRate));
+            telemetry.addData("Current IMU Ang Velo Unit", ang.unit);
+            telemetry.update();
         }
 
         drive.setDrivePower(new Pose2d());
