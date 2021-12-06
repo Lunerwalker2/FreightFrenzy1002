@@ -13,10 +13,7 @@ import kotlin.math.abs
 import kotlin.math.cos
 
 @Config
-class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry?) : SubsystemBase() {
-
-    constructor(hardwareMap: HardwareMap) : this(hardwareMap, null)
-
+class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry? = null) : SubsystemBase() {
     //Calling the constructor of the superclass already registers this subsystem
 
     private val armMotor by lazy { hardwareMap.get(DcMotorEx::class.java, "arm") }
@@ -86,7 +83,7 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
 
     init {
         //We can raise this but to be safe we are leaving it here for now
-        armGravityController.setOutputBounds(-0.7, 0.7)
+        armGravityController.setOutputBounds(-0.75, 0.75)
         register()
     }
 

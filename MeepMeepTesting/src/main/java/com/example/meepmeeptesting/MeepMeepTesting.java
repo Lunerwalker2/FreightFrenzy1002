@@ -31,7 +31,7 @@ public class MeepMeepTesting {
     public static double MAX_ACCEL = 40;
     public static double MAX_ANG_VEL = toRadians(160);
     public static double MAX_ANG_ACCEL = toRadians(160);
-    public static double TRACK_WIDTH = 12;
+    public static double TRACK_WIDTH = 15;
 
     public static int HUB_LEVEL = (int) (Math.random() * 2);
 
