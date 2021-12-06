@@ -32,7 +32,7 @@ public class TestFastCycleAuto extends AutoBase {
     private TrajectorySequence goToWarehouse;
     private TrajectorySequence backToHub;
 
-    private Pose2d startPose = new Pose2d(9.6, -64.0, toRadians(90));
+    private Pose2d startPose = new Pose2d(-33.6, -64.0, toRadians(-90));
 
     @Override
     public void initialize() {
@@ -75,11 +75,13 @@ public class TestFastCycleAuto extends AutoBase {
                             telemetry.addLine("The program started!");
                             telemetry.update();
                         }),
-                        new WaitCommand(1000),
-                        new FollowTrajectorySequenceCommand(drive, goToHubStart).andThen(waitFor(300)),
-                        new FollowTrajectorySequenceCommand(drive, goToWarehouse).andThen(waitFor(500)),
+                        new FollowTrajectorySequenceCommand(drive, goToHubStart),
+                        new FollowTrajectorySequenceCommand(drive, goToWarehouse),
                         new FollowTrajectorySequenceCommand(drive, backToHub)
                 )
         );
+
+        telemetry.addLine("dasda");
+        telemetry.update();
     }
 }

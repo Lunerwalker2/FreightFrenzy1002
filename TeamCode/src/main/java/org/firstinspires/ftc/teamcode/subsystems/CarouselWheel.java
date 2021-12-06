@@ -50,27 +50,19 @@ public class CarouselWheel extends SubsystemBase {
 
 
     public void leftForward(){
-        leftPower = 0.55;
+        leftPower = 0.40;
     }
 
     public void rightForward(){
-        rightPower = 0.55;
-    }
-
-    public void slowLeftForward(){
-        leftPower = 0.2;
-    }
-
-    public void slowRightForward(){
-        rightPower = 0.2;
+        rightPower = 0.40;
     }
 
     public void fastLeftForward(){
-        leftPower = 0.7;
+        leftPower = 0.75;
     }
 
     public void fastRightForward(){
-        rightPower = 0.7;
+        rightPower = 0.75;
     }
 
     public void leftStop(){
