@@ -59,14 +59,6 @@ public class MaxAngularVeloTuner extends LinearOpMode {
             Pose2d poseVelo = Objects.requireNonNull(drive.getPoseVelocity(), "poseVelocity() must not be null. Ensure that the getWheelVelocities() method has been overridden in your localizer.");
 
             maxAngVelocity = Math.max(poseVelo.getHeading(), maxAngVelocity);
-
-            AngularVelocity ang = drive.imu.getAngularVelocity();
-
-            telemetry.addData("Current IMU Ang Velo Deg X", Math.toDegrees(ang.xRotationRate));
-            telemetry.addData("Current IMU Ang Velo Deg Y", Math.toDegrees(ang.yRotationRate));
-            telemetry.addData("Current IMU Ang Velo Deg Z", Math.toDegrees(ang.zRotationRate));
-            telemetry.addData("Current IMU Ang Velo Unit", ang.unit);
-            telemetry.update();
         }
 
         drive.setDrivePower(new Pose2d());
