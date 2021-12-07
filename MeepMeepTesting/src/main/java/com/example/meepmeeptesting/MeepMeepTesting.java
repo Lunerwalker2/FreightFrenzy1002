@@ -55,12 +55,19 @@ public class MeepMeepTesting {
                 .setDimensions(18, 18)
                 .setColorScheme(new ColorSchemeBlueDark())
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(9.6, 64.0, toRadians(-90)))
-                                .forward(15)
-                                .turn(toRadians(90))
-                                .splineTo(new Vector2d(40, 58), toRadians(0))
+                        drive.trajectorySequenceBuilder(new Pose2d(-33.6, -64.0, toRadians(-90)))
                                 .setReversed(true)
-                                .splineTo(new Vector2d(10, 55), toRadians(180))
+                                .splineTo(new Vector2d(-4.5, -40.0), Math.toRadians(112.0))
+                                .waitSeconds(0.3)
+                                .setReversed(false)
+                                .splineToSplineHeading(new Pose2d(9.0, -62.0, Math.toRadians(-10.0)), Math.toRadians(-21.0))
+                                .splineToSplineHeading(new Pose2d(19.0, -63.5, Math.toRadians(0.0)), Math.toRadians(0.0))
+                                .splineTo(new Vector2d(50.0, -63.5), Math.toRadians(0.0))
+                                .setReversed(true)
+                                .splineToSplineHeading(new Pose2d(19.0, -63.5, Math.toRadians(0.0)), Math.toRadians(180.0))
+                                .splineToSplineHeading(new Pose2d(9.0, -62.0, Math.toRadians(-10.0)), Math.toRadians(159.0))
+                                .splineToSplineHeading(new Pose2d(-4.5, -40.0, Math.toRadians(-75.0)), Math.toRadians(105.0))
+                                .setReversed(false)
                                 .build()
                 );
 
@@ -178,7 +185,7 @@ public class MeepMeepTesting {
                 .setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)
                 .setTheme(new ColorSchemeRedDark())
                 .setBackgroundAlpha(0.95f)
-//                .addEntity(blueTestCycle)
+                .addEntity(blueTestCycle)
                 .addEntity(blueCycleRoute)
                 .addEntity(redCycleRoute)
                 .start();
