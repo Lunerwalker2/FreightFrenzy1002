@@ -26,6 +26,6 @@ class FollowTrajectoryCommand(private val drive: SampleMecanumDrive,
 
     //End when the trajectory is finished
     override fun isFinished(): Boolean {
-        return drive.isBusy
+        return !drive.isBusy
     }
 }

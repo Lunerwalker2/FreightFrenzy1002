@@ -79,7 +79,7 @@ class MecTeleOp : CommandOpMode() {
         telemetry.sendLine("Setting bulk cache mode....")
         //Set the bulk read mode to manual
         for (module in allHubs) {
-            module  .bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
+            module.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
         }
 
         //Schedule a clear of the bulk cache each loop

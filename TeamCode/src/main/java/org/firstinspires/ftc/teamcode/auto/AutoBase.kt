@@ -15,7 +15,7 @@ abstract class AutoBase : CommandOpMode() {
     By lazy means that the object will be created the first time it is accessed, i.e, when
     the hardware map is set in init.
      */
-    private val allHubs: List<LynxModule> by lazy { hardwareMap.getAll(LynxModule::class.java) }
+    val allHubs by lazy { hardwareMap.getAll(LynxModule::class.java) }
 
     fun waitFor(millis: Long): WaitCommand = WaitCommand(millis);
 
@@ -26,7 +26,7 @@ abstract class AutoBase : CommandOpMode() {
         }
 
         //Clear the bulk read cache every iteration
-        CommandScheduler.getInstance().schedule(RunCommand(
+        schedule(RunCommand(
                 {
                     for (module in allHubs) {
                         module.clearBulkCache()
