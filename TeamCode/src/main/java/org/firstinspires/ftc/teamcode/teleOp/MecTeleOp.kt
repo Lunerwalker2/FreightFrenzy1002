@@ -167,6 +167,9 @@ class MecTeleOp : CommandOpMode() {
         motors.forEach {
             val motorConfigurationType: MotorConfigurationType = it.motorType.clone()
             motorConfigurationType.achieveableMaxRPMFraction = 0.95
+            motorConfigurationType.gearing = 19.2
+            motorConfigurationType.maxRPM = 312.0
+            motorConfigurationType.ticksPerRev = 537.6
             it.motorType = motorConfigurationType
         }
 
