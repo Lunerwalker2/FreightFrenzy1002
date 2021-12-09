@@ -26,8 +26,8 @@ import java.lang.Math.toRadians
  * we have taped out, so the red autos will be a bit behind with changes.
  */
 //@Disabled
-@Autonomous(name = "Red Hub & Duck Auto", group = "Hub Auto")
-class RedHubDuckAuto : AutoBase() {
+@Autonomous(name = "Blue Hub & Duck Warehouse Auto", group = "Hub Auto")
+class BlueHubDuckWarehouseAuto : AutoBase() {
 
     //Vision
     private lateinit var markerDetector: TeamMarkerDetector
@@ -44,7 +44,8 @@ class RedHubDuckAuto : AutoBase() {
     private lateinit var backFromHub: Trajectory
     private lateinit var turnToFaceWall: TrajectorySequence
     private lateinit var goToCarousel: Trajectory
-    private lateinit var goToStorageUnit: Trajectory
+    private lateinit var backFromCarousel: TrajectorySequence
+    private lateinit var goToWarehouse: Trajectory
 
     //The RR drive class
     private lateinit var drive: SampleMecanumDrive
@@ -66,12 +67,14 @@ class RedHubDuckAuto : AutoBase() {
         telemetry.sendLine("Generating trajectories...")
 
         //Generating trajectories is an expensive task, so we do it in init
-        goForward = drive.trajectoryBuilder(startPose)
-                .lineToConstantHeading(Vector2d(-32.0, -40.0))
+        goForward = drive.trajectoryBuilder(startPose, true)
+                .lineToConstantHeading(Vector2d(-32.0, 40.0))
                 .build()
 
         turnToHub = drive.trajectorySequenceBuilder(goForward.end())
-                .turn(toRadians(135.0))
+                .setReversed(true)
+                .turn(toRadians(45.0))
+                .setReversed(false)
                 .build()
 
         goToHub = drive.trajectoryBuilder(turnToHub.end())
@@ -83,16 +86,20 @@ class RedHubDuckAuto : AutoBase() {
                 .build()
 
         turnToFaceWall = drive.trajectorySequenceBuilder(backFromHub.end())
-                .turn(toRadians(45.0))
+                .turn(toRadians(-45.0))
                 .build()
 
         goToCarousel = drive.trajectoryBuilder(turnToFaceWall.end())
-                .lineToLinearHeading(Pose2d(-62.0, -61.0, toRadians(-90.0)))
+                .lineToLinearHeading(Pose2d(-62.0, 61.0, toRadians(90.0)))
                 .build()
 
-        goToStorageUnit = drive.trajectoryBuilder(goToCarousel.end())
-                .lineToConstantHeading(Vector2d(-60.0, -35.0))
+        backFromCarousel = drive.trajectorySequenceBuilder(goToCarousel.end())
+                .back(14.0)
+                .turn(toRadians(-90.0))
+                .forward(110.0)
                 .build()
+
+
 
 
         telemetry.sendLine("Initializing Subsystems...")
@@ -145,7 +152,8 @@ class RedHubDuckAuto : AutoBase() {
                 FollowTrajectorySequenceCommand(drive, turnToFaceWall),
                 FollowTrajectoryCommand(drive, goToCarousel).andThen(waitFor(100)),
                 CarouselWheelCommand(carouselWheel, true).withTimeout(5000),
-                FollowTrajectoryCommand(drive, goToStorageUnit)
+                FollowTrajectorySequenceCommand(drive, backFromCarousel),
+                FollowTrajectoryCommand(drive, goToWarehouse)
         ))
 
         telemetry.sendLine("Ready for start!")

@@ -24,7 +24,7 @@ import java.util.Arrays;
 
 import static java.lang.Math.toRadians;
 
-public class MeepMeepTesting {
+public class SmolBot {
 
 
     public static double MAX_VEL = 40;
@@ -49,27 +49,6 @@ public class MeepMeepTesting {
 
         MeepMeep mm = new MeepMeep(600);
 
-
-        RoadRunnerBotEntity blueTestCycle = new DefaultBotBuilder(mm)
-                .setConstraints(30, 30, MAX_ANG_VEL, MAX_ANG_ACCEL, 15.6)
-                .setDimensions(18, 18)
-                .setColorScheme(new ColorSchemeBlueDark())
-                .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-33.6, -64.0, toRadians(-90)))
-                                .setReversed(true)
-                                .splineTo(new Vector2d(-4.5, -40.0), Math.toRadians(112.0))
-                                .waitSeconds(0.3)
-                                .setReversed(false)
-                                .splineToSplineHeading(new Pose2d(9.0, -62.0, Math.toRadians(-10.0)), Math.toRadians(-21.0))
-                                .splineToSplineHeading(new Pose2d(19.0, -63.5, Math.toRadians(0.0)), Math.toRadians(0.0))
-                                .splineTo(new Vector2d(50.0, -63.5), Math.toRadians(0.0))
-                                .setReversed(true)
-                                .splineToSplineHeading(new Pose2d(19.0, -63.5, Math.toRadians(0.0)), Math.toRadians(180.0))
-                                .splineToSplineHeading(new Pose2d(9.0, -62.0, Math.toRadians(-10.0)), Math.toRadians(159.0))
-                                .splineToSplineHeading(new Pose2d(-4.5, -40.0, Math.toRadians(-75.0)), Math.toRadians(105.0))
-                                .setReversed(false)
-                                .build()
-                );
 
         RoadRunnerBotEntity blueCycleRoute = new DefaultBotBuilder(mm)
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
@@ -130,62 +109,10 @@ public class MeepMeepTesting {
                 );
 
 
-
-/*
-        RoadRunnerBotEntity duckRoute = new DefaultBotBuilder(mm)
-                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 17)
-                .setColorScheme(new ColorSchemeRedDark())
-                .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(25.0, -63, toRadians(0)))
-                                .forward(10)
-                                .turn(toRadians(-90))
-                                .lineToConstantHeading(new Vector2d(-53, 56.5))
-                                .waitSeconds(2)
-                                .lineToConstantHeading(new Vector2d(-58.0, 35.0))
-                                .build()
-                );
-
-        RoadRunnerBotEntity blueHubDuckRoute = new DefaultBotBuilder(mm)
-                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 17)
-                .setColorScheme(new ColorSchemeRedDark())
-                .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-33.6, 64, toRadians(-90.0)))
-                                .lineToConstantHeading(new Vector2d(-30.0, 40.0))
-                                .turn(toRadians(-135.0))
-                                .back(6)
-                                .waitSeconds(3)
-                                .forward(8)
-                                .turn(toRadians(-45))
-                                .lineToLinearHeading(new Pose2d(-53, 56.5, toRadians(90)))
-                                .waitSeconds(2)
-                                .lineToConstantHeading(new Vector2d(-58.0, 35.0))
-                                .build()
-                );
-
-        RoadRunnerBotEntity redHubDuckRoute = new DefaultBotBuilder(mm)
-                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 17)
-                .setColorScheme(new ColorSchemeRedDark())
-                .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-33.6, -64, toRadians(90.0)))
-                                .lineToConstantHeading(new Vector2d(-30.0, -40.0))
-                                .turn(toRadians(135.0))
-                                .back(6)
-                                .waitSeconds(3)
-                                .forward(8)
-                                .turn(toRadians(45))
-                                .lineToLinearHeading(new Pose2d(-53, -56.5, toRadians(-90)))
-                                .waitSeconds(2)
-                                .lineToConstantHeading(new Vector2d(-58.0, -35.0))
-                                .build()
-                );
-                */
-
-
         mm
                 .setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)
                 .setTheme(new ColorSchemeRedDark())
                 .setBackgroundAlpha(0.95f)
-                .addEntity(blueTestCycle)
                 .addEntity(blueCycleRoute)
                 .addEntity(redCycleRoute)
                 .start();
