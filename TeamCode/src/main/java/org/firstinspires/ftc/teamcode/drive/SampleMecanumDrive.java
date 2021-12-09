@@ -300,7 +300,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // Adjust the axis rotation rate as necessary
         // Rotate about the z axis is the default assuming your REV Hub/Control Hub is laying
         // flat on a surface
-        return (double) imu.getAngularVelocity().zRotationRate;
+        return (double) -imu.getAngularVelocity().xRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
