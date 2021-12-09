@@ -62,7 +62,7 @@ class MecTeleOp : CommandOpMode() {
     var prevState = false
 
     //Drive power multiplier for slow mode
-    private var powerMultiplier = 1.0
+    private var powerMultiplier = 0.7
 
     private val allHubs by lazy { hardwareMap.getAll(LynxModule::class.java) }
 
@@ -75,6 +75,8 @@ class MecTeleOp : CommandOpMode() {
         telemetry.sendLine("Initializing Subsystems...")
 
         carouselWheel = CarouselWheel(hardwareMap, telemetry)
+        arm = Arm(hardwareMap, telemetry)
+        claw = Claw(hardwareMap, telemetry)
 
         telemetry.sendLine("Setting bulk cache mode....")
         //Set the bulk read mode to manual
@@ -100,15 +102,22 @@ class MecTeleOp : CommandOpMode() {
 
 
         //Driver controls
-        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(Runnable {
-                    powerMultiplier = 0.6
-                })
-                .whenReleased(Runnable {
-                    powerMultiplier = 1.0
-                })
+
 
         //Manipulator Controls TODO: practice with these
+
+        //Claw
+        manipulator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .toggleWhenPressed(claw::openClaw, claw::closeClaw)
+
+        //Arm
+        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                .whenPressed(Runnable {arm.armPower(0.6)})
+                .whenReleased(arm::stop)
+
+        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                .whenPressed(Runnable {arm.armPower(-0.3)})
+                .whenReleased(arm::stop)
 
 
         //Carousel wheel
@@ -179,6 +188,13 @@ class MecTeleOp : CommandOpMode() {
 
     override fun run() {
         super.run()
+
+        if (gamepad1.left_bumper || gamepad1.right_bumper) {
+            powerMultiplier = 0.4;
+        }
+        else {
+            powerMultiplier = 0.8;
+        }
 
 
         val heading = getRobotAngle()

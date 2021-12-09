@@ -52,7 +52,7 @@ class TestFastCycleAuto : AutoBase() {
         goToWarehouse = drive.trajectorySequenceBuilder(goToHubStart.end())
                 .splineToSplineHeading(Pose2d(9.0, -62.0, toRadians(-10.0)), toRadians(-21.0))
                 .splineToSplineHeading(Pose2d(19.0, -63.5, toRadians(0.0)), toRadians(0.0))
-                .splineTo(Vector2d(50.0, -63.5), toRadians(0.0))
+                .splineTo(Vector2d(40.0, -63.5), toRadians(0.0))
                 .build()
 
         backToHub = drive.trajectorySequenceBuilder(goToWarehouse.end())
