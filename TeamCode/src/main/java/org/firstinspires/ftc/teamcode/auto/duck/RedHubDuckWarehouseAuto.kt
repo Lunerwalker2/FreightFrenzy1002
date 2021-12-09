@@ -146,7 +146,7 @@ class RedHubDuckWarehouseAuto : AutoBase() {
                 ArmToScoringPositionCommand(arm).withTimeout(2000),
                 InstantCommand(claw::openClaw, claw).alongWith(waitFor(1500)),
                 InstantCommand(claw::closeClaw, claw),
-                InstantCommand({ arm.armPower(-0.3) }, arm).andThen(waitFor(2000)),
+                InstantCommand({ arm.armPower(-0.4) }, arm).andThen(waitFor(2000)),
                 InstantCommand({ arm.armPower(0.0) }, arm),
                 FollowTrajectoryCommand(drive, backFromHub),
                 FollowTrajectorySequenceCommand(drive, turnToFaceWall),

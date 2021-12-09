@@ -43,6 +43,45 @@ public class BigBot {
 
         MeepMeep mm = new MeepMeep(600);
 
+
+        RoadRunnerBotEntity redHubWarehouseRoute = new DefaultBotBuilder(mm)
+                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 17)
+                .setColorScheme(new ColorSchemeRedDark())
+                .followTrajectorySequence(drive ->
+                                drive.trajectorySequenceBuilder(new Pose2d(-9, -64, toRadians(-90.0)))
+                                        .setReversed(true)
+                                        .lineToConstantHeading(new Vector2d(1.0, -45.0))
+                                        .turn(toRadians(30.0))
+                                        .setReversed(false)
+                                        .back(6)
+                                        .waitSeconds(3)
+                                        .forward(6)
+                                        .turn(toRadians(60))
+                                        .strafeLeft(4)
+                                        .forward(50)
+//                                .lineToConstantHeading(new Vector2d(-58.0, 35.0))
+                                        .build()
+                );
+
+        RoadRunnerBotEntity blueHubWarehouseRoute = new DefaultBotBuilder(mm)
+                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 17)
+                .setColorScheme(new ColorSchemeRedDark())
+                .followTrajectorySequence(drive ->
+                                drive.trajectorySequenceBuilder(new Pose2d(-9, 64, toRadians(90.0)))
+                                        .setReversed(true)
+                                        .lineToConstantHeading(new Vector2d(1.0, 45.0))
+                                        .turn(toRadians(-30.0))
+                                        .setReversed(false)
+                                        .back(6)
+                                        .waitSeconds(3)
+                                        .forward(6)
+                                        .turn(toRadians(-60))
+                                        .strafeRight(4)
+                                        .forward(50)
+//                                .lineToConstantHeading(new Vector2d(-58.0, 35.0))
+                                        .build()
+                );
+
         RoadRunnerBotEntity blueHubDuckRoute = new DefaultBotBuilder(mm)
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 17)
                 .setColorScheme(new ColorSchemeRedDark())
@@ -116,6 +155,8 @@ public class BigBot {
                 .setTheme(new ColorSchemeRedDark())
                 .setBackgroundAlpha(0.95f)
 //                .addEntity(blueTestCycle)
+                .addEntity(redHubWarehouseRoute)
+                .addEntity(blueHubWarehouseRoute)
                 .addEntity(blueHubDuckRoute)
                 .addEntity(redHubDuckRoute)
                 .start();
