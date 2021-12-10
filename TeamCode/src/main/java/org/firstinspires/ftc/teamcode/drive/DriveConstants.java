@@ -34,6 +34,7 @@ public class DriveConstants {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean RUN_USING_ENCODER = true;
+    //TODO: IF THIS IS CHANGED TO USE FF, TELEOP MUST BE UPDATED!
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(28.7, 0, 12.4,
             14.1); //getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV)
     //12/4: 25, 0, 3.3, 13.7

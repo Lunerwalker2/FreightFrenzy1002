@@ -12,10 +12,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.PIDFCoefficients
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
+import org.firstinspires.ftc.teamcode.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
 import org.firstinspires.ftc.teamcode.subsystems.old.Arm
 import org.firstinspires.ftc.teamcode.subsystems.old.Claw
@@ -85,7 +87,7 @@ class MecTeleOp : CommandOpMode() {
         }
 
         //Schedule a clear of the bulk cache each loop
-        //This command will reamin scheduled the entire loop
+        //This command will remain scheduled the entire loop
         schedule(RunCommand(
                 {
                     for (module in allHubs) {
@@ -143,12 +145,6 @@ class MecTeleOp : CommandOpMode() {
         rightFront = hardwareMap.get(DcMotorEx::class.java, "rf")
         rightBack = hardwareMap.get(DcMotorEx::class.java, "rb")
 
-
-        imu = hardwareMap.get(BNO055IMU::class.java, "imu")
-        val parameters = BNO055IMU.Parameters()
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS
-        imu.initialize(parameters)
-
         //Create a list for easy iterations that don't take up much room
         val motors = listOf(leftFront, leftBack, rightFront, rightBack)
 
@@ -169,22 +165,41 @@ class MecTeleOp : CommandOpMode() {
         maximum velocity. Two things are important here, the first being that the SDK doesn't know the
         actual maximum velocity of the motor (different gearboxes), so it uses a guess on the value.
         For example, a motor configured as a gb 5202 motor might have the max velocity configured for
-        a 5202 1:19.2. The second thing is that the SDK caps the max velocity at 85% to ensure enough
+        a 5202 19.2:1. The second thing is that the SDK caps the max velocity at 85% to ensure enough
         head room for adjustments. We can change the first one if we want to and we have the empirical
-        maximum velocity of our specific motors. We can change the second one easily.
+        maximum velocity of our specific motors. We can change the second one easily as well.
          */
         motors.forEach {
             val motorConfigurationType: MotorConfigurationType = it.motorType.clone()
             motorConfigurationType.achieveableMaxRPMFraction = 0.95
+            //Not sure if this is necessary, but might as well
             motorConfigurationType.gearing = 19.2
             motorConfigurationType.maxRPM = 312.0
             motorConfigurationType.ticksPerRev = 537.6
             it.motorType = motorConfigurationType
         }
 
+        //Since we are using velocity PID anyway, we might as well use the constants from RR
+        val compensatedCoefficients = PIDFCoefficients(
+                DriveConstants.MOTOR_VELO_PID.p, DriveConstants.MOTOR_VELO_PID.i,
+                DriveConstants.MOTOR_VELO_PID.d,
+                DriveConstants.MOTOR_VELO_PID.f * 12 / hardwareMap.voltageSensor.iterator().next().voltage
+        )
+        //Set the constants since they don't persist over restarts.
+        for (motor in motors) {
+            motor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, compensatedCoefficients)
+        }
+
         //Reverse the left side motors
         leftFront.direction = DcMotorSimple.Direction.REVERSE
         leftBack.direction = DcMotorSimple.Direction.REVERSE
+
+        telemetry.sendLine("Initializing IMU...")
+
+        imu = hardwareMap.get(BNO055IMU::class.java, "imu")
+        val parameters = BNO055IMU.Parameters()
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS
+        imu.initialize(parameters)
 
         telemetry.sendLine("Ready for start!")
     }
@@ -192,16 +207,17 @@ class MecTeleOp : CommandOpMode() {
     override fun run() {
         super.run()
 
+        //Set the slow mode one if either bumper is pressed
         if (gamepad1.left_bumper || gamepad1.right_bumper) {
             powerMultiplier = 0.4;
-        }
-        else {
+        } else {
             powerMultiplier = 0.8;
         }
 
-
+        //Store the heading of the robot
         val heading = getRobotAngle()
 
+        //If we need to reset our zero angle, increment the offset with the current heading to do so
         if (gamepad1.a && !prevState) offset += heading
         prevState = gamepad1.a
 
@@ -214,10 +230,12 @@ class MecTeleOp : CommandOpMode() {
         we barely need to do anything here, except the drive base.
          */
 
+        //Check the deadband of the controller
         var y = if (abs(gamepad1.left_stick_y) > 0.02) (-gamepad1.left_stick_y).toDouble() else 0.0 // Remember, this is reversed!
         var x = if (abs(gamepad1.left_stick_x) > 0.02) gamepad1.left_stick_x * 1.1 else 0.0 // Counteract imperfect strafing
         var rx = if (abs(gamepad1.right_stick_x) > 0.02) gamepad1.right_stick_x.toDouble() else 0.0
 
+        //Apply some minor cubing to help with driving
         y = cubeInput(y, 0.4)
         x = cubeInput(x, 0.4)
         rx = cubeInput(rx, 0.4)
@@ -233,10 +251,6 @@ class MecTeleOp : CommandOpMode() {
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio, but only when
         // at least one is out of the range [-1, 1]
-
-        // Denominator is the largest motor power (absolute value) or 1
-        // This ensures all the powers maintain the same ratio, but only when
-        // at least one is out of the range [-1, 1]
         val denominator: Double = max(abs(y) + abs(x) + abs(rx), 1.0)
 
         val frontLeftPower = (y + x + rx) / denominator
@@ -244,11 +258,13 @@ class MecTeleOp : CommandOpMode() {
         val frontRightPower = (y - x - rx) / denominator
         val backRightPower = (y + x - rx) / denominator
 
+        //Finally set the motor powers scaled by the slow mode
         leftFront.power = frontLeftPower * powerMultiplier
         leftBack.power = backLeftPower * powerMultiplier
         rightFront.power = frontRightPower * powerMultiplier
         rightBack.power = backRightPower * powerMultiplier
 
+        //Show the current field-centric things of importance.
         telemetry.addLine("Press the left bumper to re-zero the heading.")
         telemetry.addData("Current Heading with offset", AngleUnit.DEGREES.fromRadians(getRobotAngle()))
         telemetry.addData("Offset", AngleUnit.DEGREES.fromRadians(offset))
@@ -257,6 +273,7 @@ class MecTeleOp : CommandOpMode() {
 
     }
 
+    //Gets the robot angle in -pi to pi from the imu,
     private fun getRobotAngle(): Double {
         var angle: Double = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle.toDouble()
         angle = AngleUnit.normalizeRadians(angle - offset)
