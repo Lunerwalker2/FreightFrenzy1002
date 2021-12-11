@@ -5,16 +5,16 @@ import org.firstinspires.ftc.teamcode.subsystems.old.Arm
 
 class ArmToScoringPositionCommand(private val arm: Arm): CommandBase() {
 
-    private var scoringPosition: Double = 948.0
+    private var scoringPosition: Double = 1004.0
 
     override fun initialize() {
-        arm.armPower(0.7)
+        arm.armPower(0.9)
         addRequirements(arm)
     }
 
 
     override fun isFinished(): Boolean {
-        return arm.getArmPosition() >= scoringPosition - 100
+        return arm.getArmPosition() >= scoringPosition - 50
     }
 
     override fun end(interrupted: Boolean) {

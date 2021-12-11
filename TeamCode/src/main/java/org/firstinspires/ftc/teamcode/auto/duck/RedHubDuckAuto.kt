@@ -87,11 +87,11 @@ class RedHubDuckAuto : AutoBase() {
                 .build()
 
         goToCarousel = drive.trajectoryBuilder(turnToFaceWall.end())
-                .lineToLinearHeading(Pose2d(-62.0, -61.0, toRadians(-90.0)))
+                .lineToLinearHeading(Pose2d(-64.0, -63.0, toRadians(-90.0)))
                 .build()
 
         goToStorageUnit = drive.trajectoryBuilder(goToCarousel.end())
-                .lineToConstantHeading(Vector2d(-60.0, -35.0))
+                .lineToConstantHeading(Vector2d(-63.0, -35.0))
                 .build()
 
 
@@ -136,15 +136,15 @@ class RedHubDuckAuto : AutoBase() {
                 FollowTrajectoryCommand(drive, goForward).andThen(waitFor(200)),
                 FollowTrajectorySequenceCommand(drive, turnToHub).andThen(waitFor(200)),
                 FollowTrajectoryCommand(drive, goToHub).andThen(waitFor(500)),
-                ArmToScoringPositionCommand(arm).withTimeout(2000),
+                ArmToScoringPositionCommand(arm).withTimeout(3000),
                 InstantCommand(claw::openClaw, claw).alongWith(waitFor(1500)),
                 InstantCommand(claw::closeClaw, claw),
-                InstantCommand({ arm.armPower(-0.4) }, arm).andThen(waitFor(2000)),
+                InstantCommand({ arm.armPower(-0.5) }, arm).andThen(waitFor(2000)),
                 InstantCommand({ arm.armPower(0.0) }, arm),
                 FollowTrajectoryCommand(drive, backFromHub),
                 FollowTrajectorySequenceCommand(drive, turnToFaceWall),
                 FollowTrajectoryCommand(drive, goToCarousel).andThen(waitFor(100)),
-                CarouselWheelCommand(carouselWheel, true).withTimeout(5000),
+                CarouselWheelCommand(carouselWheel, false,false).withTimeout(5000),
                 FollowTrajectoryCommand(drive, goToStorageUnit)
         ))
 

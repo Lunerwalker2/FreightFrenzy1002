@@ -64,7 +64,7 @@ class MecTeleOp : CommandOpMode() {
     var prevState = false
 
     //Drive power multiplier for slow mode
-    private var powerMultiplier = 0.7
+    private var powerMultiplier = 0.85
 
     private val allHubs by lazy { hardwareMap.getAll(LynxModule::class.java) }
 
@@ -114,11 +114,11 @@ class MecTeleOp : CommandOpMode() {
 
         //Arm
         manipulator.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                .whenPressed(Runnable {arm.armPower(0.6)})
+                .whenPressed(Runnable {arm.armPower(0.7)})
                 .whenReleased(arm::stop)
 
         manipulator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(Runnable {arm.armPower(-0.3)})
+                .whenPressed(Runnable {arm.armPower(-0.4)})
                 .whenReleased(arm::stop)
 
 
@@ -211,7 +211,7 @@ class MecTeleOp : CommandOpMode() {
         if (gamepad1.left_bumper || gamepad1.right_bumper) {
             powerMultiplier = 0.4;
         } else {
-            powerMultiplier = 0.8;
+            powerMultiplier = 0.85;
         }
 
         //Store the heading of the robot

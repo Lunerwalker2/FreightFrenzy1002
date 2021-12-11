@@ -83,7 +83,7 @@ class Arm(private val hardwareMap: HardwareMap, private val telemetry: Telemetry
 
     init {
         //We can raise this but to be safe we are leaving it here for now
-        armGravityController.setOutputBounds(-0.75, 0.75)
+        armGravityController.setOutputBounds(-0.9, 0.9)
         register()
     }
 

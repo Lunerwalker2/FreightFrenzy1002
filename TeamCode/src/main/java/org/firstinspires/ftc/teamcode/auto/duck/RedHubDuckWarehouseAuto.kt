@@ -51,7 +51,7 @@ class RedHubDuckWarehouseAuto : AutoBase() {
     private lateinit var drive: SampleMecanumDrive
 
     //Our starting position
-    private val startPose = Pose2d(-33.6, -64.0, toRadians(90.0))
+    private val startPose = Pose2d(-33.6, -64.0, toRadians(-90.0))
 
 
     override fun initialize() {
@@ -151,7 +151,7 @@ class RedHubDuckWarehouseAuto : AutoBase() {
                 FollowTrajectoryCommand(drive, backFromHub),
                 FollowTrajectorySequenceCommand(drive, turnToFaceWall),
                 FollowTrajectoryCommand(drive, goToCarousel).andThen(waitFor(100)),
-                CarouselWheelCommand(carouselWheel, true).withTimeout(5000),
+                CarouselWheelCommand(carouselWheel, false).withTimeout(5000),
                 FollowTrajectorySequenceCommand(drive, backFromCarousel),
                 FollowTrajectoryCommand(drive, goToWarehouse)
         ))

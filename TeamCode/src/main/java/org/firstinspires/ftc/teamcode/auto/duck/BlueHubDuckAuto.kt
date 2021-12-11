@@ -58,7 +58,7 @@ class BlueHubDuckAuto : AutoBase() {
         drive = SampleMecanumDrive(hardwareMap)
         drive.poseEstimate = startPose
 
-
+    
         telemetry.sendLine("Generating trajectories...")
 
         //Generating trajectories is an expensive task, so we do it in init
@@ -71,7 +71,7 @@ class BlueHubDuckAuto : AutoBase() {
                 .build()
 
         goToHub = drive.trajectoryBuilder(turnToHub.end())
-                .back(6.0)
+                .back(5.5)
                 .build()
 
         backFromHub = drive.trajectoryBuilder(goToHub.end())
@@ -87,7 +87,7 @@ class BlueHubDuckAuto : AutoBase() {
                 .build()
 
         goToStorageUnit = drive.trajectoryBuilder(goToCarousel.end())
-                .lineToConstantHeading(Vector2d(-60.0, 35.0))
+                .lineToConstantHeading(Vector2d(-62.0, 36.0))
                 .build()
 
 
@@ -133,15 +133,15 @@ class BlueHubDuckAuto : AutoBase() {
                 FollowTrajectoryCommand(drive, goForward).andThen(waitFor(200)),
                 FollowTrajectorySequenceCommand(drive, turnToHub).andThen(waitFor(200)),
                 FollowTrajectoryCommand(drive, goToHub).andThen(waitFor(500)),
-                ArmToScoringPositionCommand(arm).withTimeout(2000),
+                ArmToScoringPositionCommand(arm).withTimeout(3000),
                 InstantCommand(claw::openClaw, claw).alongWith(waitFor(1500)),
                 InstantCommand(claw::closeClaw, claw),
-                InstantCommand({ arm.armPower(-0.4) }, arm).andThen(waitFor(2000)),
+                InstantCommand({ arm.armPower(-0.5) }, arm).andThen(waitFor(2000)),
                 InstantCommand({ arm.armPower(0.0) }, arm),
                 FollowTrajectoryCommand(drive, backFromHub),
                 FollowTrajectorySequenceCommand(drive, turnToFaceWall),
                 FollowTrajectoryCommand(drive, goToCarousel).andThen(waitFor(100)),
-                CarouselWheelCommand(carouselWheel, true).withTimeout(5000),
+                CarouselWheelCommand(carouselWheel, true, false).withTimeout(5000),
                 FollowTrajectoryCommand(drive, goToStorageUnit)
         ))
 

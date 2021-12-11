@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 
-@Disabled
+//@Disabled
 @TeleOp(name = "Arm Encoder Position Output")
 class ArmPositionOutput: LinearOpMode() {
 

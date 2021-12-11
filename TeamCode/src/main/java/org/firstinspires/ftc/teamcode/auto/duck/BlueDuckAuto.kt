@@ -83,7 +83,7 @@ class BlueDuckAuto : AutoBase() {
                 FollowTrajectoryCommand(drive, goForward),
                 FollowTrajectorySequenceCommand(drive, turnRight),
                 FollowTrajectoryCommand(drive, goToCarousel),
-                CarouselWheelCommand(carouselWheel, false).withTimeout(5000),
+                CarouselWheelCommand(carouselWheel, false, false).withTimeout(5000),
                 FollowTrajectoryCommand(drive, goToStorageUnit),
         ))
 

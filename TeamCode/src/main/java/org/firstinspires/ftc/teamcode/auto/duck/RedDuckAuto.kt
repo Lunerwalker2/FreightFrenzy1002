@@ -88,7 +88,7 @@ class RedDuckAuto : AutoBase() {
                 FollowTrajectoryCommand(drive, goForward),
                 FollowTrajectorySequenceCommand(drive, turnLeft),
                 FollowTrajectoryCommand(drive,goToCarousel),
-                CarouselWheelCommand(carouselWheel, false).withTimeout(5000),
+                CarouselWheelCommand(carouselWheel, true).withTimeout(5000),
                 FollowTrajectoryCommand(drive, goToStorageUnit)
         ))
 
