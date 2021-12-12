@@ -38,19 +38,19 @@ public class MB1242 extends I2cDeviceSynchDevice<I2cDeviceSynch> implements Dist
     public MB1242(I2cDeviceSynch deviceClient) {
         super(deviceClient, true);
 
-        this.deviceClient.setI2cAddress(I2cAddr.create8bit(0xe1));
+        this.deviceClient.setI2cAddress(I2cAddr.create7bit(0xe0));
 
         super.registerArmingStateCallback(false);
         this.deviceClient.engage();
     }
 
     public void ping() {
-        deviceClient.write(0xE0, TypeConversion.intToByteArray(0x51));
+        deviceClient.write(TypeConversion.intToByteArray(0x51));
     }
 
 
     private short readRawRange(){
-        return TypeConversion.byteArrayToShort(deviceClient.read(0xE1, 2));
+        return TypeConversion.byteArrayToShort(deviceClient.read( 2));
     }
 
     /**

@@ -115,7 +115,6 @@ public class DistanceSensorTesting extends CommandOpMode {
         }
 
         prevUsingDistanceSensors = gamepad1.a;
-
         Pose2d poseEstimate = drive.getPoseEstimate();
 
         telemetry.addData("Robot X (in)", "%.3f", poseEstimate.getX());

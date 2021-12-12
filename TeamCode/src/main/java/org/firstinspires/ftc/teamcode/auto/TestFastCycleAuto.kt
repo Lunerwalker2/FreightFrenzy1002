@@ -27,7 +27,7 @@ class TestFastCycleAuto : AutoBase() {
     private lateinit var drive: SampleMecanumDrive
 
     private val startPose = Pose2d(-33.6, -64.0, toRadians(-90.0))
-
+    
 
     override fun initialize() {
 

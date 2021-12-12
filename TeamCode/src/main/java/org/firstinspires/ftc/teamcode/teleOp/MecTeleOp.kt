@@ -108,19 +108,6 @@ class MecTeleOp : CommandOpMode() {
 
         //Manipulator Controls TODO: practice with these
 
-        //Claw
-        manipulator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .toggleWhenPressed(claw::openClaw, claw::closeClaw)
-
-        //Arm
-        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                .whenPressed(Runnable {arm.armPower(0.7)})
-                .whenReleased(arm::stop)
-
-        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(Runnable {arm.armPower(-0.4)})
-                .whenReleased(arm::stop)
-
 
         //Carousel wheel
         leftCarouselTrigger = Trigger { gamepad2.left_trigger > 0.2 }
