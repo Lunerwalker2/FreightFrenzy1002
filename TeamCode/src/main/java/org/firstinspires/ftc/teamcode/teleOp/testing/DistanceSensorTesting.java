@@ -33,7 +33,7 @@ import static java.lang.Math.toRadians;
 
 import java.util.ArrayList;
 
-@Disabled
+
 @TeleOp
 public class DistanceSensorTesting extends CommandOpMode {
 
@@ -91,31 +91,23 @@ public class DistanceSensorTesting extends CommandOpMode {
         if(gamepad1.dpad_right) redSide = true;
         else if(gamepad1.dpad_left) redSide = false;
 
+        Pose2d poseEstimate = drive.getPoseEstimate();
         /*
         Use a toggle to either cancel the re-localization command (and thus stop overwriting
         the drive encoders, or (re)schedule the a new command.
          */
-        if (gamepad1.a && gamepad1.a != prevUsingDistanceSensors) {
-            if (usingDistanceSensors) {
-                relocalizeCommand.cancel();
-                usingDistanceSensors = false;
-            } else {
-                schedule(relocalizeCommand = new RelocalizeCommand(
-                        (pose) -> drive.setPoseEstimate(new Pose2d(
-                                pose.getX(),
-                                pose.getY(),
-                                pose.getHeading()
-                        )),
-                        distanceSensors,
-                        () -> drive.getExternalHeading(),
-                        redSide)
-                );
-                usingDistanceSensors = true;
-            }
-        }
+//                schedule(relocalizeCommand = new RelocalizeCommand(
+//                        (pose) -> drive.setPoseEstimate(new Pose2d(
+//                                pose.getX(),
+//                                pose.getY(),
+//                                pose.getHeading()
+//                        )),
+//                        distanceSensors,
+//                        () -> drive.getExternalHeading(),
+//                        redSide)
+//                );
 
-        prevUsingDistanceSensors = gamepad1.a;
-        Pose2d poseEstimate = drive.getPoseEstimate();
+
 
         telemetry.addData("Robot X (in)", "%.3f", poseEstimate.getX());
         telemetry.addData("Robot Y (in)", "%.3f", poseEstimate.getY());
