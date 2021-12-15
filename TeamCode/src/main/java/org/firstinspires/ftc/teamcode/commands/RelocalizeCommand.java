@@ -38,6 +38,7 @@ public class RelocalizeCommand extends CommandBase {
      * robot. They are relative because the actual coordinates doesn't matter,
      * only the horizontal and vertical distances (eg, the abs value of the x and y).
      *
+     * y is forward, x is left/right
      * Inches
      */
     private static final Vector2d forwardSensorPosition = new Vector2d();
@@ -51,6 +52,9 @@ public class RelocalizeCommand extends CommandBase {
     private final boolean leftSide;
     private boolean firstRun = true;
 
+    //Keep the last instant position for debugging use
+    public Pose2d lastInstantPosition = new Pose2d();
+    //Keep the average position for autonomous use
     private Pose2d averagePosition = new Pose2d();
 
     /**
@@ -116,7 +120,10 @@ public class RelocalizeCommand extends CommandBase {
 
         //if its the first run we need to make sure we have an initial position for the average to work
         if (firstRun) {
-            averagePosition = new Pose2d(currentPosition.getX(), currentPosition.getY(), currentPosition.getHeading());
+            averagePosition =
+                    new Pose2d(currentPosition.getX(), currentPosition.getY(), currentPosition.getHeading());
+            lastInstantPosition =
+                    new Pose2d(currentPosition.getX(), currentPosition.getY(), currentPosition.getHeading());
             firstRun = false;
         } else {
             //Average the two
@@ -125,6 +132,8 @@ public class RelocalizeCommand extends CommandBase {
                     (averagePosition.getY() + currentPosition.getY()) / 2.0,
                     AngleUnit.normalizeRadians((averagePosition.getHeading() + currentPosition.getHeading()) / 2.0)
             );
+            lastInstantPosition =
+                    new Pose2d(currentPosition.getX(), currentPosition.getY(), currentPosition.getHeading());
         }
 
         //Update the user with the new position

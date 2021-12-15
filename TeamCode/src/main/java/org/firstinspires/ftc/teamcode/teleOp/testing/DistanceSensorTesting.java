@@ -42,6 +42,8 @@ public class DistanceSensorTesting extends CommandOpMode {
     private boolean redSide = false;
     private RelocalizeCommand relocalizeCommand;
 
+    private Pose2d distanceSensorPose = new Pose2d();
+
     @Override
     public void initialize() {
 
@@ -54,15 +56,25 @@ public class DistanceSensorTesting extends CommandOpMode {
         distanceSensors = new DistanceSensors(hardwareMap);
 
         relocalizeCommand = new RelocalizeCommand(
-                (pose) -> drive.setPoseEstimate(new Pose2d(
+                (pose) -> {
+                    //Do the useless average position update
+                    distanceSensorPose = new Pose2d(
                         pose.getX(),
                         pose.getY(),
                         pose.getHeading()
-                )),
+                    );
+                    //More importantly, update the current pose estimate for live debugging
+                    drive.setPoseEstimate(new Pose2d(
+                            relocalizeCommand.lastInstantPosition.getX(),
+                            relocalizeCommand.lastInstantPosition.getY(),
+                            relocalizeCommand.lastInstantPosition.getHeading()
+                    ));
+                },
                 distanceSensors,
                 drive::getExternalHeading,
                 redSide
         );
+        schedule(relocalizeCommand);
 
     }
 
@@ -81,38 +93,20 @@ public class DistanceSensorTesting extends CommandOpMode {
         );
 
         //Update the motor powers in rr and the rr localizer
+
+        //Use the debugging instant position
         drive.update();
 
-        //Read the dpad to hold the desired side, will only take effect after each switch of localization
-        if(gamepad1.dpad_right) redSide = true;
-        else if(gamepad1.dpad_left) redSide = false;
-
         Pose2d poseEstimate = drive.getPoseEstimate();
-        /*
-        Use a toggle to either cancel the re-localization command (and thus stop overwriting
-        the drive encoders, or (re)schedule the a new command.
-         */
-//                schedule(relocalizeCommand = new RelocalizeCommand(
-//                        (pose) -> drive.setPoseEstimate(new Pose2d(
-//                                pose.getX(),
-//                                pose.getY(),
-//                                pose.getHeading()
-//                        )),
-//                        distanceSensors,
-//                        () -> drive.getExternalHeading(),
-//                        redSide)
-//                );
-
-
-
+        telemetry.addLine("Red side"+redSide);
         telemetry.addData("Robot X (in)", "%.3f", poseEstimate.getX());
         telemetry.addData("Robot Y (in)", "%.3f", poseEstimate.getY());
         telemetry.addData("Robot Heading (rad)/(deg)", "%.3f / %.3f",
                 poseEstimate.getHeading(), toDegrees(poseEstimate.getHeading()));
+        telemetry.addData("Distance Sensor Cycle Time (ms)", distanceSensors.getCycleTime());
         telemetry.addData("Forward Sensor MB1242 Range (in)", distanceSensors.getForwardRange(DistanceUnit.INCH));
         telemetry.addData("Left Sensor Rev TOF Range (in)", distanceSensors.getLeftRange(DistanceUnit.INCH));
         telemetry.addData("Right Sensor Rev TOF Range (in)", distanceSensors.getRightRange(DistanceUnit.INCH));
-
 
         telemetry.update();
 
