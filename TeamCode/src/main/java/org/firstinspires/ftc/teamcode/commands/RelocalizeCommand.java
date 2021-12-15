@@ -138,6 +138,10 @@ public class RelocalizeCommand extends CommandBase {
         distanceSensors.stopReading();
     }
 
+    @Override
+    public boolean isFinished(){
+        return false;
+    }
     /**
      * Returns if the current range readings are valid or not
      */

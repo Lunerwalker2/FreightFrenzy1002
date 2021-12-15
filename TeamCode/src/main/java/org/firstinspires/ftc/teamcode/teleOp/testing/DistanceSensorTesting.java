@@ -40,22 +40,18 @@ public class DistanceSensorTesting extends CommandOpMode {
     private DistanceSensors distanceSensors;
     private SampleMecanumDrive drive;
     private boolean redSide = false;
-    private boolean usingDistanceSensors = false;
-    private boolean prevUsingDistanceSensors = false;
     private RelocalizeCommand relocalizeCommand;
 
     @Override
     public void initialize() {
 
+        telemetry.addLine("Initializing Subsystems...");
+        telemetry.update();
+
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(new Pose2d(-33.6, 64.0, toRadians(-90.0)));
 
         distanceSensors = new DistanceSensors(hardwareMap);
-
-        waitForStart();
-
-        if (isStopRequested()) return;
-
 
         relocalizeCommand = new RelocalizeCommand(
                 (pose) -> drive.setPoseEstimate(new Pose2d(
@@ -64,7 +60,7 @@ public class DistanceSensorTesting extends CommandOpMode {
                         pose.getHeading()
                 )),
                 distanceSensors,
-                () -> drive.getExternalHeading(),
+                drive::getExternalHeading,
                 redSide
         );
 

@@ -18,9 +18,9 @@ public class DistanceSensors extends SubsystemBase {
     private final Rev2mDistanceSensor leftSensor;
 
     //Timer object for the delay
-    private final ElapsedTime delayTimer = new ElapsedTime();
+    private final ElapsedTime delayTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     //Delay in ms between pings,
-    private final int readingDelayMs = 50;
+    private final int readingDelayMs = 60;
     //Whether we should be active
     private boolean takingRangeReading = false;
     //Last read range in cm
@@ -31,7 +31,6 @@ public class DistanceSensors extends SubsystemBase {
     private boolean firstRun = true;
 
     public DistanceSensors(HardwareMap hardwareMap){
-        super();
 
         //Get the sensors from the hardware map
         forwardSensor = hardwareMap.get(MB1242.class, "forwardSensor");
@@ -71,7 +70,7 @@ public class DistanceSensors extends SubsystemBase {
     }
 
     public double getForwardRange(DistanceUnit unit) {
-        return forwardRangeReading;
+        return unit.fromCm(forwardRangeReading);
     }
 
     //Start taking range readings
