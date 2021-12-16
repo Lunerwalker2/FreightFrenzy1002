@@ -32,6 +32,8 @@ public class DistanceSensors extends SubsystemBase {
     private double rightRange = 0.0;
 
     public DistanceSensors(HardwareMap hardwareMap){
+        super();
+
 
         //Get the sensors from the hardware map
         forwardSensor = hardwareMap.get(MB1242.class, "forwardSensor");
@@ -46,7 +48,9 @@ public class DistanceSensors extends SubsystemBase {
         cycleTimer.reset();
         delayTimer.reset();
 
+
     }
+
 
     @Override
     public void periodic(){

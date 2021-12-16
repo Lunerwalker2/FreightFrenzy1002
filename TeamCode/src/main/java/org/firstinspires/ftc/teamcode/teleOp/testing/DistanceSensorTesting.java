@@ -51,7 +51,7 @@ public class DistanceSensorTesting extends CommandOpMode {
         telemetry.update();
 
         drive = new SampleMecanumDrive(hardwareMap);
-        drive.setPoseEstimate(new Pose2d(-33.6, 64.0, toRadians(-90.0)));
+        drive.setPoseEstimate(new Pose2d(-33.6, 64.0, toRadians(0)));
 
         distanceSensors = new DistanceSensors(hardwareMap);
 
@@ -74,7 +74,11 @@ public class DistanceSensorTesting extends CommandOpMode {
                 drive::getExternalHeading,
                 redSide
         );
+
         schedule(relocalizeCommand);
+
+        telemetry.addLine("Ready for start!");
+        telemetry.update();
 
     }
 
@@ -82,6 +86,7 @@ public class DistanceSensorTesting extends CommandOpMode {
     @Override
     public void run() {
 
+        super.run();
 
         //Send our joystick values to the rr drive class.
         drive.setWeightedDrivePower(
@@ -98,12 +103,13 @@ public class DistanceSensorTesting extends CommandOpMode {
         drive.update();
 
         Pose2d poseEstimate = drive.getPoseEstimate();
-        telemetry.addLine("Red side"+redSide);
+        telemetry.addLine("Red side "+redSide);
         telemetry.addData("Robot X (in)", "%.3f", poseEstimate.getX());
         telemetry.addData("Robot Y (in)", "%.3f", poseEstimate.getY());
         telemetry.addData("Robot Heading (rad)/(deg)", "%.3f / %.3f",
                 poseEstimate.getHeading(), toDegrees(poseEstimate.getHeading()));
         telemetry.addData("Distance Sensor Cycle Time (ms)", distanceSensors.getCycleTime());
+        telemetry.addData("Distance Sensor is taking", distanceSensors.isTakingRangeReading());
         telemetry.addData("Forward Sensor MB1242 Range (in)", distanceSensors.getForwardRange(DistanceUnit.INCH));
         telemetry.addData("Left Sensor Rev TOF Range (in)", distanceSensors.getLeftRange(DistanceUnit.INCH));
         telemetry.addData("Right Sensor Rev TOF Range (in)", distanceSensors.getRightRange(DistanceUnit.INCH));

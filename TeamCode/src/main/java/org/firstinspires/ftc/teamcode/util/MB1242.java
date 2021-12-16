@@ -38,7 +38,7 @@ public class MB1242 extends I2cDeviceSynchDevice<I2cDeviceSynch> implements Dist
     public MB1242(I2cDeviceSynch deviceClient) {
         super(deviceClient, true);
 
-        this.deviceClient.setI2cAddress(I2cAddr.create7bit(0xe0));
+        this.deviceClient.setI2cAddress(I2cAddr.create7bit(0x70));
 
         super.registerArmingStateCallback(false);
         this.deviceClient.engage();

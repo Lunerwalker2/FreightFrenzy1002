@@ -155,10 +155,10 @@ public class RelocalizeCommand extends CommandBase {
      * Returns if the current range readings are valid or not
      */
     private static boolean isValidReadings(double front, double side) {
-        return (front < 8 ||
+        return !(front < 6 ||
                 front > 96 ||
                 side < 3 ||
-                side > 30);
+                side > 100);
     }
 
     /**
