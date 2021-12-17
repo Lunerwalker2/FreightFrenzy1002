@@ -29,7 +29,7 @@ public class RelocalizeCommand extends CommandBase {
      *
      * //TODO: Find these
      */
-    private static final double FORWARD_SENSOR_BASE_DISTANCE_TO_WALL = 65.0;
+    private static final double FORWARD_SENSOR_BASE_DISTANCE_TO_WALL = 65.5;
     private static final double LEFT_SENSOR_BASE_DISTANCE_TO_WALL = 65.0;
     private static final double RIGHT_SENSOR_BASE_DISTANCE_TO_WALL = 65.0;
 
@@ -41,9 +41,9 @@ public class RelocalizeCommand extends CommandBase {
      * y is forward, x is left/right
      * Inches
      */
-    private static final Vector2d forwardSensorPosition = new Vector2d();
-    private static final Vector2d leftSensorPosition = new Vector2d();
-    private static final Vector2d rightSensorPosition = new Vector2d();
+    private static final Vector2d forwardSensorPosition = new Vector2d(6.5,6.5);
+    private static final Vector2d leftSensorPosition = new Vector2d(7, 5);
+    private static final Vector2d rightSensorPosition = new Vector2d(7, 5);
 
 
     private final DistanceSensors distanceSensors;
