@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.teamcode.drive.DriveConstants
+import org.firstinspires.ftc.teamcode.subsystems.CappingArm
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
 import org.firstinspires.ftc.teamcode.subsystems.old.Arm
 import org.firstinspires.ftc.teamcode.subsystems.old.Claw
@@ -46,6 +47,7 @@ class MecTeleOp : CommandOpMode() {
     private lateinit var carouselWheel: CarouselWheel
     private lateinit var arm: Arm
     private lateinit var claw: Claw
+    private lateinit var cappingArm: CappingArm
 
     // Buttons/triggers
     private lateinit var leftCarouselTrigger: Trigger
@@ -62,6 +64,7 @@ class MecTeleOp : CommandOpMode() {
     var offset = 0.0
 
     var prevState = false
+    var prevCapping = false
 
     //Drive power multiplier for slow mode
     private var powerMultiplier = 0.85
@@ -79,6 +82,7 @@ class MecTeleOp : CommandOpMode() {
         carouselWheel = CarouselWheel(hardwareMap, telemetry)
         arm = Arm(hardwareMap, telemetry)
         claw = Claw(hardwareMap, telemetry)
+        cappingArm = CappingArm(hardwareMap, telemetry)
 
         telemetry.sendLine("Setting bulk cache mode....")
         //Set the bulk read mode to manual
@@ -196,7 +200,7 @@ class MecTeleOp : CommandOpMode() {
 
         //Set the slow mode one if either bumper is pressed
         if (gamepad1.left_bumper || gamepad1.right_bumper) {
-            powerMultiplier = 0.4;
+            powerMultiplier = 0.3;
         } else {
             powerMultiplier = 0.85;
         }
@@ -212,6 +216,13 @@ class MecTeleOp : CommandOpMode() {
         //Telemetry for most things are handled in the subsystems
         telemetry.addData("Slow Mode Enabled", (powerMultiplier != 1.0))
 
+        if(-gamepad2.left_stick_y > 0.9 && !prevCapping){
+            cappingArm.incrementPosition()
+        } else if(-gamepad2.left_stick_y < -0.9 && !prevCapping){
+            cappingArm.decrementPosition()
+        }
+
+        prevCapping = -gamepad2.left_stick_y > 0.9 || -gamepad2.left_stick_y < -0.9
 
         /* Thanks to FTCLib handling all the things we just did above automatically,
         we barely need to do anything here, except the drive base.

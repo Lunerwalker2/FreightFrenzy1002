@@ -12,11 +12,11 @@ public class CappingArm extends SubsystemBase {
 
     private Telemetry telemetry;
 
-    enum Positions {
+    public enum Positions {
         IN_ROBOT(0.0),
         ABOVE_POLE(0.5),
-        ON_POLE(0.6),
-        PICK_UP(0.8);
+        ON_POLE(0.62),
+        PICK_UP(0.85);
 
         public double position;
         Positions(double position){
@@ -48,6 +48,10 @@ public class CappingArm extends SubsystemBase {
     public void setArmPosition(Positions position){
         currentPosition = position;
         cappingServo.setPosition(position.position);
+    }
+
+    public void setArmPositionRaw(double position){
+        cappingServo.setPosition(position);
     }
 
     public void incrementPosition(){
