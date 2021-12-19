@@ -20,8 +20,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.teamcode.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.subsystems.CappingArm
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
-import org.firstinspires.ftc.teamcode.subsystems.old.Arm
-import org.firstinspires.ftc.teamcode.subsystems.old.Claw
 import org.firstinspires.ftc.teamcode.util.Extensions
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.cubeInput
 import kotlin.math.abs
@@ -43,11 +41,9 @@ MOST OF THIS IS NOT HOW THE SDK WORKS PLEASE DON'T TAKE THIS AS AN EXAMPLE OF TH
 @TeleOp(name = "Main TeleOp", group = "TeleOp")
 class MecTeleOp : CommandOpMode() {
 
+
     //Subsystems
     private lateinit var carouselWheel: CarouselWheel
-    private lateinit var arm: Arm
-    private lateinit var claw: Claw
-    private lateinit var cappingArm: CappingArm
 
     // Buttons/triggers
     private lateinit var leftCarouselTrigger: Trigger
@@ -64,7 +60,6 @@ class MecTeleOp : CommandOpMode() {
     var offset = 0.0
 
     var prevState = false
-    var prevCapping = false
 
     //Drive power multiplier for slow mode
     private var powerMultiplier = 0.85
@@ -80,9 +75,6 @@ class MecTeleOp : CommandOpMode() {
         telemetry.sendLine("Initializing Subsystems...")
 
         carouselWheel = CarouselWheel(hardwareMap, telemetry)
-        arm = Arm(hardwareMap, telemetry)
-        claw = Claw(hardwareMap, telemetry)
-        cappingArm = CappingArm(hardwareMap, telemetry)
 
         telemetry.sendLine("Setting bulk cache mode....")
         //Set the bulk read mode to manual
@@ -216,13 +208,6 @@ class MecTeleOp : CommandOpMode() {
         //Telemetry for most things are handled in the subsystems
         telemetry.addData("Slow Mode Enabled", (powerMultiplier != 1.0))
 
-        if(-gamepad2.left_stick_y > 0.9 && !prevCapping){
-            cappingArm.incrementPosition()
-        } else if(-gamepad2.left_stick_y < -0.9 && !prevCapping){
-            cappingArm.decrementPosition()
-        }
-
-        prevCapping = -gamepad2.left_stick_y > 0.9 || -gamepad2.left_stick_y < -0.9
 
         /* Thanks to FTCLib handling all the things we just did above automatically,
         we barely need to do anything here, except the drive base.

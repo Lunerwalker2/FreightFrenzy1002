@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleOp.testing
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Servo
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.CappingArm
 import kotlin.jvm.Throws
 
 
+@Disabled
 @TeleOp
 class CappingArmTest : LinearOpMode(){
 

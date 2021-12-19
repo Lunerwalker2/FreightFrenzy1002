@@ -10,6 +10,7 @@ import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import static java.lang.Math.toRadians;
 
@@ -23,6 +24,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DistanceSensors;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 
+@Disabled
 @Autonomous(name = "One Cycle with distance sensors")
 public class TestCycleAuto extends AutoBase {
 

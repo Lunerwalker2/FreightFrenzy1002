@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.auto.AutoBase
 import com.arcrobotics.ftclib.command.InstantCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectoryCommand
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.sendLine
 import java.lang.Math.toRadians
 
+@Disabled
 @Autonomous(name = "Red test cycle")
 class TestFastCycleAuto : AutoBase() {
 
