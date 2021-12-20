@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Intake extends SubsystemBase {
 
@@ -12,6 +15,11 @@ public class Intake extends SubsystemBase {
     private DcMotorSimple intakeMotor;
     private Telemetry telemetry;
     private State state = State.STOP;
+    private DistanceSensor freightSensor;
+    private static final double freightDetectedThreshold = 3.0;
+    private int numLoops = 0;
+    public boolean freightDetected = false;
+
 
     public enum State {
         INTAKE(1),
@@ -33,17 +41,29 @@ public class Intake extends SubsystemBase {
     public Intake(HardwareMap hardwareMap, Telemetry telemetry){
 
         intakeMotor = hardwareMap.get(DcMotorSimple.class, "intakeMotor");
+//        freightSensor = (DistanceSensor) hardwareMap.get(RevColorSensorV3.class, "freightSensor");
+
         this.telemetry = telemetry;
     }
 
     @Override
     public void periodic(){
         if(telemetry != null) telemetry.addData("Intake State", state);
+        //reading i2c sensors is expensive, so only read every so often.
+//        numLoops++;
+//        if(numLoops >= 4){
+//            freightDetected = checkFreightDetected();
+//            numLoops = 0;
+//        }
     }
 
     public void setState(State state){
         intakeMotor.setPower(state.power);
         this.state = state;
+    }
+
+    public boolean checkFreightDetected(){
+        return freightSensor.getDistance(DistanceUnit.INCH) < freightDetectedThreshold;
     }
 
     public void intake(){
