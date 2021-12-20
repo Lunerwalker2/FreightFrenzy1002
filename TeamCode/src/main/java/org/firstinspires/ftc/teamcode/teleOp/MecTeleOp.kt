@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.teamcode.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.subsystems.CappingArm
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
+import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.util.Extensions
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.cubeInput
 import kotlin.math.abs
@@ -43,7 +44,8 @@ class MecTeleOp : CommandOpMode() {
 
 
     //Subsystems
-    private lateinit var carouselWheel: CarouselWheel
+//    private lateinit var carouselWheel: CarouselWheel
+    private lateinit var intake: Intake
 
     // Buttons/triggers
     private lateinit var leftCarouselTrigger: Trigger
@@ -74,7 +76,8 @@ class MecTeleOp : CommandOpMode() {
         //Extension functions pog see Extensions.kt in util package
         telemetry.sendLine("Initializing Subsystems...")
 
-        carouselWheel = CarouselWheel(hardwareMap, telemetry)
+//        carouselWheel = CarouselWheel(hardwareMap, telemetry)
+        intake = Intake(hardwareMap, telemetry)
 
         telemetry.sendLine("Setting bulk cache mode....")
         //Set the bulk read mode to manual
@@ -106,20 +109,26 @@ class MecTeleOp : CommandOpMode() {
 
 
         //Carousel wheel
-        leftCarouselTrigger = Trigger { gamepad2.left_trigger > 0.2 }
-                .whileActiveContinuous(Runnable {
-                    if (gamepad2.left_trigger < 0.9) carouselWheel.leftForward()
-                    else carouselWheel.fastLeftForward()
-                })
-                .whenInactive(carouselWheel::leftStop)
+//        leftCarouselTrigger = Trigger { gamepad2.left_trigger > 0.2 }
+//                .whileActiveContinuous(Runnable {
+//                    if (gamepad2.left_trigger < 0.9) carouselWheel.leftForward()
+//                    else carouselWheel.fastLeftForward()
+//                })
+//                .whenInactive(carouselWheel::leftStop)
+//
+//        rightCarouselTrigger = Trigger { gamepad2.right_trigger > 0.2 }
+//                .whileActiveContinuous(Runnable {
+//                    if (gamepad2.right_trigger < 0.9) carouselWheel.rightForward()
+//                    else carouselWheel.fastRightForward()
+//                })
+//                .whenInactive(carouselWheel::rightStop)
 
-        rightCarouselTrigger = Trigger { gamepad2.right_trigger > 0.2 }
-                .whileActiveContinuous(Runnable {
-                    if (gamepad2.right_trigger < 0.9) carouselWheel.rightForward()
-                    else carouselWheel.fastRightForward()
+        manipulator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenActive(Runnable {
+                    if (gamepad2.a) intake.outtake()
+                    else intake.intake()
                 })
-                .whenInactive(carouselWheel::rightStop)
-
+                .whenInactive(intake::stop)
 
         telemetry.sendLine("Setting up drive hardware...")
         //Get our motors from the hardware map
@@ -154,7 +163,7 @@ class MecTeleOp : CommandOpMode() {
          */
         motors.forEach {
             val motorConfigurationType: MotorConfigurationType = it.motorType.clone()
-            motorConfigurationType.achieveableMaxRPMFraction = 0.95
+            motorConfigurationType.achieveableMaxRPMFraction = 1.0
             //Not sure if this is necessary, but might as well
             motorConfigurationType.gearing = 19.2
             motorConfigurationType.maxRPM = 312.0
@@ -193,7 +202,8 @@ class MecTeleOp : CommandOpMode() {
         //Set the slow mode one if either bumper is pressed
         if (gamepad1.left_bumper || gamepad1.right_bumper) {
             powerMultiplier = 0.3;
-        } else {
+        }
+        else {
             powerMultiplier = 0.85;
         }
 

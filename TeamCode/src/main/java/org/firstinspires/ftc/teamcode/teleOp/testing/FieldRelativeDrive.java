@@ -65,7 +65,7 @@ public class FieldRelativeDrive extends LinearOpMode {
         motors.add(rb);
 
         motors.forEach((motor) -> motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER));
-        motors.forEach((motor) -> motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT));
+        motors.forEach((motor) -> motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE));
 
         motors.forEach((motor) -> {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -92,12 +92,12 @@ public class FieldRelativeDrive extends LinearOpMode {
             double heading = getRobotAngle();
 
 
-            if (gamepad1.left_bumper && !prevState) offset += heading;
-            prevState = gamepad1.left_bumper;
+            if (gamepad1.a && !prevState) offset += heading;
+            prevState = gamepad1.a;
 
-            double y = (Math.abs(gamepad1.left_stick_y) > 0.05) ? cubeInput(-gamepad1.left_stick_y, 0.52) : 0.0; // Remember, this is reversed!
-            double x = (Math.abs(gamepad1.left_stick_x) > 0.05) ? cubeInput(gamepad1.left_stick_x * 1.1, 0.52) : 0.0; // Counteract imperfect strafing
-            double rx = (Math.abs(gamepad1.right_stick_x) > 0.05) ? cubeInput(gamepad1.right_stick_x, 0.6) : 0.0;
+            double y = (Math.abs(gamepad1.left_stick_y) > 0.05) ? cubeInput(-gamepad1.left_stick_y, 0.4) : 0.0; // Remember, this is reversed!
+            double x = (Math.abs(gamepad1.left_stick_x) > 0.05) ? cubeInput(gamepad1.left_stick_x * 1.1, 0.4) : 0.0; // Counteract imperfect strafing
+            double rx = (Math.abs(gamepad1.right_stick_x) > 0.05) ? cubeInput(gamepad1.right_stick_x, 0.4) : 0.0;
 
             //Get the field centric inputs
 
