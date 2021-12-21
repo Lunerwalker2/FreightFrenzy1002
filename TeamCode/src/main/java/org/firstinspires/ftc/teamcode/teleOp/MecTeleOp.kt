@@ -201,10 +201,10 @@ class MecTeleOp : CommandOpMode() {
 
         //Set the slow mode one if either bumper is pressed
         if (gamepad1.left_bumper || gamepad1.right_bumper) {
-            powerMultiplier = 0.3;
+            powerMultiplier = 0.3
         }
         else {
-            powerMultiplier = 0.85;
+            powerMultiplier = 0.85
         }
 
         //Store the heading of the robot

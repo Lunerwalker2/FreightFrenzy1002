@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.acmerobotics.roadrunner.util.Angle;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
@@ -27,21 +28,19 @@ import static java.lang.Math.toRadians;
 public class SmolBot {
 
 
-    public static double MAX_VEL = 40;
-    public static double MAX_ACCEL = 40;
-    public static double MAX_ANG_VEL = toRadians(160);
-    public static double MAX_ANG_ACCEL = toRadians(160);
-    public static double TRACK_WIDTH = 15;
+    public static double MAX_VEL = 45;
+    public static double MAX_ACCEL = 45;
+    public static double MAX_ANG_VEL = toRadians(200);
+    public static double MAX_ANG_ACCEL = toRadians(200);
+    public static double TRACK_WIDTH = 10;
 
-    public static int HUB_LEVEL = (int) (Math.random() * 2);
+    public static int HUB_LEVEL = (int) (Math.random() * 3);
 
 
-    //large bot
-    //blue side psoe of carousel wheel -62, 64
-    //7.5 towards front, 9 to the rightx`
-
-    private static final Pose2d blueStartingPosition = new Pose2d(6, 63.5, toRadians(90));
-    private static final Pose2d redStartingPosition = blueStartingPosition.copy(blueStartingPosition.getX(), -blueStartingPosition.getY(), -blueStartingPosition.getHeading());
+    private static final Pose2d blueStartingPosition = new Pose2d(6, 63.5, toRadians(0));
+    private static final Pose2d redStartingPosition =
+            blueStartingPosition.copy(blueStartingPosition.getX(), -blueStartingPosition.getY(),
+                    Angle.normDelta(blueStartingPosition.getHeading() + toRadians(180)));
 
     public static void main(String[] args) {
 
@@ -49,7 +48,27 @@ public class SmolBot {
 
         MeepMeep mm = new MeepMeep(600);
 
+        RoadRunnerBotEntity blueCycleRoute = new DefaultBotBuilder(mm)
+                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
+                .setDimensions(13, 17)
+                .setColorScheme(new ColorSchemeBlueDark())
+                .followTrajectorySequence(drive ->
+                        drive.trajectorySequenceBuilder(blueStartingPosition)
+                                .lineToConstantHeading(new Vector2d(-10, 50))
+                                .waitSeconds(0.5)
+                                .addDisplacementMarker(() -> {System.out.println("Lift out");})
+                                .waitSeconds(0.5)
+                                .addDisplacementMarker(() -> {System.out.println("Lift in");})
+                                .splineToConstantHeading(new Vector2d(15, 64), toRadians(0))
+                                .splineToConstantHeading(new Vector2d(50, 64), toRadians(0))
+                                .waitSeconds(0.5)
+                                .addDisplacementMarker(() -> {System.out.println("Intake");})
+                                .splineToConstantHeading(new Vector2d(15, 64), toRadians(180))
+                                .splineToConstantHeading(new Vector2d(-10, 50), toRadians(-140))
+                                .build()
+                );
 
+/*
         RoadRunnerBotEntity blueCycleRoute = new DefaultBotBuilder(mm)
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
                 .setDimensions(12, 17)
@@ -108,13 +127,14 @@ public class SmolBot {
                                 .build()
                 );
 
+ */
+
 
         mm
                 .setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)
                 .setTheme(new ColorSchemeRedDark())
                 .setBackgroundAlpha(0.95f)
                 .addEntity(blueCycleRoute)
-                .addEntity(redCycleRoute)
                 .start();
 
     }

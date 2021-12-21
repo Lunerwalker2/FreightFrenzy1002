@@ -12,9 +12,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Intake extends SubsystemBase {
 
 
-    private DcMotorSimple intakeMotor;
+    private DcMotorSimple frontIntake;
+    private DcMotorSimple backIntake;
     private Telemetry telemetry;
     private State state = State.STOP;
+    private boolean front = true;
     private DistanceSensor freightSensor;
     private static final double freightDetectedThreshold = 3.0;
     private int numLoops = 0;
@@ -40,7 +42,9 @@ public class Intake extends SubsystemBase {
 
     public Intake(HardwareMap hardwareMap, Telemetry telemetry){
 
-        intakeMotor = hardwareMap.get(DcMotorSimple.class, "intakeMotor");
+        frontIntake = hardwareMap.get(DcMotorSimple.class, "frontIntake");
+        backIntake = hardwareMap.get(DcMotorSimple.class, "backIntake");
+
 //        freightSensor = (DistanceSensor) hardwareMap.get(RevColorSensorV3.class, "freightSensor");
 
         this.telemetry = telemetry;
@@ -58,12 +62,17 @@ public class Intake extends SubsystemBase {
     }
 
     public void setState(State state){
-        intakeMotor.setPower(state.power);
+        if(front) frontIntake.setPower(state.power);
+        else backIntake.setPower(state.power);
         this.state = state;
     }
 
     public boolean checkFreightDetected(){
         return freightSensor.getDistance(DistanceUnit.INCH) < freightDetectedThreshold;
+    }
+
+    public void setSide(boolean front){
+        this.front = front;
     }
 
     public void intake(){
