@@ -47,10 +47,16 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
         }
     }
 
-    fun stopLift(){
-        liftMotor.power = 0.0
-        state = State.STOPPED
-    }
+    fun setLiftPower(power: Double) = run { liftMotor.power = power }
+
+        fun stopLift(){
+            liftMotor.power = 0.0
+            state = State.STOPPED
+        }
+
+        fun getLiftRawPosition(): Double {
+            return liftMotor.currentPosition.toDouble()
+        }
 
 
 
