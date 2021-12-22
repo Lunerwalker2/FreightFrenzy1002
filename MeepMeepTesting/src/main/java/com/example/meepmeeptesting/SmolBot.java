@@ -63,8 +63,10 @@ public class SmolBot {
                                 .splineToConstantHeading(new Vector2d(50, 64), toRadians(0))
                                 .waitSeconds(0.5)
                                 .addDisplacementMarker(() -> {System.out.println("Intake");})
+                                .setReversed(true)
                                 .splineToConstantHeading(new Vector2d(15, 64), toRadians(180))
                                 .splineToConstantHeading(new Vector2d(-10, 50), toRadians(-140))
+                                .setReversed(false)
                                 .build()
                 );
 

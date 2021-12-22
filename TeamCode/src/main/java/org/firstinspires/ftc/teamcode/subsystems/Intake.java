@@ -17,10 +17,6 @@ public class Intake extends SubsystemBase {
     private Telemetry telemetry;
     private State state = State.STOP;
     private boolean front = true;
-    private DistanceSensor freightSensor;
-    private static final double freightDetectedThreshold = 3.0;
-    private int numLoops = 0;
-    public boolean freightDetected = false;
 
 
     public enum State {
@@ -45,20 +41,14 @@ public class Intake extends SubsystemBase {
         frontIntake = hardwareMap.get(DcMotorSimple.class, "frontIntake");
         backIntake = hardwareMap.get(DcMotorSimple.class, "backIntake");
 
-//        freightSensor = (DistanceSensor) hardwareMap.get(RevColorSensorV3.class, "freightSensor");
+        backIntake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.telemetry = telemetry;
     }
 
     @Override
-    public void periodic(){
-        if(telemetry != null) telemetry.addData("Intake State", state);
-        //reading i2c sensors is expensive, so only read every so often.
-//        numLoops++;
-//        if(numLoops >= 4){
-//            freightDetected = checkFreightDetected();
-//            numLoops = 0;
-//        }
+    public void periodic() {
+        if (telemetry != null) telemetry.addData("Intake State", state);
     }
 
     public void setState(State state){
@@ -67,9 +57,6 @@ public class Intake extends SubsystemBase {
         this.state = state;
     }
 
-    public boolean checkFreightDetected(){
-        return freightSensor.getDistance(DistanceUnit.INCH) < freightDetectedThreshold;
-    }
 
     public void setSide(boolean front){
         this.front = front;

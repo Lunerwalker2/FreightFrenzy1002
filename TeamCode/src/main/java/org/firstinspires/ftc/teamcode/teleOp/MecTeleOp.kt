@@ -64,12 +64,16 @@ class MecTeleOp : CommandOpMode() {
     var prevState = false
 
     //Drive power multiplier for slow mode
-    private var powerMultiplier = 0.85
+    private var powerMultiplier = 0.9
 
     private val allHubs by lazy { hardwareMap.getAll(LynxModule::class.java) }
 
+    private lateinit var liftMotor: DcMotor
+
 
     override fun initialize() {
+        liftMotor = hardwareMap.get(DcMotor::class.java, "liftMotor")
+        liftMotor.direction = DcMotorSimple.Direction.REVERSE
 
         offset = Extensions.HEADING_SAVER
 
@@ -129,6 +133,12 @@ class MecTeleOp : CommandOpMode() {
                     else intake.intake()
                 })
                 .whenInactive(intake::stop)
+
+        manipulator.getGamepadButton(GamepadKeys.Button.B)
+                .toggleWhenPressed(
+                        Runnable { intake.setSide(false) },
+                        Runnable { intake.setSide(true) }
+                )
 
         telemetry.sendLine("Setting up drive hardware...")
         //Get our motors from the hardware map
@@ -199,12 +209,16 @@ class MecTeleOp : CommandOpMode() {
     override fun run() {
         super.run()
 
+        if(gamepad2.dpad_up && liftMotor.currentPosition < 1050) liftMotor.power = 0.7
+        else if(gamepad2.dpad_down && liftMotor.currentPosition > 10) liftMotor.power = -0.5
+        else liftMotor.power = 0.0
+
         //Set the slow mode one if either bumper is pressed
         if (gamepad1.left_bumper || gamepad1.right_bumper) {
             powerMultiplier = 0.3
         }
         else {
-            powerMultiplier = 0.85
+            powerMultiplier = 0.9
         }
 
         //Store the heading of the robot
