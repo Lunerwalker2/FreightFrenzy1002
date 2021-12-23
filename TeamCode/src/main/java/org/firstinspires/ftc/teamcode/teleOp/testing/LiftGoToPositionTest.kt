@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup
 import com.arcrobotics.ftclib.command.WaitCommand
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import org.firstinspires.ftc.teamcode.commands.MoveLiftPositionCommand
 import org.firstinspires.ftc.teamcode.subsystems.Lift
 
 
@@ -17,6 +18,9 @@ class LiftGoToPositionTest() : CommandOpMode() {
         val lift = Lift(hardwareMap)
 
 
-
+        schedule(SequentialCommandGroup(
+                MoveLiftPositionCommand(lift, Lift.Positions.TOP)
+        ))
     }
+
 }

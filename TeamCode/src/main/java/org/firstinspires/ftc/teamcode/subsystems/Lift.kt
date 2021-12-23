@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.*
 import kotlin.math.abs
 
 class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetry? = null) : SubsystemBase() {
-    private var liftMotor: DcMotorEx
+    private val liftMotor: DcMotorEx
 
     enum class Positions(val targetPosition: Int) {
         TOP(1050),
@@ -34,6 +34,7 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
     }
 
     override fun periodic() {
+        telemetry?.addData("Lift Status", state)
         when (state) {
             State.STOPPED -> {
 
@@ -42,6 +43,7 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
 
             }
         }
+        telemetry?.addData("Lift Position", liftMotor.currentPosition)
     }
 
     fun setLiftPower(power: Double) = run { liftMotor.power = power }

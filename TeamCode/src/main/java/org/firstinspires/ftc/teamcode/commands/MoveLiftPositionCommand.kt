@@ -5,7 +5,7 @@ import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile
 import org.firstinspires.ftc.teamcode.subsystems.Lift
 
-class MoveLiftPositionCommand(private val lift: Lift, private val position: Lift.Positions ) : ProfiledPIDCommand(
+class MoveLiftPositionCommand(private val lift: Lift, position: Lift.Positions ) : ProfiledPIDCommand(
         controller,
         lift::getLiftRawPosition,
         position.targetPosition.toDouble(),
@@ -19,8 +19,8 @@ class MoveLiftPositionCommand(private val lift: Lift, private val position: Lift
                 0.05, 0.0, 0.0,
                 TrapezoidProfile.Constraints(
                         //TODO: Find this empirically
-                        2000.0, //theoretical max velo of 5:1 ultraplanetary in ticks/sec
-                        2000.0
+                        500.0, //theoretical max velo of 5:1 ultraplanetary in ticks/sec
+                        500.0
                 )
         )
     }

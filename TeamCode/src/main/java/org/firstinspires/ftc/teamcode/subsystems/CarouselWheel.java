@@ -10,8 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class CarouselWheel extends SubsystemBase {
 
 
-    private final DcMotor leftWheelMotor;
-    private final DcMotor rightWheelMotor;
+    private final DcMotor wheelMotor;
 
     private double leftPower = 0.0; //the power for the wheel
     private double rightPower = 0.0;
@@ -27,20 +26,16 @@ public class CarouselWheel extends SubsystemBase {
 
         this.telemetry = telemetry;
 
-        leftWheelMotor = hardwareMap.get(DcMotor.class, "leftCarouselMotor");
-        rightWheelMotor = hardwareMap.get(DcMotor.class, "rightCarouselMotor");
+        wheelMotor = hardwareMap.get(DcMotor.class, "leftCarouselMotor");
 
-        rightWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        leftWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //Not really necessary
-        rightWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //Not really necessary
     }
 
 
     @Override
     public void periodic(){
-        leftWheelMotor.setPower(leftPower);
-        rightWheelMotor.setPower(rightPower);
+        wheelMotor.setPower(leftPower);
 
         if(telemetry != null){
             telemetry.addData("Left wheel activated", leftPower != 0.0);

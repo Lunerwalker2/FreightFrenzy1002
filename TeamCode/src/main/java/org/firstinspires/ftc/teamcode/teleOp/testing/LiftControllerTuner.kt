@@ -48,7 +48,7 @@ class LiftControllerTuner() : LinearOpMode() {
         while(opModeIsActive()){
             telemetry.addData("Current Position", liftMotor.currentPosition)
             telemetry.addData("Target", liftController.targetPosition)
-            telemetry.addData("correction", liftMotor.power)
+            telemetry.addData("Correction", liftMotor.power)
             telemetry.update()
 
 
