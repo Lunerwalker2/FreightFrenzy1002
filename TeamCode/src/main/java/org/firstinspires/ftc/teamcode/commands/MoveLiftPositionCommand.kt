@@ -15,8 +15,6 @@ class MoveLiftPositionCommand(private val lift: Lift, private val position: Lift
 
     companion object {
 
-        private const val targetPosition = 1050.0
-
         private val controller = ProfiledPIDController(
                 0.05, 0.0, 0.0,
                 TrapezoidProfile.Constraints(
@@ -28,7 +26,7 @@ class MoveLiftPositionCommand(private val lift: Lift, private val position: Lift
     }
 
     init {
-        controller.setTolerance(10.0)
+        controller.setTolerance(20.0)
     }
 
     override fun isFinished(): Boolean {

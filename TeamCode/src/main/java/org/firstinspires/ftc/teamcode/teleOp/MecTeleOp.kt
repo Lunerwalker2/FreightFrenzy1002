@@ -17,10 +17,12 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
+import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand
 import org.firstinspires.ftc.teamcode.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.subsystems.CappingArm
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
 import org.firstinspires.ftc.teamcode.subsystems.Intake
+import org.firstinspires.ftc.teamcode.subsystems.Lift
 import org.firstinspires.ftc.teamcode.util.Extensions
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.cubeInput
 import kotlin.math.abs
@@ -46,6 +48,7 @@ class MecTeleOp : CommandOpMode() {
     //Subsystems
 //    private lateinit var carouselWheel: CarouselWheel
     private lateinit var intake: Intake
+    private lateinit var lift: Lift
 
     // Buttons/triggers
     private lateinit var leftCarouselTrigger: Trigger
@@ -66,14 +69,8 @@ class MecTeleOp : CommandOpMode() {
     //Drive power multiplier for slow mode
     private var powerMultiplier = 0.9
 
-    private val allHubs by lazy { hardwareMap.getAll(LynxModule::class.java) }
-
-    private lateinit var liftMotor: DcMotor
-
 
     override fun initialize() {
-        liftMotor = hardwareMap.get(DcMotor::class.java, "liftMotor")
-        liftMotor.direction = DcMotorSimple.Direction.REVERSE
 
         offset = Extensions.HEADING_SAVER
 
@@ -82,22 +79,13 @@ class MecTeleOp : CommandOpMode() {
 
 //        carouselWheel = CarouselWheel(hardwareMap, telemetry)
         intake = Intake(hardwareMap, telemetry)
+        lift = Lift(hardwareMap, telemetry)
 
         telemetry.sendLine("Setting bulk cache mode....")
-        //Set the bulk read mode to manual
-        for (module in allHubs) {
-            module.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
-        }
 
         //Schedule a clear of the bulk cache each loop
         //This command will remain scheduled the entire loop
-        schedule(RunCommand(
-                {
-                    for (module in allHubs) {
-                        module.clearBulkCache()
-                    }
-                }
-        ))
+        schedule(BulkCacheCommand(hardwareMap))
 
 
         telemetry.sendLine("Setting up gamepads...")
@@ -209,9 +197,9 @@ class MecTeleOp : CommandOpMode() {
     override fun run() {
         super.run()
 
-        if(gamepad2.dpad_up && liftMotor.currentPosition < 1050) liftMotor.power = 0.7
-        else if(gamepad2.dpad_down && liftMotor.currentPosition > 10) liftMotor.power = -0.5
-        else liftMotor.power = 0.0
+        if(gamepad2.dpad_up && lift.getLiftRawPosition() < 1050) lift.setLiftPower(0.8)
+        else if(gamepad2.dpad_down && lift.getLiftRawPosition() > 10) lift.setLiftPower(-0.55)
+        else lift.setLiftPower(0.0)
 
         //Set the slow mode one if either bumper is pressed
         if (gamepad1.left_bumper || gamepad1.right_bumper) {
@@ -230,8 +218,7 @@ class MecTeleOp : CommandOpMode() {
 
 
         //Telemetry for most things are handled in the subsystems
-        telemetry.addData("Slow Mode Enabled", (powerMultiplier != 1.0))
-
+        telemetry.addData("Slow Mode Enabled", (powerMultiplier != 0.9))
 
         /* Thanks to FTCLib handling all the things we just did above automatically,
         we barely need to do anything here, except the drive base.

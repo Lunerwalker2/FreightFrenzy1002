@@ -8,12 +8,11 @@ import com.qualcomm.robotcore.hardware.*
 import kotlin.math.abs
 
 class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetry? = null) : SubsystemBase() {
-    private var deposit: Servo
     private var liftMotor: DcMotorEx
 
     enum class Positions(val targetPosition: Int) {
-        TOP(650),
-        MIDDLE(400),
+        TOP(1050),
+        MIDDLE(500),
         BOTTOM(200),
         IN_ROBOT(0)
     }
@@ -32,8 +31,6 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
         liftMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
 
         liftMotor.direction = DcMotorSimple.Direction.REVERSE
-
-        deposit = hardwareMap.get(Servo::class.java, "deposit")
     }
 
     override fun periodic() {
@@ -49,15 +46,14 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
 
     fun setLiftPower(power: Double) = run { liftMotor.power = power }
 
-        fun stopLift(){
-            liftMotor.power = 0.0
-            state = State.STOPPED
-        }
+    fun stopLift() {
+        liftMotor.power = 0.0
+        state = State.STOPPED
+    }
 
-        fun getLiftRawPosition(): Double {
-            return liftMotor.currentPosition.toDouble()
-        }
-
+    fun getLiftRawPosition(): Double {
+        return liftMotor.currentPosition.toDouble()
+    }
 
 
 }

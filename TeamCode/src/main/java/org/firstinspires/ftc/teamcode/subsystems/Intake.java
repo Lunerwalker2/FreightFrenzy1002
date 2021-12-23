@@ -62,10 +62,16 @@ public class Intake extends SubsystemBase {
         this.front = front;
     }
 
+    /**
+     * Starts the intake on whatever the current side is.
+     */
     public void intake(){
         setState(State.INTAKE);
     }
 
+    /**
+     * Starts the outtake on whatever the current side is.
+     */
     public void outtake(){
         setState(State.OUTTAKE);
     }
