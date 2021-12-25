@@ -19,7 +19,7 @@ class MoveLiftPositionCommand(private val lift: Lift, position: Lift.Positions )
                 0.05, 0.0, 0.0,
                 TrapezoidProfile.Constraints(
                         //TODO: Find this empirically
-                        500.0, //theoretical max velo of 5:1 ultraplanetary in ticks/sec
+                        1000.0,
                         500.0
                 )
         )

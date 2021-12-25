@@ -9,19 +9,17 @@ public class CarouselWheelCommand extends CommandBase {
 
 
     private final CarouselWheel carouselWheel;
-    private final boolean leftSide;
     private final boolean forward;
 
     /**
      * True if left side, false if right side
      */
-    public CarouselWheelCommand(CarouselWheel carouselWheel, boolean leftSide){
-        this(carouselWheel, leftSide, true);
+    public CarouselWheelCommand(CarouselWheel carouselWheel){
+        this(carouselWheel, true);
     }
 
-    public CarouselWheelCommand(CarouselWheel carouselWheel, boolean leftSide, boolean forward){
+    public CarouselWheelCommand(CarouselWheel carouselWheel, boolean forward){
         this.carouselWheel = carouselWheel;
-        this.leftSide = leftSide;
         this.forward = forward;
         addRequirements(carouselWheel);
     }
@@ -30,14 +28,7 @@ public class CarouselWheelCommand extends CommandBase {
 
     @Override
     public void initialize(){
-        if(leftSide){
-            if(forward) carouselWheel.leftForward();
-            else carouselWheel.leftBackward();
-        }
-        else {
-            carouselWheel.rightForward();
-            carouselWheel.rightBackward();
-        }
+        carouselWheel.setWheelPower(0.6);
     }
 
     @Override
@@ -47,7 +38,6 @@ public class CarouselWheelCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted){
-        carouselWheel.leftStop();
-        carouselWheel.rightStop();
+        carouselWheel.setWheelPower(0);
     }
 }

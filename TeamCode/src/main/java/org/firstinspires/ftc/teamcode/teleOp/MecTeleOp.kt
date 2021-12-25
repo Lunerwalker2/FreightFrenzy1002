@@ -2,12 +2,10 @@ package org.firstinspires.ftc.teamcode.teleOp
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.arcrobotics.ftclib.command.CommandOpMode
-import com.arcrobotics.ftclib.command.RunCommand
 import com.arcrobotics.ftclib.command.button.Trigger
 import com.arcrobotics.ftclib.gamepad.GamepadEx
 import com.arcrobotics.ftclib.gamepad.GamepadKeys
 import com.qualcomm.hardware.bosch.BNO055IMU
-import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
@@ -19,8 +17,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand
 import org.firstinspires.ftc.teamcode.drive.DriveConstants
-import org.firstinspires.ftc.teamcode.subsystems.CappingArm
-import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.Lift
 import org.firstinspires.ftc.teamcode.util.Extensions
@@ -54,21 +50,19 @@ class MecTeleOp : CommandOpMode() {
     private lateinit var leftCarouselTrigger: Trigger
     private lateinit var rightCarouselTrigger: Trigger
 
-
     //We could go and use the rr drive class but meh I'd like to show the math anyway
     private lateinit var leftFront: DcMotorEx
     private lateinit var leftBack: DcMotorEx
     private lateinit var rightFront: DcMotorEx
     private lateinit var rightBack: DcMotorEx
-
     private lateinit var imu: BNO055IMU
     var offset = 0.0
-
-    var prevState = false
-
+    var prevSlowState = false
+    private var prevLiftUp = false
+    private var prevLiftDown = false
+    private var prevLiftStop = false
     //Drive power multiplier for slow mode
     private var powerMultiplier = 0.9
-
 
     override fun initialize() {
 
@@ -197,9 +191,36 @@ class MecTeleOp : CommandOpMode() {
     override fun run() {
         super.run()
 
-        if(gamepad2.dpad_up && lift.getLiftRawPosition() < 1050) lift.setLiftPower(0.8)
-        else if(gamepad2.dpad_down && lift.getLiftRawPosition() > 10) lift.setLiftPower(-0.55)
-        else lift.setLiftPower(0.0)
+        /*
+        We do all of this in order to avoid setting the motor power constantly in each case,
+        which just adds an extra hardware.
+         */
+        if(gamepad2.dpad_up && lift.getLiftRawPosition() < 1050){
+            if(!prevLiftUp){
+                prevLiftUp = true
+                prevLiftDown = false
+                prevLiftStop = false
+                lift.setLiftPower(0.8)
+            }
+        }
+        else if(gamepad2.dpad_down && lift.getLiftRawPosition() > 10){
+            if(!prevLiftDown){
+                prevLiftDown = true
+                prevLiftUp = false
+                prevLiftStop = false
+                lift.setLiftPower(-0.55)
+            }
+        }
+        else {
+            if(!prevLiftStop) {
+                prevLiftStop = true
+                lift.setLiftPower(0.0)
+            }
+            prevLiftUp = false
+            prevLiftDown = false
+
+        }
+
 
         //Set the slow mode one if either bumper is pressed
         if (gamepad1.left_bumper || gamepad1.right_bumper) {
@@ -213,8 +234,8 @@ class MecTeleOp : CommandOpMode() {
         val heading = getRobotAngle()
 
         //If we need to reset our zero angle, increment the offset with the current heading to do so
-        if (gamepad1.a && !prevState) offset += heading
-        prevState = gamepad1.a
+        if (gamepad1.a && !prevSlowState) offset += heading
+        prevSlowState = gamepad1.a
 
 
         //Telemetry for most things are handled in the subsystems
