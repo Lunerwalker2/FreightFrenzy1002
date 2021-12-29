@@ -26,6 +26,7 @@ import kotlin.math.max
 
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.sendLine
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.toFieldRelative
+import kotlin.math.sign
 
 /*
 I'm using a lot of FTCLib classes in this because the framework exists for auto, so might as well.
@@ -134,44 +135,12 @@ class MecTeleOp : CommandOpMode() {
 
         //Set all motors to run using encoder, i.e internal velocity control with a 0.85 power cap
         motors.forEach {
-            it.mode = DcMotor.RunMode.RUN_USING_ENCODER
+            it.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
 
         //Set the zero power behavior to brake, meaning the motor will actively stop
         motors.forEach {
             it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-        }
-
-        /*
-        We don't need to do this, however since we can it can help. Basically, the run using
-        encoders runmode will control the velocity using the internal motor encoder and a PIDF
-        controller, however it determines this velocity using the fraction of the motor's theoretical
-        maximum velocity. Two things are important here, the first being that the SDK doesn't know the
-        actual maximum velocity of the motor (different gearboxes), so it uses a guess on the value.
-        For example, a motor configured as a gb 5202 motor might have the max velocity configured for
-        a 5202 19.2:1. The second thing is that the SDK caps the max velocity at 85% to ensure enough
-        head room for adjustments. We can change the first one if we want to and we have the empirical
-        maximum velocity of our specific motors. We can change the second one easily as well.
-         */
-        motors.forEach {
-            val motorConfigurationType: MotorConfigurationType = it.motorType.clone()
-            motorConfigurationType.achieveableMaxRPMFraction = 1.0
-            //Not sure if this is necessary, but might as well
-            motorConfigurationType.gearing = 19.2
-            motorConfigurationType.maxRPM = 312.0
-            motorConfigurationType.ticksPerRev = 537.6
-            it.motorType = motorConfigurationType
-        }
-
-        //Since we are using velocity PID anyway, we might as well use the constants from RR
-        val compensatedCoefficients = PIDFCoefficients(
-                DriveConstants.MOTOR_VELO_PID.p, DriveConstants.MOTOR_VELO_PID.i,
-                DriveConstants.MOTOR_VELO_PID.d,
-                DriveConstants.MOTOR_VELO_PID.f * 12 / hardwareMap.voltageSensor.iterator().next().voltage
-        )
-        //Set the constants since they don't persist over restarts.
-        for (motor in motors) {
-            motor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, compensatedCoefficients)
         }
 
         //Reverse the left side motors
@@ -274,10 +243,11 @@ class MecTeleOp : CommandOpMode() {
         val backRightPower = (y + x - rx) / denominator
 
         //Finally set the motor powers scaled by the slow mode
-        leftFront.power = frontLeftPower * powerMultiplier
-        leftBack.power = backLeftPower * powerMultiplier
-        rightFront.power = frontRightPower * powerMultiplier
-        rightBack.power = backRightPower * powerMultiplier
+        //NEW: Apply a kstatic term to each motor for friction
+        leftFront.power = ((sign(frontLeftPower) * 0.03253) + frontLeftPower) * powerMultiplier
+        leftBack.power = ((sign(backLeftPower) * 0.03265) + backLeftPower) * powerMultiplier
+        rightFront.power = ((sign(frontRightPower) * 0.0433) + frontRightPower) * powerMultiplier
+        rightBack.power = ((sign(backRightPower) * 0.0425) + backRightPower) * powerMultiplier
 
         //Show the current field-centric things of importance.
         telemetry.addLine("Press the left bumper to re-zero the heading.")

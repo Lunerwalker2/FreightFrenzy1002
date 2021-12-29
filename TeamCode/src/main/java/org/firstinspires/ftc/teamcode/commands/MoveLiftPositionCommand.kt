@@ -13,20 +13,23 @@ class MoveLiftPositionCommand(private val lift: Lift, position: Lift.Positions )
         lift
 ) {
 
+    private var lastSetPoint = 0.0
+
+
     companion object {
 
         private val controller = ProfiledPIDController(
                 0.05, 0.0, 0.0,
                 TrapezoidProfile.Constraints(
                         //TODO: Find this empirically
-                        1000.0,
-                        500.0
+                        2700.0,
+                        2700.0
                 )
         )
     }
 
     init {
-        controller.setTolerance(20.0)
+        controller.setTolerance(10.0)
     }
 
     override fun isFinished(): Boolean {
