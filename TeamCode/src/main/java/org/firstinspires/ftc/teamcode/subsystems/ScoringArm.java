@@ -14,11 +14,8 @@ public class ScoringArm extends SubsystemBase {
     //Position for in the robot and loading
     private final double loadingPosition = 0.0;
 
-    //Maximum position for outside the robot and for scoring (by default) in teleop
-    private final double maxOuterPosition = 0.7;
-
     //Position for normal scoring
-    private final double scoringPosition = 0.4;
+    private final double scoringPosition = 1.0;
 
 
     public ScoringArm(HardwareMap hardwareMap){
@@ -35,15 +32,12 @@ public class ScoringArm extends SubsystemBase {
         if(telemetry != null){
             telemetry.addData("Scoring Arm Position", () -> {
                 if(armServo.getPosition() != loadingPosition ||
-                armServo.getPosition() != maxOuterPosition ||
-                armServo.getPosition() != scoringPosition){
+                        armServo.getPosition() != scoringPosition){
                     return String.format("%.4f", armServo.getPosition());
                 } else if(armServo.getPosition() == loadingPosition){
                     return loadingPosition + "(Loading Position)";
-                } else if(armServo.getPosition() == scoringPosition){
-                    return scoringPosition + "(Scoring Position)";
                 } else {
-                    return maxOuterPosition + "(Outer Position)";
+                    return scoringPosition + "(Scoring Position)";
                 }
             });
         }
@@ -54,7 +48,7 @@ public class ScoringArm extends SubsystemBase {
      */
     public void raise(){
         double nextPosition = armServo.getPosition() + 0.005;
-        if(nextPosition <= maxOuterPosition){
+        if(nextPosition <= scoringPosition){
             armServo.setPosition(nextPosition);
         }
     }
@@ -64,7 +58,7 @@ public class ScoringArm extends SubsystemBase {
      */
     public void lower(){
         double nextPosition = armServo.getPosition() - 0.005;
-        if(nextPosition >= maxOuterPosition){
+        if(nextPosition >= loadingPosition){
             armServo.setPosition(nextPosition);
         }
     }
@@ -81,12 +75,5 @@ public class ScoringArm extends SubsystemBase {
      */
     public void scoringPosition(){
         armServo.setPosition(scoringPosition);
-    }
-
-    /**
-     * Moves the scoring arm to the maximum raised position.
-     */
-    public void outerPosition(){
-        armServo.setPosition(maxOuterPosition);
     }
 }
