@@ -17,8 +17,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand
 import org.firstinspires.ftc.teamcode.drive.DriveConstants
+import org.firstinspires.ftc.teamcode.subsystems.Bucket
 import org.firstinspires.ftc.teamcode.subsystems.Intake
 import org.firstinspires.ftc.teamcode.subsystems.Lift
+import org.firstinspires.ftc.teamcode.subsystems.ScoringArm
 import org.firstinspires.ftc.teamcode.util.Extensions
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.cubeInput
 import kotlin.math.abs
@@ -46,6 +48,8 @@ class MecTeleOp : CommandOpMode() {
 //    private lateinit var carouselWheel: CarouselWheel
     private lateinit var intake: Intake
     private lateinit var lift: Lift
+    private lateinit var scoringArm: ScoringArm
+    private lateinit var bucket: Bucket
 
     // Buttons/triggers
     private lateinit var leftCarouselTrigger: Trigger
@@ -75,6 +79,8 @@ class MecTeleOp : CommandOpMode() {
 //        carouselWheel = CarouselWheel(hardwareMap, telemetry)
         intake = Intake(hardwareMap, telemetry)
         lift = Lift(hardwareMap, telemetry)
+        scoringArm = ScoringArm(hardwareMap, telemetry)
+        bucket = Bucket(hardwareMap, telemetry)
 
         telemetry.sendLine("Setting bulk cache mode....")
 
@@ -121,6 +127,18 @@ class MecTeleOp : CommandOpMode() {
                 .toggleWhenPressed(
                         Runnable { intake.setSide(false) },
                         Runnable { intake.setSide(true) }
+                )
+
+        manipulator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .toggleWhenPressed(
+                        bucket::dump,
+                        bucket::load
+                )
+
+        manipulator.getGamepadButton(GamepadKeys.Button.X)
+                .toggleWhenPressed(
+                        scoringArm::scoringPosition,
+                        scoringArm::loadingPosition
                 )
 
         telemetry.sendLine("Setting up drive hardware...")
