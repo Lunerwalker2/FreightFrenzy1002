@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -20,7 +22,10 @@ public class MakeReadyToScoreCommand extends ParallelCommandGroup {
     public MakeReadyToScoreCommand(Lift lift, ScoringArm scoringArm){
         addCommands(
                 new MoveLiftPositionCommand(lift, Lift.Positions.BOTTOM),
-                new InstantCommand(scoringArm::scoringPosition)
+                new SequentialCommandGroup(
+                        new WaitCommand(200),
+                        new InstantCommand(scoringArm::scoringPosition)
+                )
         );
     }
 

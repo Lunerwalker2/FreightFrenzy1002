@@ -16,6 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand
+import org.firstinspires.ftc.teamcode.commands.MakeReadyToLoadCommand
+import org.firstinspires.ftc.teamcode.commands.MakeReadyToScoreCommand
 import org.firstinspires.ftc.teamcode.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.subsystems.Bucket
 import org.firstinspires.ftc.teamcode.subsystems.Intake
@@ -140,6 +142,12 @@ class MecTeleOp : CommandOpMode() {
                         scoringArm::scoringPosition,
                         scoringArm::loadingPosition
                 )
+
+        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(MakeReadyToLoadCommand(lift, scoringArm, bucket))
+
+        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(MakeReadyToScoreCommand(lift, scoringArm))
 
         telemetry.sendLine("Setting up drive hardware...")
         //Get our motors from the hardware map
