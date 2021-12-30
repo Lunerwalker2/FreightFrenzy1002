@@ -18,7 +18,7 @@ public class Bucket extends SubsystemBase {
 
     public Bucket(HardwareMap hardwareMap, Telemetry telemetry){
         bucketServo = hardwareMap.get(Servo.class, "bucketServo");
-        up();
+        dump();
         this.telemetry = telemetry;
     }
 
@@ -32,15 +32,15 @@ public class Bucket extends SubsystemBase {
     /**
      * Moves the bucket down to the depositing position.
      */
-    public void down(){
-        bucketServo.setPosition(0.5);
+    public void load(){
+        bucketServo.setPosition(1.0);
         isDown = true;
     }
 
     /**
      * Moves the bucket up to the holding (flat) position.
      */
-    public void up(){
+    public void dump(){
         bucketServo.setPosition(0.0);
         isDown = false;
     }

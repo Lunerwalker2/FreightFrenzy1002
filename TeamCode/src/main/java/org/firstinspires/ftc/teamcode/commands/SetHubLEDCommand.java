@@ -32,9 +32,7 @@ public class SetHubLEDCommand extends InstantCommand {
     @Override
     public void initialize() {
         super.initialize();
-        hubList.forEach((hub) -> {
-            hub.setConstant(colorInt);
-        });
+        hubList.forEach((hub) -> hub.setConstant(colorInt));
     }
 
 
