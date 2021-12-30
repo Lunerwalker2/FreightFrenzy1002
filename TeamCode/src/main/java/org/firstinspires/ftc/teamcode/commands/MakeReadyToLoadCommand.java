@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -19,9 +21,12 @@ public class MakeReadyToLoadCommand extends ParallelCommandGroup {
 
     public MakeReadyToLoadCommand(Lift lift, ScoringArm scoringArm, Bucket bucket){
         addCommands(
-                new MoveLiftPositionCommand(lift, Lift.Positions.IN_ROBOT),
                 new InstantCommand(scoringArm::loadingPosition, scoringArm),
-                new InstantCommand(bucket::load, bucket)
+                new InstantCommand(bucket::load, bucket),
+                new SequentialCommandGroup(
+                        new WaitCommand(400),
+                        new MoveLiftPositionCommand(lift, Lift.Positions.IN_ROBOT)
+                )
         );
     }
 }
