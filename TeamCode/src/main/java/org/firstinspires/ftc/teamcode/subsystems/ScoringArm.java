@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ScoringArm extends SubsystemBase {
@@ -18,37 +19,35 @@ public class ScoringArm extends SubsystemBase {
     private final double scoringPosition = 1.0;
 
 
-    public ScoringArm(HardwareMap hardwareMap){
+    public ScoringArm(HardwareMap hardwareMap) {
         this(hardwareMap, null);
     }
 
-    public ScoringArm(HardwareMap hardwareMap, Telemetry telemetry){
+    public ScoringArm(HardwareMap hardwareMap, Telemetry telemetry) {
         armServo = hardwareMap.get(Servo.class, "scoringArmServo");
         this.telemetry = telemetry;
     }
 
     @Override
     public void periodic() {
-        if(telemetry != null){
-            telemetry.addData("Scoring Arm Position", () -> {
-                if(armServo.getPosition() != loadingPosition ||
-                        armServo.getPosition() != scoringPosition){
-                    return String.format("%.4f", armServo.getPosition());
-                } else if(armServo.getPosition() == loadingPosition){
-                    return loadingPosition + "(Loading Position)";
-                } else {
-                    return scoringPosition + "(Scoring Position)";
-                }
-            });
+        if (telemetry != null) {
+            if (armServo.getPosition() != loadingPosition ||
+                    armServo.getPosition() != scoringPosition) {
+                telemetry.addLine("Scoring Arm Position" + String.format("%.4f", armServo.getPosition()));
+            } else if (armServo.getPosition() == loadingPosition) {
+                telemetry.addLine(loadingPosition + "(Loading Position)");
+            } else {
+                telemetry.addLine(scoringPosition + "(Scoring Position)");
+            }
         }
     }
 
     /**
      * Raises the scoring arm by a small increment if the arm is within the limits.
      */
-    public void raise(){
+    public void raise() {
         double nextPosition = armServo.getPosition() + 0.005;
-        if(nextPosition <= scoringPosition){
+        if (nextPosition <= scoringPosition) {
             armServo.setPosition(nextPosition);
         }
     }
@@ -56,9 +55,9 @@ public class ScoringArm extends SubsystemBase {
     /**
      * Lowers the scoring arm by a small increment if the arm is within the limits.
      */
-    public void lower(){
+    public void lower() {
         double nextPosition = armServo.getPosition() - 0.005;
-        if(nextPosition >= loadingPosition){
+        if (nextPosition >= loadingPosition) {
             armServo.setPosition(nextPosition);
         }
     }
@@ -66,14 +65,14 @@ public class ScoringArm extends SubsystemBase {
     /**
      * Moves the scoring arm to the lowered (loading) position.
      */
-    public void loadingPosition(){
+    public void loadingPosition() {
         armServo.setPosition(loadingPosition);
     }
 
     /**
      * Moves the scoring arm to the raised (scoring) position.
      */
-    public void scoringPosition(){
+    public void scoringPosition() {
         armServo.setPosition(scoringPosition);
     }
 }
