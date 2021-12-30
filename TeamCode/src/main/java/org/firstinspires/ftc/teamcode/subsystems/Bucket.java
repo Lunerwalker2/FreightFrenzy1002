@@ -18,7 +18,7 @@ public class Bucket extends SubsystemBase {
 
     public Bucket(HardwareMap hardwareMap, Telemetry telemetry){
         bucketServo = hardwareMap.get(Servo.class, "bucketServo");
-        dump();
+        load();
         this.telemetry = telemetry;
     }
 

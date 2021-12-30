@@ -25,6 +25,7 @@ public class ScoringArm extends SubsystemBase {
 
     public ScoringArm(HardwareMap hardwareMap, Telemetry telemetry) {
         armServo = hardwareMap.get(Servo.class, "scoringArmServo");
+        loadingPosition();
         this.telemetry = telemetry;
     }
 
