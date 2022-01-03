@@ -19,7 +19,7 @@ class CappingArmTest : LinearOpMode(){
 
         val cappingArm = CappingArm(hardwareMap, telemetry);
         var wasPressed = true
-        var currentPosition = CappingArm.Positions.IN_ROBOT.position
+        var currentPosition = 0.0
 
         waitForStart()
 
