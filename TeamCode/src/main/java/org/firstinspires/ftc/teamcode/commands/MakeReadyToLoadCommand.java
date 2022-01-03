@@ -25,7 +25,7 @@ public class MakeReadyToLoadCommand extends ParallelCommandGroup {
                 new InstantCommand(bucket::load, bucket),
                 new SequentialCommandGroup(
                         new WaitCommand(400),
-                        new MoveLiftPositionCommand(lift, Lift.Positions.IN_ROBOT)
+                        new MoveLiftPositionCommand(lift, Lift.Positions.IN_ROBOT, 5)
                 )
         );
     }

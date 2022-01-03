@@ -48,6 +48,14 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
 
     fun setLiftPower(power: Double) = run { liftMotor.power = power }
 
+    fun atUpperLimit(): Boolean {
+        return getLiftRawPosition() > 1100
+    }
+
+    fun atLowerLimit(): Boolean {
+        return getLiftRawPosition() < 2
+    }
+
     fun stopLift() {
         liftMotor.power = 0.0
         state = State.STOPPED

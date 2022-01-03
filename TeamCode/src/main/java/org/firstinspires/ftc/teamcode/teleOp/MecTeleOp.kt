@@ -53,9 +53,6 @@ class MecTeleOp : CommandOpMode() {
     private lateinit var scoringArm: ScoringArm
     private lateinit var bucket: Bucket
 
-    // Buttons/triggers
-    private lateinit var leftCarouselTrigger: Trigger
-    private lateinit var rightCarouselTrigger: Trigger
 
     //We could go and use the rr drive class but meh I'd like to show the math anyway
     private lateinit var leftFront: DcMotorEx
@@ -100,7 +97,7 @@ class MecTeleOp : CommandOpMode() {
         //Driver controls
 
 
-        //Manipulator Controls TODO: practice with these
+        //Manipulator Controls
 
 
         //Carousel wheel
@@ -111,13 +108,8 @@ class MecTeleOp : CommandOpMode() {
 //                })
 //                .whenInactive(carouselWheel::leftStop)
 //
-//        rightCarouselTrigger = Trigger { gamepad2.right_trigger > 0.2 }
-//                .whileActiveContinuous(Runnable {
-//                    if (gamepad2.right_trigger < 0.9) carouselWheel.rightForward()
-//                    else carouselWheel.fastRightForward()
-//                })
-//                .whenInactive(carouselWheel::rightStop)
 
+        //TODO: Change to driver left joystick
         manipulator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenActive(Runnable {
                     if (gamepad2.a) intake.outtake()
@@ -125,29 +117,37 @@ class MecTeleOp : CommandOpMode() {
                 })
                 .whenInactive(intake::stop)
 
+        //TODO: Change to driver dpad left/right, add hub led
         manipulator.getGamepadButton(GamepadKeys.Button.B)
                 .toggleWhenPressed(
                         Runnable { intake.setSide(false) },
                         Runnable { intake.setSide(true) }
                 )
 
+        /* ***********************************************/
+
+        //TODO: Change to left bumper
         manipulator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .toggleWhenPressed(
                         bucket::dump,
                         bucket::load
                 )
 
+        //TODO: Change to right bumper
         manipulator.getGamepadButton(GamepadKeys.Button.X)
                 .toggleWhenPressed(
                         scoringArm::scoringPosition,
                         scoringArm::loadingPosition
                 )
 
+        //TODO: Change to left joystick up/down, cancel on manual, command to variables with by lazy
         manipulator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
                 .whenPressed(MakeReadyToLoadCommand(lift, scoringArm, bucket))
 
         manipulator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
                 .whenPressed(MakeReadyToScoreCommand(lift, scoringArm))
+
+        //////////////////////////////////////////////// Drive Base
 
         telemetry.sendLine("Setting up drive hardware...")
         //Get our motors from the hardware map
@@ -190,7 +190,8 @@ class MecTeleOp : CommandOpMode() {
         We do all of this in order to avoid setting the motor power constantly in each case,
         which just adds an extra hardware.
          */
-        if(gamepad2.dpad_up && lift.getLiftRawPosition() < 1050){
+        //TODO: Put into actual ftclib thigns
+        if(gamepad2.dpad_up && !lift.atUpperLimit()){
             if(!prevLiftUp){
                 prevLiftUp = true
                 prevLiftDown = false
@@ -198,7 +199,7 @@ class MecTeleOp : CommandOpMode() {
                 lift.setLiftPower(0.8)
             }
         }
-        else if(gamepad2.dpad_down && lift.getLiftRawPosition() > 10){
+        else if(gamepad2.dpad_down && !lift.atLowerLimit()){
             if(!prevLiftDown){
                 prevLiftDown = true
                 prevLiftUp = false
@@ -209,7 +210,7 @@ class MecTeleOp : CommandOpMode() {
         else {
             if(!prevLiftStop) {
                 prevLiftStop = true
-                lift.setLiftPower(0.0)
+                lift.stopLift()
             }
             prevLiftUp = false
             prevLiftDown = false
@@ -217,6 +218,7 @@ class MecTeleOp : CommandOpMode() {
         }
 
 
+        /////////////////////////////////////////////////////////////// Drive Base
         //Set the slow mode one if either bumper is pressed
         if (gamepad1.left_bumper || gamepad1.right_bumper) {
             powerMultiplier = 0.3

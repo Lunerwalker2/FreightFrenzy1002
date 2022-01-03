@@ -12,20 +12,8 @@ public class CappingArm extends SubsystemBase {
 
     private Telemetry telemetry;
 
-    public enum Positions {
-        IN_ROBOT(0.0),
-        ABOVE_POLE(0.5),
-        ON_POLE(0.62),
-        PICK_UP(0.85);
-
-        public double position;
-        Positions(double position){
-            this.position = position;
-        }
-    }
-
-    private Positions[] positionsList = Positions.values();
-    private Positions currentPosition = Positions.IN_ROBOT;
+    private final double inRobotPosition = 0.0;
+    private double currentPosition = 0.0;
 
     public CappingArm(HardwareMap hardwareMap){
         this(hardwareMap, null);
@@ -34,7 +22,7 @@ public class CappingArm extends SubsystemBase {
     public CappingArm(HardwareMap hardwareMap, Telemetry telemetry){
         cappingServo = hardwareMap.get(Servo.class, "cappingServo");
         this.telemetry = telemetry;
-        cappingServo.setPosition(currentPosition.position);
+        cappingServo.setPosition(inRobotPosition);
     }
 
 
@@ -45,23 +33,22 @@ public class CappingArm extends SubsystemBase {
         }
     }
 
-    public void setArmPosition(Positions position){
-        currentPosition = position;
-        cappingServo.setPosition(position.position);
-    }
 
     public void setArmPositionRaw(double position){
+        currentPosition = position;
         cappingServo.setPosition(position);
     }
 
-    public void incrementPosition(){
-        int nextPos = currentPosition.ordinal() + 1;
-        if(nextPos < positionsList.length) setArmPosition(positionsList[nextPos]);
+    public void raise(){
+        currentPosition += 0.001;
+        if(currentPosition > 1.0) currentPosition = 1.0;
+        cappingServo.setPosition(currentPosition);
     }
 
-    public void decrementPosition(){
-        int nextPos = currentPosition.ordinal() - 1;
-        if(nextPos >= 0) setArmPosition(positionsList[nextPos]);
+    public void lower(){
+        currentPosition -= 0.001;
+        if(currentPosition < 0.0) currentPosition = 0.0;
+        cappingServo.setPosition(currentPosition);
     }
 
 }

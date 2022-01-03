@@ -5,7 +5,7 @@ import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile
 import org.firstinspires.ftc.teamcode.subsystems.Lift
 
-class MoveLiftPositionCommand(private val lift: Lift, position: Lift.Positions ) : ProfiledPIDCommand(
+class MoveLiftPositionCommand(private val lift: Lift, position: Lift.Positions, tolerance: Double = 10.0) : ProfiledPIDCommand(
         controller,
         lift::getLiftRawPosition,
         position.targetPosition.toDouble(),
@@ -29,7 +29,7 @@ class MoveLiftPositionCommand(private val lift: Lift, position: Lift.Positions )
     }
 
     init {
-        controller.setTolerance(10.0)
+        controller.setTolerance(tolerance)
     }
 
     override fun isFinished(): Boolean {

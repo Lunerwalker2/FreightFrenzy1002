@@ -11,8 +11,8 @@ public class CarouselWheel extends SubsystemBase {
 
 
     private final DcMotor wheelMotor;
-    private double power = 0.0; //the power for the wheel
     private final Telemetry telemetry;
+    private boolean clockwise = true;
 
     public CarouselWheel(HardwareMap hardwareMap){
         this(hardwareMap, null);
@@ -30,19 +30,22 @@ public class CarouselWheel extends SubsystemBase {
     public void periodic(){
 
         if(telemetry != null){
-            telemetry.addData("Carousel Wheel", (power != 0.0) ? "ON" : "OFF");
+            telemetry.addData("Carousel Wheel Direction", (clockwise) ? "ON" : "OFF");
         }
     }
 
 
     /**
-     * Forward is clockwise
+     * Turns the wheel the direction it's currently set to
      * @param power The power to set the motor to
      */
     public void setWheelPower(double power){
-        wheelMotor.setPower(power);
+        wheelMotor.setPower((clockwise) ? power : -power);
     }
 
+    public void setDirection(boolean clockwise){
+        this.clockwise = clockwise;
+    }
 
 
 }
