@@ -28,13 +28,12 @@ import static java.lang.Math.toRadians;
 public class SmolBot {
 
 
-    public static double MAX_VEL = 45;
-    public static double MAX_ACCEL = 45;
+    public static double MAX_VEL = 40;
+    public static double MAX_ACCEL = 40;
     public static double MAX_ANG_VEL = toRadians(200);
     public static double MAX_ANG_ACCEL = toRadians(200);
-    public static double TRACK_WIDTH = 10;
+    public static double TRACK_WIDTH = 12.1;
 
-    public static int HUB_LEVEL = (int) (Math.random() * 3);
 
 
     private static final Pose2d blueStartingPosition = new Pose2d(6, 63.5, toRadians(0));
@@ -50,86 +49,54 @@ public class SmolBot {
 
         RoadRunnerBotEntity blueCycleRoute = new DefaultBotBuilder(mm)
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
-                .setDimensions(13, 17)
+                .setDimensions(13, 18)
                 .setColorScheme(new ColorSchemeBlueDark())
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(blueStartingPosition)
-                                .lineToConstantHeading(new Vector2d(-10, 50))
+                                .lineToConstantHeading(new Vector2d(-10, 60))
                                 .waitSeconds(0.5)
-                                .addDisplacementMarker(() -> {System.out.println("Lift out");})
+                                .addDisplacementMarker(() -> System.out.println("Lift out"))
                                 .waitSeconds(0.5)
-                                .addDisplacementMarker(() -> {System.out.println("Lift in");})
+                                .addDisplacementMarker(() -> System.out.println("Lift in"))
                                 .splineToConstantHeading(new Vector2d(15, 64), toRadians(0))
                                 .splineToConstantHeading(new Vector2d(50, 64), toRadians(0))
+                                .addDisplacementMarker(() -> System.out.println("Intaking"))
+                                .forward(7, getVelocityConstraint(5, toRadians(200), 12.1))
                                 .waitSeconds(0.5)
-                                .addDisplacementMarker(() -> {System.out.println("Intake");})
+                                .addDisplacementMarker(() -> System.out.println("Freight Found, Relocalizing"))
+                                .waitSeconds(0.1)
                                 .setReversed(true)
                                 .splineToConstantHeading(new Vector2d(15, 64), toRadians(180))
-                                .splineToConstantHeading(new Vector2d(-10, 50), toRadians(-140))
-                                .setReversed(false)
-                                .build()
-                );
-
-/*
-        RoadRunnerBotEntity blueCycleRoute = new DefaultBotBuilder(mm)
-                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
-                .setDimensions(12, 17)
-                .setColorScheme(new ColorSchemeBlueDark())
-                .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(blueStartingPosition)
-                                .setReversed(true)
-                                .splineTo(new Vector2d(-4.5, 40), toRadians(-112))
-                                .waitSeconds(0.3)
-                                .setReversed(false)
-                                .splineToSplineHeading(new Pose2d(9, 62, toRadians(10)), toRadians(21))
-                                .addDisplacementMarker(() -> System.out.println("marker"))
-                                .splineToSplineHeading(new Pose2d(19, 63.5, toRadians(0)), toRadians(0))
-                                .addDisplacementMarker(() -> System.out.println("marker"))
-                                .splineTo(new Vector2d(50, 63.5), toRadians(0))
-                                .addDisplacementMarker(() -> System.out.println("marker"))
-                                //Intake
-                                .waitSeconds(1.0)
-                                .setReversed(true)
-                                .splineToSplineHeading(new Pose2d(19, 63.5, toRadians(0)), toRadians(180))
-                                .addDisplacementMarker(() -> System.out.println("marker"))
-                                .splineToSplineHeading(new Pose2d(9, 62, toRadians(10)), toRadians(-159))
-                                .addDisplacementMarker(() -> System.out.println("marker"))
-                                .splineToSplineHeading(new Pose2d(-4.5, 40, toRadians(75)), toRadians(-105))
-                                .addDisplacementMarker(() -> System.out.println("marker"))
+                                .splineToConstantHeading(new Vector2d(-10, 60), toRadians(-160))
                                 .setReversed(false)
                                 .build()
                 );
 
         RoadRunnerBotEntity redCycleRoute = new DefaultBotBuilder(mm)
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
-                .setDimensions(12, 17)
-                .setColorScheme(new ColorSchemeRedDark())
+                .setDimensions(13, 18)
+                .setColorScheme(new ColorSchemeBlueDark())
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(redStartingPosition)
+                                .lineToConstantHeading(new Vector2d(-10, -60))
+                                .waitSeconds(0.5)
+                                .addDisplacementMarker(() -> System.out.println("Lift out"))
+                                .waitSeconds(0.5)
+                                .addDisplacementMarker(() -> System.out.println("Lift in"))
                                 .setReversed(true)
-                                .splineTo(new Vector2d(-4.5, -40), toRadians(112))
-                                .waitSeconds(0.3)
+                                .splineToConstantHeading(new Vector2d(15, -64), toRadians(0))
+                                .splineToConstantHeading(new Vector2d(50, -64), toRadians(0))
+                                .addDisplacementMarker(() -> System.out.println("Intaking"))
+                                .back(7, getVelocityConstraint(5, toRadians(200), 12.1))
+                                .waitSeconds(0.5)
+                                .addDisplacementMarker(() -> System.out.println("Freight Found, Relocalizing"))
+                                .waitSeconds(0.1)
                                 .setReversed(false)
-                                .splineToSplineHeading(new Pose2d(9, -62, toRadians(-10)), toRadians(-21))
-                                .addDisplacementMarker(() -> System.out.println("marker"))
-                                .splineToSplineHeading(new Pose2d(19, -63.5, toRadians(0)), toRadians(0))
-                                .addDisplacementMarker(() -> System.out.println("marker"))
-                                .splineTo(new Vector2d(50, -63.5), toRadians(0))
-                                .addDisplacementMarker(() -> System.out.println("marker"))
-                                //Intake
-                                .waitSeconds(1.0)
+                                .splineToConstantHeading(new Vector2d(15, -64), toRadians(180))
+                                .splineToConstantHeading(new Vector2d(-10, -60), toRadians(160))
                                 .setReversed(true)
-                                .splineToSplineHeading(new Pose2d(19, -63.5, toRadians(0)), toRadians(180))
-                                .addDisplacementMarker(() -> System.out.println("marker"))
-                                .splineToSplineHeading(new Pose2d(9, -62, toRadians(-10)), toRadians(159))
-                                .addDisplacementMarker(() -> System.out.println("marker"))
-                                .splineToSplineHeading(new Pose2d(-4.5, -40, toRadians(-75)), toRadians(105))
-                                .addDisplacementMarker(() -> System.out.println("marker"))
-                                .setReversed(false)
                                 .build()
                 );
-
- */
 
 
         mm
@@ -137,6 +104,7 @@ public class SmolBot {
                 .setTheme(new ColorSchemeRedDark())
                 .setBackgroundAlpha(0.95f)
                 .addEntity(blueCycleRoute)
+                .addEntity(redCycleRoute)
                 .start();
 
     }
