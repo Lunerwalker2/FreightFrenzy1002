@@ -75,7 +75,7 @@ public class SmolBot {
         RoadRunnerBotEntity redCycleRoute = new DefaultBotBuilder(mm)
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
                 .setDimensions(13, 18)
-                .setColorScheme(new ColorSchemeBlueDark())
+                .setColorScheme(new ColorSchemeRedDark())
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(redStartingPosition)
                                 .lineToConstantHeading(new Vector2d(-10, -60))

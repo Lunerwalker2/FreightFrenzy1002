@@ -35,8 +35,8 @@ public class DriveConstants {
      */
     public static final boolean RUN_USING_ENCODER = true;
     //TODO: IF THIS IS CHANGED TO USE FF, TELEOP MUST BE UPDATED!
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(26, 0, 5,
-            12.9); //getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV)
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(23, 0, 5.7,
+            13.005); //getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV)
     //12/4: 25, 0, 3.3, 13.7
 
     /*
@@ -51,7 +51,7 @@ public class DriveConstants {
     public static double GEAR_RATIO = 0.994; // output (wheel) speed / input (motor) speed
     //mid nov: 0.9873830877
     //12/4: 0.9654
-    public static double TRACK_WIDTH = 12.1; // in
+    public static double TRACK_WIDTH = 12.24; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
