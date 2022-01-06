@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleOp
 
+import android.graphics.Color
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.arcrobotics.ftclib.command.CommandOpMode
 import com.arcrobotics.ftclib.command.button.Trigger
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand
 import org.firstinspires.ftc.teamcode.commands.MakeReadyToLoadCommand
 import org.firstinspires.ftc.teamcode.commands.MakeReadyToScoreCommand
+import org.firstinspires.ftc.teamcode.commands.SetHubLEDCommand
 import org.firstinspires.ftc.teamcode.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.subsystems.Bucket
 import org.firstinspires.ftc.teamcode.subsystems.Intake
@@ -109,32 +111,32 @@ class MecTeleOp : CommandOpMode() {
 //                .whenInactive(carouselWheel::leftStop)
 //
 
-        //TODO: Change to driver left joystick
-        manipulator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+        Trigger {gamepad1.left_trigger > 0.4}
                 .whenActive(Runnable {
-                    if (gamepad2.a) intake.outtake()
+                    if (gamepad1.x) intake.outtake()
                     else intake.intake()
                 })
                 .whenInactive(intake::stop)
 
-        //TODO: Change to driver dpad left/right, add hub led
-        manipulator.getGamepadButton(GamepadKeys.Button.B)
-                .toggleWhenPressed(
-                        Runnable { intake.setSide(false) },
-                        Runnable { intake.setSide(true) }
-                )
+
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(Runnable { intake.setSide(true) })
+                .whenPressed(SetHubLEDCommand(hardwareMap, Color.GREEN))
+
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(Runnable { intake.setSide(false) })
+                .whenPressed(SetHubLEDCommand(hardwareMap, Color.RED))
+
 
         /* ***********************************************/
 
-        //TODO: Change to left bumper
-        manipulator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+        manipulator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .toggleWhenPressed(
                         bucket::dump,
                         bucket::load
                 )
 
-        //TODO: Change to right bumper
-        manipulator.getGamepadButton(GamepadKeys.Button.X)
+        manipulator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .toggleWhenPressed(
                         scoringArm::scoringPosition,
                         scoringArm::loadingPosition

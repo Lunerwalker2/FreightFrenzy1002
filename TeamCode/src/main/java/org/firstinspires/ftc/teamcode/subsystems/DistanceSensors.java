@@ -13,6 +13,7 @@ public class DistanceSensors extends SubsystemBase {
 
     //forward sensor
     private final MB1242 forwardSensor;
+    private final MB1242 backwardSensor;
     //The two TOF Distance sensors on the sides.
     private final Rev2mDistanceSensor rightSensor;
     private final Rev2mDistanceSensor leftSensor;
@@ -28,28 +29,38 @@ public class DistanceSensors extends SubsystemBase {
     private boolean takingRangeReading = false;
     //Last read range in cm
     private double forwardRange = 0.0;
+    private double backwardRange = 0.0;
     private double leftRange = 0.0;
     private double rightRange = 0.0;
 
-    public DistanceSensors(HardwareMap hardwareMap){
-        super();
+    private boolean redSide = true;
 
+    public DistanceSensors(HardwareMap hardwareMap){
+        this(hardwareMap, true);
+    }
+
+    public DistanceSensors(HardwareMap hardwareMap, boolean redSide){
 
         //Get the sensors from the hardware map
         forwardSensor = hardwareMap.get(MB1242.class, "forwardSensor");
+        backwardSensor = hardwareMap.get(MB1242.class, "backwardSensor");
         rightSensor = hardwareMap.get(Rev2mDistanceSensor.class, "rightSensor");
         leftSensor = hardwareMap.get(Rev2mDistanceSensor.class,"leftSensor");
 
         //Set initial values, usage must be careful to account for the first read as it might be incorrect
         forwardRange = forwardSensor.getDistance(DistanceUnit.CM);
+        backwardRange = backwardSensor.getDistance(DistanceUnit.CM);
         leftRange = leftSensor.getDistance(DistanceUnit.CM);
         rightRange = rightSensor.getDistance(DistanceUnit.CM);
 
         cycleTimer.reset();
         delayTimer.reset();
 
+        this.redSide = true;
 
     }
+
+
 
 
     @Override
@@ -58,10 +69,15 @@ public class DistanceSensors extends SubsystemBase {
         if(takingRangeReading){
             //Check if its been longer than our delay to properly let the sensor perform
             if(hasDelayExpired()){
-                forwardRange = forwardSensor.getDistance(DistanceUnit.CM);
+                if(redSide){
+                    backwardRange = backwardSensor.getDistance(DistanceUnit.CM);
+                    backwardSensor.ping();
+                } else {
+                    forwardRange = forwardSensor.getDistance(DistanceUnit.CM);
+                    forwardSensor.ping();
+                }
                 rightRange = rightSensor.getDistance(DistanceUnit.CM);
                 leftRange = leftSensor.getDistance(DistanceUnit.CM);
-                forwardSensor.ping();
                 delayTimer.reset();
             }
         }
@@ -82,6 +98,11 @@ public class DistanceSensors extends SubsystemBase {
     public double getForwardRange(DistanceUnit unit) {
         return unit.fromCm(forwardRange);
     }
+
+    public double getBackwardRange(DistanceUnit unit) {
+        return unit.fromCm(backwardRange);
+    }
+
 
     //Start taking range readings
     public void startReading() {
@@ -117,6 +138,7 @@ public class DistanceSensors extends SubsystemBase {
         while(timer.milliseconds() < 80);
         return forwardSensor.getDistance(DistanceUnit.CM) > 20 || //20cm is the minimum range, so we test with it
             leftSensor.getDistance(DistanceUnit.CM) > 3 ||
-                rightSensor.getDistance(DistanceUnit.CM) > 3;
+                rightSensor.getDistance(DistanceUnit.CM) > 3 ||
+                backwardSensor.getDistance(DistanceUnit.CM) > 20;
     }
 }

@@ -30,6 +30,7 @@ public class RelocalizeCommand extends CommandBase {
      * //TODO: Find these
      */
     private static final double FORWARD_SENSOR_BASE_DISTANCE_TO_WALL = 65.5;
+    private static final double BACKWARD_SENSOR_BASE_DISTANCE_TO_WALL = 65.5;
     private static final double LEFT_SENSOR_BASE_DISTANCE_TO_WALL = 65.0;
     private static final double RIGHT_SENSOR_BASE_DISTANCE_TO_WALL = 65.0;
 
@@ -42,6 +43,7 @@ public class RelocalizeCommand extends CommandBase {
      * Inches
      */
     private static final Vector2d forwardSensorPosition = new Vector2d(6.5,6.5);
+    private static final Vector2d backwardSensorPosition = new Vector2d(6.5,6.5);
     private static final Vector2d leftSensorPosition = new Vector2d(7, 5);
     private static final Vector2d rightSensorPosition = new Vector2d(7, 5);
 
@@ -89,7 +91,9 @@ public class RelocalizeCommand extends CommandBase {
 
         //test for possible invalid values
         if (!isValidReadings(
-                distanceSensors.getForwardRange(DistanceUnit.INCH),
+                (leftSide) ?
+                        distanceSensors.getForwardRange(DistanceUnit.INCH) :
+                        distanceSensors.getBackwardRange(DistanceUnit.INCH),
                 (leftSide) ?
                         distanceSensors.getLeftRange(DistanceUnit.INCH) :
                         distanceSensors.getRightRange(DistanceUnit.INCH))
@@ -97,7 +101,9 @@ public class RelocalizeCommand extends CommandBase {
 
         //Find the rotated distances
         double[] rotatedDistances = findRotatedDistance(
-                distanceSensors.getForwardRange(DistanceUnit.INCH),
+                (leftSide) ?
+                        distanceSensors.getForwardRange(DistanceUnit.INCH) :
+                        distanceSensors.getBackwardRange(DistanceUnit.INCH),
                 (leftSide) ?
                         distanceSensors.getLeftRange(DistanceUnit.INCH) :
                         distanceSensors.getRightRange(DistanceUnit.INCH),
@@ -107,12 +113,14 @@ public class RelocalizeCommand extends CommandBase {
 
 
         //Find our forward distance (x in field coordinates)
-        double x = (FORWARD_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[0]);
+        double x = (leftSide) ?
+                (FORWARD_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[0]) :
+                (BACKWARD_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[0]);
 
         //Find our side distance (y in field coordinates)
         double y = (leftSide) ?
-                rotatedDistances[1] - RIGHT_SENSOR_BASE_DISTANCE_TO_WALL :
-                LEFT_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[1];
+                (rotatedDistances[1] - RIGHT_SENSOR_BASE_DISTANCE_TO_WALL) :
+                (LEFT_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[1]);
 
 
         //Put them together in a position
@@ -182,7 +190,10 @@ public class RelocalizeCommand extends CommandBase {
 
 
         //Rotate the vector with the sensor's position by the current heading
-        Vector2d rotatedForwardSensorPosition = forwardSensorPosition.rotated(headingRad);
+        Vector2d rotatedForwardSensorPosition = (leftSide) ?
+                forwardSensorPosition.rotated(headingRad) :
+                backwardSensorPosition.rotated(headingRad);
+
         //Do the same for the side sensor
         Vector2d rotatedSideSensorPosition = (leftSide) ?
                 leftSensorPosition.rotated(headingRad) :
