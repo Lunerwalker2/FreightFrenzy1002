@@ -55,7 +55,6 @@ class MecTeleOp : CommandOpMode() {
     private lateinit var scoringArm: ScoringArm
     private lateinit var bucket: Bucket
 
-
     //We could go and use the rr drive class but meh I'd like to show the math anyway
     private lateinit var leftFront: DcMotorEx
     private lateinit var leftBack: DcMotorEx
@@ -69,6 +68,8 @@ class MecTeleOp : CommandOpMode() {
     private var prevLiftStop = false
     //Drive power multiplier for slow mode
     private var powerMultiplier = 0.9
+    private val makeReadyToLoadCommand by lazy { MakeReadyToLoadCommand(lift, scoringArm, bucket) }
+    private val makeReadyToScoreCommand by lazy { MakeReadyToScoreCommand(lift, scoringArm)}
 
     override fun initialize() {
 
@@ -120,10 +121,12 @@ class MecTeleOp : CommandOpMode() {
 
 
         driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(intake::stop)
                 .whenPressed(Runnable { intake.setSide(true) })
                 .whenPressed(SetHubLEDCommand(hardwareMap, Color.GREEN))
 
         driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(intake::stop)
                 .whenPressed(Runnable { intake.setSide(false) })
                 .whenPressed(SetHubLEDCommand(hardwareMap, Color.RED))
 
@@ -142,9 +145,39 @@ class MecTeleOp : CommandOpMode() {
                         scoringArm::loadingPosition
                 )
 
-        //TODO: Change to left joystick up/down, cancel on manual, command to variables with by lazy
-        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(MakeReadyToLoadCommand(lift, scoringArm, bucket))
+
+        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                .whenPressed(Runnable {
+                    if(!lift.atUpperLimit()) lift.setLiftPower(0.8)
+                })
+                .whenReleased(lift::stopLift)
+                .cancelWhenPressed(makeReadyToScoreCommand)
+                .cancelWhenPressed(makeReadyToLoadCommand)
+
+        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                .whenPressed(Runnable {
+                    if(!lift.atLowerLimit()){
+                        if((lift.getLiftRawPosition() < 100 &&
+                                        scoringArm.position == ScoringArm.loadingPosition ||
+                                        !bucket.isDown)){
+                            lift.stopLift()
+                        } else {
+                            lift.setLiftPower(-0.6)
+                        }
+                    }
+                })
+                .whenReleased(lift::stopLift)
+                .cancelWhenPressed(makeReadyToScoreCommand)
+                .cancelWhenPressed(makeReadyToLoadCommand)
+
+
+        Trigger {-gamepad2.left_stick_y > 0.5}
+                .whenActive(makeReadyToScoreCommand)
+                .cancelWhenActive(makeReadyToLoadCommand)
+
+        Trigger {-gamepad2.left_stick_y < -0.5}
+                .whenActive(makeReadyToLoadCommand)
+                .cancelWhenActive(makeReadyToScoreCommand)
 
         manipulator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
                 .whenPressed(MakeReadyToScoreCommand(lift, scoringArm))
@@ -192,32 +225,31 @@ class MecTeleOp : CommandOpMode() {
         We do all of this in order to avoid setting the motor power constantly in each case,
         which just adds an extra hardware.
          */
-        //TODO: Put into actual ftclib thigns
-        if(gamepad2.dpad_up && !lift.atUpperLimit()){
-            if(!prevLiftUp){
-                prevLiftUp = true
-                prevLiftDown = false
-                prevLiftStop = false
-                lift.setLiftPower(0.8)
-            }
-        }
-        else if(gamepad2.dpad_down && !lift.atLowerLimit()){
-            if(!prevLiftDown){
-                prevLiftDown = true
-                prevLiftUp = false
-                prevLiftStop = false
-                lift.setLiftPower(-0.55)
-            }
-        }
-        else {
-            if(!prevLiftStop) {
-                prevLiftStop = true
-                lift.stopLift()
-            }
-            prevLiftUp = false
-            prevLiftDown = false
-
-        }
+//        if(gamepad2.dpad_up && !lift.atUpperLimit()){
+//            if(!prevLiftUp){
+//                prevLiftUp = true
+//                prevLiftDown = false
+//                prevLiftStop = false
+//                lift.setLiftPower(0.8)
+//            }
+//        }
+//        else if(gamepad2.dpad_down && !lift.atLowerLimit()){
+//            if(!prevLiftDown){
+//                prevLiftDown = true
+//                prevLiftUp = false
+//                prevLiftStop = false
+//                lift.setLiftPower(-0.55)
+//            }
+//        }
+//        else {
+//            if(!prevLiftStop) {
+//                prevLiftStop = true
+//                lift.stopLift()
+//            }
+//            prevLiftUp = false
+//            prevLiftDown = false
+//
+//        }
 
 
         /////////////////////////////////////////////////////////////// Drive Base

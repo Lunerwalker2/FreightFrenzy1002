@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ScoringArm;
  */
 public class MakeReadyToScoreCommand extends ParallelCommandGroup {
 
+
     public MakeReadyToScoreCommand(Lift lift, ScoringArm scoringArm){
         addCommands(
                 new MoveLiftPositionCommand(lift, Lift.Positions.BOTTOM, 10),

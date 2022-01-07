@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.toRadians;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.CommandBase;
@@ -29,10 +32,10 @@ public class RelocalizeCommand extends CommandBase {
      *
      * //TODO: Find these
      */
-    private static final double FORWARD_SENSOR_BASE_DISTANCE_TO_WALL = 65.5;
-    private static final double BACKWARD_SENSOR_BASE_DISTANCE_TO_WALL = 65.5;
-    private static final double LEFT_SENSOR_BASE_DISTANCE_TO_WALL = 65.0;
-    private static final double RIGHT_SENSOR_BASE_DISTANCE_TO_WALL = 65.0;
+    private static final double FORWARD_SENSOR_BASE_DISTANCE_TO_WALL = 65.34375; //TODO: fux
+    private static final double BACKWARD_SENSOR_BASE_DISTANCE_TO_WALL = 65.34375;
+    private static final double LEFT_SENSOR_BASE_DISTANCE_TO_WALL = 65.875;
+    private static final double RIGHT_SENSOR_BASE_DISTANCE_TO_WALL = 66.875;
 
     /*
      * These are the relative positions of each sensor from the center of the
@@ -42,10 +45,10 @@ public class RelocalizeCommand extends CommandBase {
      * y is forward, x is left/right
      * Inches
      */
-    private static final Vector2d forwardSensorPosition = new Vector2d(6.5,6.5);
-    private static final Vector2d backwardSensorPosition = new Vector2d(6.5,6.5);
-    private static final Vector2d leftSensorPosition = new Vector2d(7, 5);
-    private static final Vector2d rightSensorPosition = new Vector2d(7, 5);
+    private static final Vector2d forwardSensorPosition = new Vector2d(5.875,6.65625); //TODO: fix
+    private static final Vector2d backwardSensorPosition = new Vector2d(-5.875,-6.65625);
+    private static final Vector2d leftSensorPosition = new Vector2d(-6.125, -0.15625);
+    private static final Vector2d rightSensorPosition = new Vector2d(5.125, -4.15625);
 
 
     private final DistanceSensors distanceSensors;
@@ -192,7 +195,8 @@ public class RelocalizeCommand extends CommandBase {
         //Rotate the vector with the sensor's position by the current heading
         Vector2d rotatedForwardSensorPosition = (leftSide) ?
                 forwardSensorPosition.rotated(headingRad) :
-                backwardSensorPosition.rotated(headingRad);
+                backwardSensorPosition.rotated(AngleUnit.RADIANS.normalize(
+                        headingRad + PI - toRadians(4))); //TODO: find exact error
 
         //Do the same for the side sensor
         Vector2d rotatedSideSensorPosition = (leftSide) ?

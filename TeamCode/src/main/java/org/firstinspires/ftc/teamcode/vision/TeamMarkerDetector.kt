@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.vision
 
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
+import org.firstinspires.ftc.teamcode.vision.pipeline.AprilTagHubLevelPipeline
 import org.firstinspires.ftc.teamcode.vision.pipeline.TeamMarkerPipeline
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCamera.AsyncCameraOpenListener
@@ -27,7 +28,8 @@ class TeamMarkerDetector(private val hardwareMap: HardwareMap) {
 
 
     private lateinit var camera: OpenCvCamera
-    val teamMarkerPipeline: TeamMarkerPipeline = TeamMarkerPipeline()
+
+    val teamMarkerPipeline: AprilTagHubLevelPipeline = AprilTagHubLevelPipeline()
 
 
 
@@ -41,28 +43,11 @@ class TeamMarkerDetector(private val hardwareMap: HardwareMap) {
 
     }
 
-    fun setLeftRectangle(x: Double, y: Double){
-        TeamMarkerPipeline.leftMarkerPositionX = x
-        TeamMarkerPipeline.leftMarkerPositionY = y
-    }
-
-    fun setRightRectangle(x: Double, y: Double){
-        TeamMarkerPipeline.centerMarkerPositionX = x
-        TeamMarkerPipeline.centerMarkerPositionY = y
-    }
-
-    fun setRectangleSize(width: Int, height: Int){
-        TeamMarkerPipeline.leftMarkerPositionWidth = width
-        TeamMarkerPipeline.leftMarkerPositionHeight = height
-        TeamMarkerPipeline.centerMarkerPositionWidth = width
-        TeamMarkerPipeline.centerMarkerPositionHeight = height
-    }
-
 
     fun startStream(){
         camera.openCameraDeviceAsync(object : AsyncCameraOpenListener {
             override fun onOpened() {
-                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT)
+                camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_LEFT)
             }
 
             override fun onError(errorCode: Int) {

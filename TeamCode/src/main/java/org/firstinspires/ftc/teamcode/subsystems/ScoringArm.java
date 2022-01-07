@@ -13,10 +13,10 @@ public class ScoringArm extends SubsystemBase {
     private final Servo armServo;
 
     //Position for in the robot and loading
-    private final double loadingPosition = 0.0;
+    public static final double loadingPosition = 0.0;
 
     //Position for normal scoring
-    private final double scoringPosition = 1.0;
+    public static final double scoringPosition = 1.0;
 
 
     public ScoringArm(HardwareMap hardwareMap) {
@@ -61,6 +61,14 @@ public class ScoringArm extends SubsystemBase {
         if (nextPosition >= loadingPosition) {
             armServo.setPosition(nextPosition);
         }
+    }
+
+    public double getPosition(){
+        return armServo.getPosition();
+    }
+
+    public void setPosition(double position){
+        armServo.setPosition(position);
     }
 
     /**

@@ -35,8 +35,11 @@ public class SmolBot {
     public static double TRACK_WIDTH = 12.1;
 
 
+    //length = 17.3125
+    //width = 13.25
 
-    private static final Pose2d blueStartingPosition = new Pose2d(6, 63.5, toRadians(0));
+
+    private static final Pose2d blueStartingPosition = new Pose2d(8.34375, 65.375, toRadians(0));
     private static final Pose2d redStartingPosition =
             blueStartingPosition.copy(blueStartingPosition.getX(), -blueStartingPosition.getY(),
                     Angle.normDelta(blueStartingPosition.getHeading() + toRadians(180)));
