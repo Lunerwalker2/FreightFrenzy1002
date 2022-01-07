@@ -28,8 +28,8 @@ import static java.lang.Math.toRadians;
 public class SmolBot {
 
 
-    public static double MAX_VEL = 40;
-    public static double MAX_ACCEL = 40;
+    public static double MAX_VEL = 45;
+    public static double MAX_ACCEL = 45;
     public static double MAX_ANG_VEL = toRadians(200);
     public static double MAX_ANG_ACCEL = toRadians(200);
     public static double TRACK_WIDTH = 12.1;

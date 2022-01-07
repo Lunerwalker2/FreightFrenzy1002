@@ -38,7 +38,7 @@ class DropFreightInHubCommand(
                         .andThen(InstantCommand(bucket::dump)),
                 SequentialCommandGroup(
                         InstantCommand(intake::outtake),
-                        WaitCommand(1000),
+                        WaitCommand(500),
                         InstantCommand(intake::stop)
                 ),
                 SequentialCommandGroup(

@@ -10,6 +10,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.trajectory.Trajectory;
 
 import org.firstinspires.ftc.teamcode.auto.AutoBase;
+import org.firstinspires.ftc.teamcode.commands.autocommands.CrawlForwardUntilIntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.DropFreightInHubCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.DropPreLoadFreightCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.RetractAndGoToWarehouseCommand;
@@ -98,6 +99,15 @@ public class RedCycleAuto extends AutoBase {
                 ).andThen(waitFor(500)),
                 new RetractFromPreLoadAndCycleCommand(
                         drive, lift, scoringArm, bucket, true, hubLevel
+                ).andThen(waitFor(500)),
+//                new CrawlForwardUntilIntakeCommand(
+//                        drive, intake, bucket, true
+//                )
+                new DropFreightInHubCommand(
+                        drive, lift, scoringArm, bucket, intake, true
+                ),
+                new RetractAndGoToWarehouseCommand(
+                        drive, lift, scoringArm, bucket, true
                 )
 
         ));

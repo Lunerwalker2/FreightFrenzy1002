@@ -127,31 +127,31 @@ public class RelocalizeCommand extends CommandBase {
 
 
         //Put them together in a position
-        Pose2d currentPosition = new Pose2d(x, y, heading);
-
-        //if its the first run we need to make sure we have an initial position for the average to work
-        if (firstRun) {
-            averagePosition =
-                    new Pose2d(currentPosition.getX(), currentPosition.getY(), currentPosition.getHeading());
-            lastInstantPosition =
-                    new Pose2d(currentPosition.getX(), currentPosition.getY(), currentPosition.getHeading());
-            firstRun = false;
-        } else {
-            //Average the two
-            averagePosition = new Pose2d(
-                    (averagePosition.getX() + currentPosition.getX()) / 2.0,
-                    (averagePosition.getY() + currentPosition.getY()) / 2.0,
-                    AngleUnit.normalizeRadians((averagePosition.getHeading() + currentPosition.getHeading()) / 2.0)
-            );
-            lastInstantPosition =
-                    new Pose2d(currentPosition.getX(), currentPosition.getY(), currentPosition.getHeading());
-        }
+//        Pose2d currentPosition = new Pose2d(x, y, heading);
+//
+//        //if its the first run we need to make sure we have an initial position for the average to work
+//        if (firstRun) {
+//            averagePosition =
+//                    new Pose2d(currentPosition.getX(), currentPosition.getY(), currentPosition.getHeading());
+//            lastInstantPosition =
+//                    new Pose2d(currentPosition.getX(), currentPosition.getY(), currentPosition.getHeading());
+//            firstRun = false;
+//        } else {
+//            //Average the two
+//            averagePosition = new Pose2d(
+//                    (averagePosition.getX() + currentPosition.getX()) / 2.0,
+//                    (averagePosition.getY() + currentPosition.getY()) / 2.0,
+//                    AngleUnit.normalizeRadians((averagePosition.getHeading() + currentPosition.getHeading()) / 2.0)
+//            );
+//            lastInstantPosition =
+//                    new Pose2d(currentPosition.getX(), currentPosition.getY(), currentPosition.getHeading());
+//        }
 
         //Update the user with the new position
-        poseConsumer.accept(averagePosition);
+        poseConsumer.accept(new Pose2d(x, y, heading));
     }
 
-    //Since this command will only be ended via cancellation, we dont need to specify an end condition
+    //This command will only run once
 
     @Override
     public void end(boolean interrupted) {
@@ -160,10 +160,10 @@ public class RelocalizeCommand extends CommandBase {
 
     @Override
     public boolean isFinished(){
-        return false;
+        return true;
     }
     /**
-     * Returns if the current range readings are valid or not
+     * Returns if the current range readings are valid or not. cm
      */
     private static boolean isValidReadings(double front, double side) {
         return !(front < 6 ||
