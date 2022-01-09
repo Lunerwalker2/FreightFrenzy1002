@@ -27,6 +27,21 @@ public class RetractFromPreLoadAndCycleCommand extends ParallelCommandGroup {
     private final boolean redSide;
     private final HubLevel hubLevel;
 
+    private static final Pose2d blueStartingPositionTop =
+            new Pose2d(-10, 60, toRadians(0));
+    private static final Pose2d blueStartingPositionMiddle =
+            new Pose2d(-10, 55, toRadians(0));
+    private static final Pose2d blueStartingPositionBottom =
+            new Pose2d(-10, 50, toRadians(0));
+    private static final Pose2d redStartingPositionTop =
+            new Pose2d(-10, -60, toRadians(180));
+    private static final Pose2d redStartingPositionMiddle =
+            new Pose2d(-10, -55, toRadians(180));
+    private static final Pose2d redStartingPositionBottom =
+            new Pose2d(-10, -50, toRadians(180));
+
+
+
     public RetractFromPreLoadAndCycleCommand(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm,
             Bucket bucket, boolean redSide, HubLevel hubLevel
@@ -39,8 +54,12 @@ public class RetractFromPreLoadAndCycleCommand extends ParallelCommandGroup {
         this.redSide = redSide;
         this.hubLevel = hubLevel;
 
-        addRequirements(lift, scoringArm, bucket);
+        generateTrajectories();
 
+    }
+
+    @Override
+    public void initialize() {
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 new SequentialCommandGroup(
@@ -48,31 +67,56 @@ public class RetractFromPreLoadAndCycleCommand extends ParallelCommandGroup {
                         new MakeReadyToLoadCommand(lift, scoringArm, bucket)
                 )
         );
+    }
 
+    private static TrajectorySequence blueFromTopLevel;
+    private static TrajectorySequence blueFromMiddleLevel;
+    private static TrajectorySequence blueFromBottomLevel;
+    private static TrajectorySequence redFromTopLevel;
+    private static TrajectorySequence redFromMiddleLevel;
+    private static TrajectorySequence redFromBottomLevel;
 
+    public void generateTrajectories() {
+        blueFromTopLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
+                .splineToConstantHeading(new Vector2d(15, 64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(50, 64), toRadians(0))
+                .build();
+        blueFromMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
+                .splineToConstantHeading(new Vector2d(15, 64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(50, 64), toRadians(0))
+                .build();
+        blueFromBottomLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
+                .splineToConstantHeading(new Vector2d(15, 64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(50, 64), toRadians(0))
+                .build();
+        redFromTopLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(15, -64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(50, -64), toRadians(0))
+                .build();
+        redFromMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(15, -64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(50, -64), toRadians(0))
+                .build();
+        redFromBottomLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(15, -64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(50, -64), toRadians(0))
+                .build();
     }
 
 
+
     public TrajectorySequence getTrajectoryCommand() {
-        Pose2d startPose = new Pose2d();
-        double heading = (redSide) ? toRadians(180) : toRadians(0);
         switch (hubLevel) {
             case TOP:
-                startPose = new Pose2d(-10,
-                        (redSide) ? -60 : 60, heading);
-                break;
+                return (redSide) ? redFromTopLevel : blueFromTopLevel;
             case MIDDLE:
-                startPose = new Pose2d(-10,
-                        (redSide) ? -55 : 55, heading);
-                break;
+                return (redSide) ? redFromMiddleLevel : blueFromMiddleLevel;
             case BOTTOM:
-                startPose = new Pose2d(-10,
-                        (redSide) ? -50 : 50, heading);
+                return (redSide) ? redFromBottomLevel : blueFromBottomLevel;
+            default: return null;
         }
-        return drive.trajectorySequenceBuilder(startPose)
-                .setReversed(!redSide)
-                .splineToConstantHeading(new Vector2d(15, (redSide) ? -64 : 64), toRadians(0))
-                .splineToConstantHeading(new Vector2d(50, (redSide) ? -64 : 64), toRadians(0))
-                .build();
     }
 }

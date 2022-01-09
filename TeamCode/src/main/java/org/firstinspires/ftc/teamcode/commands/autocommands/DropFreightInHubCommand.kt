@@ -31,7 +31,7 @@ class DropFreightInHubCommand(
 
     init {
 
-        addRequirements(lift, scoringArm, bucket, intake)
+        addRequirements(scoringArm, bucket, intake)
 
         addCommands(
                 FollowTrajectorySequenceCommand(drive, trajectoryCommand)

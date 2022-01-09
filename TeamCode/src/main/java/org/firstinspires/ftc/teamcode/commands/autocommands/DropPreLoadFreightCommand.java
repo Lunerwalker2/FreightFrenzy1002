@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands.autocommands;
 
+import static java.lang.Math.toRadians;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -11,6 +13,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectoryCommand;
+import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.commands.MakeReadyToScoreCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveLiftPositionCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -28,24 +31,34 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
     private final Bucket bucket;
     private final HubLevel hubLevel;
     private final boolean redSide;
-    private final Pose2d startPose;
+
+    private static final Pose2d blueStartingPosition =
+            new Pose2d(7.4, 64.0, toRadians(0));
+
+    private static final Pose2d redStartingPosition =
+            new Pose2d(7.4, -64.0, toRadians(180));
+
 
 
     public DropPreLoadFreightCommand(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm, Bucket bucket,
-            HubLevel hubLevel, boolean redSide, Pose2d startPose) {
+            HubLevel hubLevel, boolean redSide) {
         this.drive = drive;
         this.lift = lift;
         this.scoringArm = scoringArm;
         this.bucket = bucket;
         this.hubLevel = hubLevel;
         this.redSide = redSide;
-        this.startPose = startPose;
 
-        addRequirements(lift, scoringArm, bucket);
+        addRequirements(bucket, scoringArm);
 
+        generateTrajectories();
+    }
+
+    @Override
+    public void initialize(){
         addCommands(
-                new FollowTrajectoryCommand(drive, getPreLoadTrajectory())
+                new FollowTrajectorySequenceCommand(drive, getPreLoadTrajectory())
                         .andThen(new InstantCommand(bucket::dump)),
                 new MoveLiftPositionCommand(lift,
                         (hubLevel == HubLevel.TOP) ? Lift.Positions.TOP :
@@ -67,28 +80,50 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                             }
                         })
                 )
-
-
         );
+
+        super.initialize();
+    }
+
+    private static TrajectorySequence blueDriveToTopLevel;
+    private static TrajectorySequence blueDriveToMiddleLevel;
+    private static TrajectorySequence blueDriveToBottomLevel;
+    private static TrajectorySequence redDriveToTopLevel;
+    private static TrajectorySequence redDriveToMiddleLevel;
+    private static TrajectorySequence redDriveToBottomLevel;
+
+    private void generateTrajectories(){
+        blueDriveToTopLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
+                .lineTo(new Vector2d(-10, 60))
+                .build();
+        blueDriveToMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
+                .lineTo(new Vector2d(-10, 55))
+                .build();
+        blueDriveToBottomLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
+                .lineTo(new Vector2d(-10, 50))
+                .build();
+        redDriveToTopLevel = drive.trajectorySequenceBuilder(redStartingPosition)
+                .lineTo(new Vector2d(-10, -60))
+                .build();
+        redDriveToMiddleLevel = drive.trajectorySequenceBuilder(redStartingPosition)
+                .lineTo(new Vector2d(-10, -55))
+                .build();
+        redDriveToBottomLevel = drive.trajectorySequenceBuilder(redStartingPosition)
+                .lineTo(new Vector2d(-10, -50))
+                .build();
     }
 
 
-    public Trajectory getPreLoadTrajectory() {
+    public TrajectorySequence getPreLoadTrajectory() {
         switch (hubLevel) {
             case TOP:
-                return drive.trajectoryBuilder(startPose)
-                        .lineTo(new Vector2d(-10, (redSide) ? -60 : 60))
-                        .build();
+                return (redSide) ? redDriveToTopLevel : blueDriveToTopLevel;
 
             case MIDDLE:
-                return drive.trajectoryBuilder(startPose)
-                        .lineTo(new Vector2d(-10, (redSide) ? -55 : 55))
-                        .build();
+                return (redSide) ? redDriveToMiddleLevel : blueDriveToMiddleLevel;
 
             case BOTTOM:
-                return drive.trajectoryBuilder(startPose)
-                        .lineTo(new Vector2d(-10, (redSide) ? -50 : 50))
-                        .build();
+                return (redSide) ? redDriveToBottomLevel : blueDriveToBottomLevel;
             default:
                 return null;
         }

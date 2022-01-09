@@ -34,8 +34,6 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
         this.bucket = bucket;
         this.redSide = redSide;
 
-        addRequirements(lift, scoringArm, bucket);
-
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 new SequentialCommandGroup(
