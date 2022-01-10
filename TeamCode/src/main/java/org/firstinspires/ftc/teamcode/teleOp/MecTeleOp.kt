@@ -162,8 +162,6 @@ class MecTeleOp : CommandOpMode() {
                 .whenActive(makeReadyToLoadCommand)
                 .cancelWhenActive(makeReadyToScoreCommand)
 
-        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(MakeReadyToScoreCommand(lift, scoringArm))
 
         //////////////////////////////////////////////// Drive Base
 

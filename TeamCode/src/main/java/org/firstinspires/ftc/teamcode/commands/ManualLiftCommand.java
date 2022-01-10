@@ -26,8 +26,6 @@ import java.util.function.BooleanSupplier;
 public class ManualLiftCommand extends CommandBase {
 
     private final Lift lift;
-    private final BooleanSupplier isScoringArmReady;
-    private final BooleanSupplier isBucketReady;
     private final GamepadEx manipulator;
 
     public ManualLiftCommand(Lift lift, ScoringArm scoringArm, Bucket bucket,
@@ -35,8 +33,7 @@ public class ManualLiftCommand extends CommandBase {
         addRequirements(lift); //Only add the lift since we aren't moving anything else
 
         this.lift = lift;
-        isScoringArmReady = () -> scoringArm.getPosition() == ScoringArm.loadingPosition;
-        isBucketReady = () -> !bucket.isDown();
+
         this.manipulator = manipulator;
     }
 
@@ -45,19 +42,13 @@ public class ManualLiftCommand extends CommandBase {
         //Two dpad buttons cant be pressed at the same time so we don't have to worry about that.
 
         //Check if the up button is pressed
-        if (manipulator.getButton(GamepadKeys.Button.DPAD_UP)) {
-            //If it's at the top, then stop it
-            if (!lift.atUpperLimit()) lift.setLiftPower(0.8);
-            else lift.stopLift();
+        if (manipulator.getButton(GamepadKeys.Button.DPAD_UP) && !lift.atUpperLimit()) {
+            lift.setLiftPower(0.8);
         }
         //Then check if the down is pressed
-        else if (manipulator.getButton(GamepadKeys.Button.DPAD_DOWN)) {
+        else if (manipulator.getButton(GamepadKeys.Button.DPAD_DOWN) && !lift.atLowerLimit()) {
             //Check if its at the bottom or if it's near the bottom but the arm and bucket are still out
-            if (!lift.atLowerLimit() &&
-                    (lift.getLiftRawPosition() < 100 && !isScoringArmReady.getAsBoolean() &&
-                            !isBucketReady.getAsBoolean())) {
-                lift.setLiftPower(-0.6);
-            } else lift.stopLift();
+            lift.setLiftPower(-0.6);
         }
         //Otherwise, do nothing
         else {

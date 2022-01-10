@@ -43,7 +43,7 @@ public class Bucket extends SubsystemBase {
      * Moves the bucket down to the depositing position.
      */
     public void load(){
-        bucketServo.setPosition(1.0);
+        bucketServo.setPosition(0.0);
         isDown = true;
     }
 
@@ -51,7 +51,7 @@ public class Bucket extends SubsystemBase {
      * Moves the bucket up to the holding (flat) position.
      */
     public void dump(){
-        bucketServo.setPosition(0.0);
+        bucketServo.setPosition(1.0);
         isDown = false;
     }
 
