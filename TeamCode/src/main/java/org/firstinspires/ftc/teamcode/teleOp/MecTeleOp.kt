@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.teleOp
 
 import android.graphics.Color
 import com.acmerobotics.roadrunner.geometry.Pose2d
+import com.arcrobotics.ftclib.command.CommandBase
 import com.arcrobotics.ftclib.command.CommandOpMode
+import com.arcrobotics.ftclib.command.PerpetualCommand
 import com.arcrobotics.ftclib.command.button.Trigger
 import com.arcrobotics.ftclib.gamepad.GamepadEx
 import com.arcrobotics.ftclib.gamepad.GamepadKeys
@@ -16,10 +18,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
-import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand
-import org.firstinspires.ftc.teamcode.commands.MakeReadyToLoadCommand
-import org.firstinspires.ftc.teamcode.commands.MakeReadyToScoreCommand
-import org.firstinspires.ftc.teamcode.commands.SetHubLEDCommand
+import org.firstinspires.ftc.teamcode.commands.*
 import org.firstinspires.ftc.teamcode.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.subsystems.Bucket
 import org.firstinspires.ftc.teamcode.subsystems.Intake
@@ -70,6 +69,7 @@ class MecTeleOp : CommandOpMode() {
     private var powerMultiplier = 0.9
     private val makeReadyToLoadCommand by lazy { MakeReadyToLoadCommand(lift, scoringArm, bucket) }
     private val makeReadyToScoreCommand by lazy { MakeReadyToScoreCommand(lift, scoringArm)}
+    private lateinit var manualLiftCommand: ManualLiftCommand
 
     override fun initialize() {
 
@@ -145,32 +145,15 @@ class MecTeleOp : CommandOpMode() {
                         scoringArm::loadingPosition
                 )
 
+        //Set up the default command for the lift, for more info see the class file of the command
+        manualLiftCommand = ManualLiftCommand(
+                lift, scoringArm, bucket, manipulator
+        )
 
-        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                .whenPressed(Runnable {
-                    if(!lift.atUpperLimit()) lift.setLiftPower(0.8)
-                })
-                .whenReleased(lift::stopLift)
-                .cancelWhenPressed(makeReadyToScoreCommand)
-                .cancelWhenPressed(makeReadyToLoadCommand)
+        //Make this the default lift command
+        lift.defaultCommand = PerpetualCommand(manualLiftCommand)
 
-        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(Runnable {
-                    if(!lift.atLowerLimit()){
-                        if((lift.getLiftRawPosition() < 100 &&
-                                        scoringArm.position == ScoringArm.loadingPosition ||
-                                        !bucket.isDown)){
-                            lift.stopLift()
-                        } else {
-                            lift.setLiftPower(-0.6)
-                        }
-                    }
-                })
-                .whenReleased(lift::stopLift)
-                .cancelWhenPressed(makeReadyToScoreCommand)
-                .cancelWhenPressed(makeReadyToLoadCommand)
-
-
+        //If these are scheduled, then the lift command will be interrupted momentarily
         Trigger {-gamepad2.left_stick_y > 0.5}
                 .whenActive(makeReadyToScoreCommand)
                 .cancelWhenActive(makeReadyToLoadCommand)
