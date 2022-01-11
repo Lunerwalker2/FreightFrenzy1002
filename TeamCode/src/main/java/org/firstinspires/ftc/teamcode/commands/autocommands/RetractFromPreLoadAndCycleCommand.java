@@ -63,7 +63,7 @@ public class RetractFromPreLoadAndCycleCommand extends ParallelCommandGroup {
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 new SequentialCommandGroup(
-                        new WaitCommand(600),
+                        new WaitCommand(800),
                         new MakeReadyToLoadCommand(lift, scoringArm, bucket)
                 )
         );
@@ -81,25 +81,25 @@ public class RetractFromPreLoadAndCycleCommand extends ParallelCommandGroup {
                 .splineToConstantHeading(new Vector2d(15, 64), toRadians(0))
                 .splineToConstantHeading(new Vector2d(50, 64), toRadians(0))
                 .build();
-        blueFromMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
+        blueFromMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPositionMiddle)
                 .splineToConstantHeading(new Vector2d(15, 64), toRadians(0))
                 .splineToConstantHeading(new Vector2d(50, 64), toRadians(0))
                 .build();
-        blueFromBottomLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
+        blueFromBottomLevel = drive.trajectorySequenceBuilder(blueStartingPositionBottom)
                 .splineToConstantHeading(new Vector2d(15, 64), toRadians(0))
                 .splineToConstantHeading(new Vector2d(50, 64), toRadians(0))
                 .build();
-        redFromTopLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
+        redFromTopLevel = drive.trajectorySequenceBuilder(redStartingPositionTop)
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(15, -64), toRadians(0))
                 .splineToConstantHeading(new Vector2d(50, -64), toRadians(0))
                 .build();
-        redFromMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
+        redFromMiddleLevel = drive.trajectorySequenceBuilder(redStartingPositionMiddle)
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(15, -64), toRadians(0))
                 .splineToConstantHeading(new Vector2d(50, -64), toRadians(0))
                 .build();
-        redFromBottomLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
+        redFromBottomLevel = drive.trajectorySequenceBuilder(redStartingPositionBottom)
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(15, -64), toRadians(0))
                 .splineToConstantHeading(new Vector2d(50, -64), toRadians(0))

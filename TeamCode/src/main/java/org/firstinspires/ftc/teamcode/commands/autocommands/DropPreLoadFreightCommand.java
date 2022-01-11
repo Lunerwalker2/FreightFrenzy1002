@@ -65,7 +65,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                                 (hubLevel == HubLevel.MIDDLE) ? Lift.Positions.MIDDLE :
                                         Lift.Positions.BOTTOM, 10),
                 new SequentialCommandGroup(
-                        new WaitCommand(400),
+                        new WaitCommand(800),
                         new InstantCommand(() -> {
                             switch (hubLevel) {
                                 case TOP:

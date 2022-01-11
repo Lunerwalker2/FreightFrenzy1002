@@ -24,6 +24,12 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
     private final Bucket bucket;
     private final boolean redSide;
 
+    private static final Pose2d blueStartingPosition =
+            new Pose2d(-10, -60, toRadians(180));
+
+    private static final Pose2d redStartingPosition =
+            new Pose2d(-10, 60, toRadians(0));
+
     public RetractAndGoToWarehouseCommand(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm,
             Bucket bucket, boolean redSide
@@ -34,6 +40,12 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
         this.bucket = bucket;
         this.redSide = redSide;
 
+        generateTrajectory();
+
+    }
+
+    @Override
+    public void initialize(){
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 new SequentialCommandGroup(
@@ -42,14 +54,26 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
                 )
         );
 
+        super.initialize();
+    }
+
+    private TrajectorySequence blueTrajectory;
+    private TrajectorySequence redTrajectory;
+
+    private void generateTrajectory() {
+        blueTrajectory = drive.trajectorySequenceBuilder(blueStartingPosition)
+                .splineToConstantHeading(new Vector2d(15, 64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(50, 64), toRadians(0))
+                .build();
+
+        redTrajectory = drive.trajectorySequenceBuilder(redStartingPosition)
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(15, -64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(50, -64), toRadians(0))
+                .build();
     }
 
     public TrajectorySequence getTrajectoryCommand() {
-        return drive.trajectorySequenceBuilder(new Pose2d(10, (redSide) ? -60 : 60,
-                (redSide) ? toRadians(180) : toRadians(0)))
-                .setReversed(!redSide)
-                .splineToConstantHeading(new Vector2d(15, (redSide) ? -64 : 64), toRadians(0))
-                .splineToConstantHeading(new Vector2d(50, (redSide) ? -64 : 64), toRadians(0))
-                .build();
+        return (redSide) ? redTrajectory : blueTrajectory;
     }
 }

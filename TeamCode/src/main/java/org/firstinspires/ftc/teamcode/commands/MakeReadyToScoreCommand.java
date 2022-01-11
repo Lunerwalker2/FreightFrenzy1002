@@ -24,7 +24,7 @@ public class MakeReadyToScoreCommand extends ParallelCommandGroup {
         addCommands(
                 new MoveLiftPositionCommand(lift, Lift.Positions.BOTTOM, 10),
                 new SequentialCommandGroup(
-                        new WaitCommand(600),
+                        new WaitCommand(700),
                         new InstantCommand(scoringArm::scoringPosition)
                 )
         );

@@ -20,8 +20,11 @@ class DropFreightInHubCommand(
         private val intake: Intake, private val redSide: Boolean) : ParallelCommandGroup() {
 
 
-    private val trajectoryCommand: TrajectorySequence
-        get() = drive.trajectorySequenceBuilder(drive.poseEstimate)
+    /**
+     * This has to be a runtime function since we don't know where we will stop when intaking.
+     */
+    private fun getTrajectoryCommand(): TrajectorySequence =
+        drive.trajectorySequenceBuilder(drive.poseEstimate)
                 .setReversed(!redSide)
                 .splineToConstantHeading(Vector2d(15.0, if (redSide) -64.0 else 64.0), Math.toRadians(180.0))
                 .splineToConstantHeading(
@@ -30,22 +33,32 @@ class DropFreightInHubCommand(
                 .build()
 
     init {
-
         addRequirements(scoringArm, bucket, intake)
+    }
 
+    override fun initialize() {
         addCommands(
-                FollowTrajectorySequenceCommand(drive, trajectoryCommand)
+                //Drive to the hub and dump at the end, hopefully lift will have extended.
+                FollowTrajectorySequenceCommand(drive, getTrajectoryCommand())
                         .andThen(InstantCommand(bucket::dump)),
+                //Outtake to be safe in case we have other freight in the intake
                 SequentialCommandGroup(
                         InstantCommand(intake::outtake),
                         WaitCommand(500),
                         InstantCommand(intake::stop)
                 ),
+                //Move lift out pretty much instantly
                 SequentialCommandGroup(
-                        WaitCommand(300),
+                        WaitCommand(100),
                         MoveLiftPositionCommand(lift, Lift.Positions.TOP, 10.0),
+                ),
+                //Try to wait for the lift to extend before moving the arm
+                SequentialCommandGroup(
+                        WaitCommand(800),
                         InstantCommand(scoringArm::scoringPosition)
                 )
         )
+
+        super.initialize()
     }
 }
