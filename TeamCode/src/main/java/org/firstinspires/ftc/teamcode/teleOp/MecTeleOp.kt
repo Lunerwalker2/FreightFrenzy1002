@@ -202,36 +202,6 @@ class MecTeleOp : CommandOpMode() {
     override fun run() {
         super.run()
 
-        /*
-        We do all of this in order to avoid setting the motor power constantly in each case,
-        which just adds an extra hardware.
-         */
-//        if(gamepad2.dpad_up && !lift.atUpperLimit()){
-//            if(!prevLiftUp){
-//                prevLiftUp = true
-//                prevLiftDown = false
-//                prevLiftStop = false
-//                lift.setLiftPower(0.8)
-//            }
-//        }
-//        else if(gamepad2.dpad_down && !lift.atLowerLimit()){
-//            if(!prevLiftDown){
-//                prevLiftDown = true
-//                prevLiftUp = false
-//                prevLiftStop = false
-//                lift.setLiftPower(-0.55)
-//            }
-//        }
-//        else {
-//            if(!prevLiftStop) {
-//                prevLiftStop = true
-//                lift.stopLift()
-//            }
-//            prevLiftUp = false
-//            prevLiftDown = false
-//
-//        }
-
 
         /////////////////////////////////////////////////////////////// Drive Base
         //Set the slow mode one if either bumper is pressed

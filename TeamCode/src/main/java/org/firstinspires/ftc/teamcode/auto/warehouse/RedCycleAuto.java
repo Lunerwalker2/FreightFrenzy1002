@@ -30,7 +30,6 @@ import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector;
 public class RedCycleAuto extends AutoBase {
 
     private SampleMecanumDrive drive;
-    private DistanceSensors distanceSensors;
     private Intake intake;
     private Lift lift;
     private ScoringArm scoringArm;
@@ -45,7 +44,7 @@ public class RedCycleAuto extends AutoBase {
     private HubLevel hubLevel = HubLevel.TOP;
 
     //TODO: Change
-    private Pose2d startPose = new Pose2d(7.4, -64.0, toRadians(180)); //left side aligned with left crease
+    private Pose2d startPose = new Pose2d(8.34375, -65.375, toRadians(180.0)); //left side aligned with left crease
 
     @Override
     public void initialize() {
@@ -61,7 +60,7 @@ public class RedCycleAuto extends AutoBase {
         telemetry.addLine("Initializing Subsystems...");
         telemetry.update();
 
-        distanceSensors = new DistanceSensors(hardwareMap, true);
+
         intake = new Intake(hardwareMap);
         intake.setSide(false);
         lift = new Lift(hardwareMap, telemetry);
@@ -115,6 +114,9 @@ public class RedCycleAuto extends AutoBase {
 //                goToWarehouseCommand.andThen(waitFor(500))
 
         ));
+
+        telemetry.addLine("Ready For Start!");
+        telemetry.update();
 
 
 
