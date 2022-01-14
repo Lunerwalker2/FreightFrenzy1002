@@ -47,7 +47,7 @@ class TeamMarkerDetector(private val hardwareMap: HardwareMap) {
     fun startStream(){
         camera.openCameraDeviceAsync(object : AsyncCameraOpenListener {
             override fun onOpened() {
-                camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_LEFT)
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT)
             }
 
             override fun onError(errorCode: Int) {

@@ -20,10 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.teamcode.commands.*
 import org.firstinspires.ftc.teamcode.drive.DriveConstants
-import org.firstinspires.ftc.teamcode.subsystems.Bucket
-import org.firstinspires.ftc.teamcode.subsystems.Intake
-import org.firstinspires.ftc.teamcode.subsystems.Lift
-import org.firstinspires.ftc.teamcode.subsystems.ScoringArm
+import org.firstinspires.ftc.teamcode.subsystems.*
 import org.firstinspires.ftc.teamcode.util.Extensions
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.cubeInput
 import kotlin.math.abs
@@ -48,7 +45,7 @@ class MecTeleOp : CommandOpMode() {
 
 
     //Subsystems
-//    private lateinit var carouselWheel: CarouselWheel
+    private lateinit var carouselWheel: CarouselWheel
     private lateinit var intake: Intake
     private lateinit var lift: Lift
     private lateinit var scoringArm: ScoringArm
@@ -78,7 +75,7 @@ class MecTeleOp : CommandOpMode() {
         //Extension functions pog see Extensions.kt in util package
         telemetry.sendLine("Initializing Subsystems...")
 
-//        carouselWheel = CarouselWheel(hardwareMap, telemetry)
+        carouselWheel = CarouselWheel(hardwareMap, telemetry)
         intake = Intake(hardwareMap, telemetry)
         lift = Lift(hardwareMap, telemetry)
         scoringArm = ScoringArm(hardwareMap, telemetry)
@@ -104,13 +101,17 @@ class MecTeleOp : CommandOpMode() {
 
 
         //Carousel wheel
-//        leftCarouselTrigger = Trigger { gamepad2.left_trigger > 0.2 }
-//                .whileActiveContinuous(Runnable {
-//                    if (gamepad2.left_trigger < 0.9) carouselWheel.leftForward()
-//                    else carouselWheel.fastLeftForward()
-//                })
-//                .whenInactive(carouselWheel::leftStop)
-//
+        Trigger { gamepad2.right_trigger > 0.2 }
+                .whileActiveContinuous(Runnable {
+                    if (gamepad2.right_trigger < 0.9) carouselWheel.setWheelPower(0.5)
+                    else carouselWheel.setWheelPower(0.7)
+                })
+                .whenInactive(Runnable { carouselWheel.setWheelPower(0.0)})
+
+        manipulator.getGamepadButton(GamepadKeys.Button.B)
+                .toggleWhenPressed(Runnable { carouselWheel.setDirection(false) },
+                Runnable { carouselWheel.setDirection(true) })
+
 
         Trigger {gamepad1.left_trigger > 0.4}
                 .whenActive(Runnable {
