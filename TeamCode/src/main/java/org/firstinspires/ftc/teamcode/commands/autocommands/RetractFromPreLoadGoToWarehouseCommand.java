@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ScoringArm;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.vision.HubLevel;
 
-public class RetractFromPreLoadAndCycleCommand extends ParallelCommandGroup {
+public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup {
 
 
     private final SampleMecanumDrive drive;
@@ -42,7 +42,7 @@ public class RetractFromPreLoadAndCycleCommand extends ParallelCommandGroup {
 
 
 
-    public RetractFromPreLoadAndCycleCommand(
+    public RetractFromPreLoadGoToWarehouseCommand(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm,
             Bucket bucket, boolean redSide, HubLevel hubLevel
     ) {

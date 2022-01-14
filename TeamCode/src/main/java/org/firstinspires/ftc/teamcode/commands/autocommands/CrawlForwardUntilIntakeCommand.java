@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.commands.RunIntakeCommand;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -31,6 +32,12 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
                                         (redSide) ? toRadians(180) : toRadians(0))
                         )
                                 .setReversed(redSide)
+                                //Set it to go slow, even tho its really clunky
+                                .setVelConstraint(
+                                        SampleMecanumDrive.getVelocityConstraint(
+                                                15, toRadians(180), DriveConstants.TRACK_WIDTH
+                                        )
+                                )
                                 .forward(15)
                                 .build()
                 ),

@@ -3,26 +3,20 @@ package org.firstinspires.ftc.teamcode.auto.warehouse;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.auto.AutoBase;
-import org.firstinspires.ftc.teamcode.commands.autocommands.CrawlForwardUntilIntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.DropFreightInHubCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.DropPreLoadFreightCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.RetractAndGoToWarehouseCommand;
-import org.firstinspires.ftc.teamcode.commands.autocommands.RetractFromPreLoadAndCycleCommand;
+import org.firstinspires.ftc.teamcode.commands.autocommands.RetractFromPreLoadGoToWarehouseCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
-import org.firstinspires.ftc.teamcode.subsystems.DistanceSensors;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.ScoringArm;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.vision.HubLevel;
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector;
 
@@ -36,14 +30,15 @@ public class RedCycleAuto extends AutoBase {
     private Bucket bucket;
 
     private DropPreLoadFreightCommand dropPreLoadFreightCommand;
-    private RetractFromPreLoadAndCycleCommand retractFromPreLoadAndCycleCommand;
+    private RetractFromPreLoadGoToWarehouseCommand retractFromPreLoadGoToWarehouseCommand;
     private DropFreightInHubCommand dropFreightInHubCommand;
     private RetractAndGoToWarehouseCommand goToWarehouseCommand;
 
     private TeamMarkerDetector teamMarkerDetector;
     private HubLevel hubLevel = HubLevel.TOP;
 
-    //TODO: Change
+
+
     private Pose2d startPose = new Pose2d(8.34375, -65.375, toRadians(180.0)); //left side aligned with left crease
 
     @Override
@@ -77,7 +72,7 @@ public class RedCycleAuto extends AutoBase {
                 drive, lift, scoringArm, bucket, hubLevel, true
         );
 
-        retractFromPreLoadAndCycleCommand = new RetractFromPreLoadAndCycleCommand(
+        retractFromPreLoadGoToWarehouseCommand = new RetractFromPreLoadGoToWarehouseCommand(
                 drive, lift, scoringArm, bucket, true, hubLevel
         );
 

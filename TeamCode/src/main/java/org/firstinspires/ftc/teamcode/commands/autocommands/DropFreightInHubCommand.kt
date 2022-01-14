@@ -54,7 +54,7 @@ class DropFreightInHubCommand(
                 ),
                 //Try to wait for the lift to extend before moving the arm
                 SequentialCommandGroup(
-                        WaitCommand(800),
+                        WaitCommand(600),
                         InstantCommand(scoringArm::scoringPosition)
                 )
         )

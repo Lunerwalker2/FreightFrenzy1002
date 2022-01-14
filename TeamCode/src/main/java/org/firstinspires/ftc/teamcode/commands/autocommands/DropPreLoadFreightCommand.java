@@ -33,11 +33,10 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
     private final boolean redSide;
 
     private static final Pose2d blueStartingPosition =
-            new Pose2d(7.4, 64.0, toRadians(0));
+            new Pose2d(8.34375, 65.375, toRadians(0.0));
 
     private static final Pose2d redStartingPosition =
-            new Pose2d(7.4, -64.0, toRadians(180));
-
+            new Pose2d(8.34375, -65.375, toRadians(180.0));
 
 
     public DropPreLoadFreightCommand(
@@ -56,16 +55,15 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
     }
 
     @Override
-    public void initialize(){
+    public void initialize() {
         addCommands(
-                new FollowTrajectorySequenceCommand(drive, getPreLoadTrajectory())
-                        .andThen(new InstantCommand(bucket::dump)),
+                new FollowTrajectorySequenceCommand(drive, getPreLoadTrajectory()),
                 new MoveLiftPositionCommand(lift,
                         (hubLevel == HubLevel.TOP) ? Lift.Positions.TOP :
                                 (hubLevel == HubLevel.MIDDLE) ? Lift.Positions.MIDDLE :
                                         Lift.Positions.BOTTOM, 10),
                 new SequentialCommandGroup(
-                        new WaitCommand(800),
+                        new WaitCommand(600),
                         new InstantCommand(() -> {
                             switch (hubLevel) {
                                 case TOP:
@@ -78,7 +76,9 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                                     scoringArm.setPosition(0.4);
                                     break;
                             }
-                        })
+                        }),
+                        new WaitCommand(700),
+                        new InstantCommand(bucket::dump)
                 )
         );
 
@@ -92,7 +92,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
     private static TrajectorySequence redDriveToMiddleLevel;
     private static TrajectorySequence redDriveToBottomLevel;
 
-    private void generateTrajectories(){
+    private void generateTrajectories() {
         blueDriveToTopLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
                 .lineTo(new Vector2d(-10, 60))
                 .build();

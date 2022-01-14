@@ -13,7 +13,7 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
     enum class Positions(val targetPosition: Int) {
         TOP(1100),
         MIDDLE(500),
-        BOTTOM(200),
+        BOTTOM(300),
         IN_ROBOT(2)
     }
 
