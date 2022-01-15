@@ -23,13 +23,16 @@ import org.firstinspires.ftc.teamcode.subsystems.ScoringArm;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.vision.HubLevel;
 
+import java.util.function.Supplier;
+
 public class DropPreLoadFreightCommand extends ParallelCommandGroup {
 
     private final SampleMecanumDrive drive;
     private final Lift lift;
     private final ScoringArm scoringArm;
     private final Bucket bucket;
-    private final HubLevel hubLevel;
+    private final Supplier<HubLevel> getHubLevel;
+    private HubLevel hubLevel;
     private final boolean redSide;
 
     private static final Pose2d blueStartingPosition =
@@ -41,12 +44,12 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
 
     public DropPreLoadFreightCommand(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm, Bucket bucket,
-            HubLevel hubLevel, boolean redSide) {
+            Supplier<HubLevel> getHubLevel, boolean redSide) {
         this.drive = drive;
         this.lift = lift;
         this.scoringArm = scoringArm;
         this.bucket = bucket;
-        this.hubLevel = hubLevel;
+        this.getHubLevel = getHubLevel;
         this.redSide = redSide;
 
         addRequirements(bucket, scoringArm);
@@ -56,6 +59,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
 
     @Override
     public void initialize() {
+        hubLevel = getHubLevel.get();
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getPreLoadTrajectory()),
                 new MoveLiftPositionCommand(lift,
@@ -76,8 +80,10 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                                     scoringArm.setPosition(0.4);
                                     break;
                             }
-                        }),
-                        new WaitCommand(700),
+                        })
+                ),
+                new SequentialCommandGroup(
+                        new WaitCommand(1000),
                         new InstantCommand(bucket::dump)
                 )
         );
@@ -94,22 +100,22 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
 
     private void generateTrajectories() {
         blueDriveToTopLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
-                .lineTo(new Vector2d(-10, 60))
-                .build();
-        blueDriveToMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
-                .lineTo(new Vector2d(-10, 55))
-                .build();
-        blueDriveToBottomLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
                 .lineTo(new Vector2d(-10, 50))
                 .build();
+        blueDriveToMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
+                .lineTo(new Vector2d(-10, 45))
+                .build();
+        blueDriveToBottomLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
+                .lineTo(new Vector2d(-10, 40))
+                .build();
         redDriveToTopLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-10, -60))
+                .lineTo(new Vector2d(-10, -50))
                 .build();
         redDriveToMiddleLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-10, -55))
+                .lineTo(new Vector2d(-10, -45))
                 .build();
         redDriveToBottomLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-10, -50))
+                .lineTo(new Vector2d(-10, -40))
                 .build();
     }
 

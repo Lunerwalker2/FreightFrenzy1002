@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.auto.AutoBase;
+import org.firstinspires.ftc.teamcode.commands.autocommands.CrawlForwardUntilIntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.DropFreightInHubCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.DropPreLoadFreightCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.RetractAndGoToWarehouseCommand;
@@ -31,12 +32,12 @@ public class RedCycleAuto extends AutoBase {
 
     private DropPreLoadFreightCommand dropPreLoadFreightCommand;
     private RetractFromPreLoadGoToWarehouseCommand retractFromPreLoadGoToWarehouseCommand;
+    private CrawlForwardUntilIntakeCommand crawlForwardUntilIntakeCommand;
     private DropFreightInHubCommand dropFreightInHubCommand;
     private RetractAndGoToWarehouseCommand goToWarehouseCommand;
 
     private TeamMarkerDetector teamMarkerDetector;
     private HubLevel hubLevel = HubLevel.TOP;
-
 
 
     private Pose2d startPose = new Pose2d(8.34375, -65.375, toRadians(180.0)); //left side aligned with left crease
@@ -69,11 +70,15 @@ public class RedCycleAuto extends AutoBase {
         telemetry.update();
 
         dropPreLoadFreightCommand = new DropPreLoadFreightCommand(
-                drive, lift, scoringArm, bucket, hubLevel, true
+                drive, lift, scoringArm, bucket, () -> hubLevel, true
         );
 
         retractFromPreLoadGoToWarehouseCommand = new RetractFromPreLoadGoToWarehouseCommand(
-                drive, lift, scoringArm, bucket, true, hubLevel
+                drive, lift, scoringArm, bucket, true, () -> hubLevel
+        );
+
+        crawlForwardUntilIntakeCommand = new CrawlForwardUntilIntakeCommand(
+                drive, intake, bucket, true
         );
 
         dropFreightInHubCommand = new DropFreightInHubCommand(
@@ -85,8 +90,9 @@ public class RedCycleAuto extends AutoBase {
         );
 
         teamMarkerDetector.startStream();
-        while (!isStarted()){
-//            hubLevel = teamMarkerDetector.getTeamMarkerPipeline().getHubLevel();
+        while (!isStarted()) {
+            hubLevel = teamMarkerDetector.getTeamMarkerPipeline().getHubLevel();
+            telemetry.addLine("Ready For Start!");
             telemetry.addData("Hub Level", hubLevel);
             telemetry.update();
         }
@@ -100,7 +106,8 @@ public class RedCycleAuto extends AutoBase {
                     telemetry.addLine("The program started!");
                     telemetry.update();
                 }),
-                dropPreLoadFreightCommand
+                dropPreLoadFreightCommand.andThen(waitFor(300)),
+                retractFromPreLoadGoToWarehouseCommand
 //                retractFromPreLoadAndCycleCommand.andThen(waitFor(500)),
 //                new CrawlForwardUntilIntakeCommand(
 //                        drive, intake, bucket, true
@@ -110,13 +117,9 @@ public class RedCycleAuto extends AutoBase {
 
         ));
 
-        telemetry.addLine("Ready For Start!");
-        telemetry.update();
-
 
 
     }
-
 
 
 }

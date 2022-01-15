@@ -4,6 +4,7 @@ import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -17,6 +18,8 @@ import org.firstinspires.ftc.teamcode.subsystems.ScoringArm;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.vision.HubLevel;
 
+import java.util.function.Supplier;
+
 public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup {
 
 
@@ -25,26 +28,27 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
     private final ScoringArm scoringArm;
     private final Bucket bucket;
     private final boolean redSide;
-    private final HubLevel hubLevel;
+    private final Supplier<HubLevel> getHubLevel;
+    private HubLevel hubLevel;
 
     private static final Pose2d blueStartingPositionTop =
-            new Pose2d(-10, 60, toRadians(0));
-    private static final Pose2d blueStartingPositionMiddle =
-            new Pose2d(-10, 55, toRadians(0));
-    private static final Pose2d blueStartingPositionBottom =
             new Pose2d(-10, 50, toRadians(0));
+    private static final Pose2d blueStartingPositionMiddle =
+            new Pose2d(-10, 45, toRadians(0));
+    private static final Pose2d blueStartingPositionBottom =
+            new Pose2d(-10, 40, toRadians(0));
     private static final Pose2d redStartingPositionTop =
-            new Pose2d(-10, -60, toRadians(180));
-    private static final Pose2d redStartingPositionMiddle =
-            new Pose2d(-10, -55, toRadians(180));
-    private static final Pose2d redStartingPositionBottom =
             new Pose2d(-10, -50, toRadians(180));
+    private static final Pose2d redStartingPositionMiddle =
+            new Pose2d(-10, -45, toRadians(180));
+    private static final Pose2d redStartingPositionBottom =
+            new Pose2d(-10, -40, toRadians(180));
 
 
 
     public RetractFromPreLoadGoToWarehouseCommand(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm,
-            Bucket bucket, boolean redSide, HubLevel hubLevel
+            Bucket bucket, boolean redSide, Supplier<HubLevel> getHubLevel
     ) {
 
         this.drive = drive;
@@ -52,7 +56,7 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
         this.scoringArm = scoringArm;
         this.bucket = bucket;
         this.redSide = redSide;
-        this.hubLevel = hubLevel;
+        this.getHubLevel = getHubLevel;
 
         generateTrajectories();
 
@@ -60,13 +64,16 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
 
     @Override
     public void initialize() {
+        hubLevel = getHubLevel.get();
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 new SequentialCommandGroup(
                         new WaitCommand(800),
-                        new MakeReadyToLoadCommand(lift, scoringArm, bucket)
+                        new MakeReadyToLoadCommand(lift, scoringArm, bucket),
+                        new InstantCommand(bucket::sensorDown)
                 )
         );
+        super.initialize();
     }
 
     private static TrajectorySequence blueFromTopLevel;

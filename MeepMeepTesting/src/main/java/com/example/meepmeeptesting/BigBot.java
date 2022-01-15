@@ -65,7 +65,7 @@ public class BigBot {
 
         RoadRunnerBotEntity blueHubWarehouseRoute = new DefaultBotBuilder(mm)
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 17)
-                .setColorScheme(new ColorSchemeRedDark())
+                .setColorScheme(new ColorSchemeBlueDark())
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-9, 64, toRadians(90.0)))
                                         .setReversed(true)
@@ -84,7 +84,7 @@ public class BigBot {
 
         RoadRunnerBotEntity blueHubDuckRoute = new DefaultBotBuilder(mm)
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 17)
-                .setColorScheme(new ColorSchemeRedDark())
+                .setColorScheme(new ColorSchemeBlueDark())
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-33.6, 64, toRadians(90.0)))
                                 .setReversed(true)

@@ -44,7 +44,5 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
                 new RunIntakeCommand(intake, !redSide, true)
         );
 
-        addRequirements(bucket);
-
     }
 }
