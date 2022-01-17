@@ -11,9 +11,9 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
     private val liftMotor: DcMotorEx
 
     enum class Positions(val targetPosition: Int) {
-        TOP(705),
-        MIDDLE(500),
-        BOTTOM(300),
+        TOP(600),
+        MIDDLE(315),
+        BOTTOM(130),
         IN_ROBOT(2)
     }
 

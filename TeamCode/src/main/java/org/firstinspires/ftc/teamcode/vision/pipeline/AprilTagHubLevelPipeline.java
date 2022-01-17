@@ -131,7 +131,7 @@ public class AprilTagHubLevelPipeline extends OpenCvPipeline
         }
 
         //Set the default case
-        hubLevel = HubLevel.MIDDLE;
+        hubLevel = HubLevel.TOP;
 
         // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
         // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.

@@ -37,7 +37,7 @@ public class BlueCycleAuto extends AutoBase {
     private RetractAndGoToWarehouseCommand goToWarehouseCommand;
 
     private TeamMarkerDetector teamMarkerDetector;
-    private HubLevel hubLevel = HubLevel.TOP;
+    private HubLevel hubLevel = HubLevel.BOTTOM;
 
 
     private Pose2d startPose = new Pose2d(8.34375, 65.375, toRadians(0.0)); //left side aligned with left crease
@@ -91,7 +91,7 @@ public class BlueCycleAuto extends AutoBase {
 
         teamMarkerDetector.startStream();
         while (!isStarted()) {
-            hubLevel = teamMarkerDetector.getTeamMarkerPipeline().getHubLevel();
+//            hubLevel = teamMarkerDetector.getTeamMarkerPipeline().getHubLevel();
             telemetry.addLine("Ready For Start!");
             telemetry.addData("Hub Level", hubLevel);
             telemetry.update();
@@ -106,8 +106,8 @@ public class BlueCycleAuto extends AutoBase {
                     telemetry.addLine("The program started!");
                     telemetry.update();
                 }),
-                dropPreLoadFreightCommand.andThen(waitFor(300))
-//                retractFromPreLoadGoToWarehouseCommand,
+                dropPreLoadFreightCommand.andThen(waitFor(1000)),
+                retractFromPreLoadGoToWarehouseCommand
 //                crawlForwardUntilIntakeCommand
 //                dropFreightInHubCommand.andThen(waitFor(500)),
 //                goToWarehouseCommand.andThen(waitFor(500))

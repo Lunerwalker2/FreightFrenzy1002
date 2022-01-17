@@ -32,17 +32,17 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
     private HubLevel hubLevel;
 
     private static final Pose2d blueStartingPositionTop =
-            new Pose2d(-10, 50, toRadians(0));
+            new Pose2d(-10, 55, toRadians(0));
     private static final Pose2d blueStartingPositionMiddle =
-            new Pose2d(-10, 45, toRadians(0));
+            new Pose2d(-10, 50, toRadians(0));
     private static final Pose2d blueStartingPositionBottom =
-            new Pose2d(-10, 40, toRadians(0));
+            new Pose2d(-10, 46, toRadians(0));
     private static final Pose2d redStartingPositionTop =
-            new Pose2d(-10, -50, toRadians(180));
+            new Pose2d(-10, -55, toRadians(180));
     private static final Pose2d redStartingPositionMiddle =
-            new Pose2d(-10, -45, toRadians(180));
+            new Pose2d(-10, -50, toRadians(180));
     private static final Pose2d redStartingPositionBottom =
-            new Pose2d(-10, -40, toRadians(180));
+            new Pose2d(-10, -46, toRadians(180));
 
 
 
@@ -68,7 +68,7 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 new SequentialCommandGroup(
-                        new WaitCommand(400),
+                        new WaitCommand(800),
                         new MakeReadyToLoadCommand(lift, scoringArm, bucket),
                         new InstantCommand(bucket::sensorDown)
                 )
@@ -86,30 +86,30 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
     public void generateTrajectories() {
         blueFromTopLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
                 .splineToConstantHeading(new Vector2d(15, 64), toRadians(0))
-                .splineToConstantHeading(new Vector2d(50, 64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(45, 64), toRadians(0))
                 .build();
         blueFromMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPositionMiddle)
                 .splineToConstantHeading(new Vector2d(15, 64), toRadians(0))
-                .splineToConstantHeading(new Vector2d(50, 64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(45, 64), toRadians(0))
                 .build();
         blueFromBottomLevel = drive.trajectorySequenceBuilder(blueStartingPositionBottom)
                 .splineToConstantHeading(new Vector2d(15, 64), toRadians(0))
-                .splineToConstantHeading(new Vector2d(50, 64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(45, 64), toRadians(0))
                 .build();
         redFromTopLevel = drive.trajectorySequenceBuilder(redStartingPositionTop)
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(15, -64), toRadians(0))
-                .splineToConstantHeading(new Vector2d(50, -64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(45, -64), toRadians(0))
                 .build();
         redFromMiddleLevel = drive.trajectorySequenceBuilder(redStartingPositionMiddle)
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(15, -64), toRadians(0))
-                .splineToConstantHeading(new Vector2d(50, -64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(45, -64), toRadians(0))
                 .build();
         redFromBottomLevel = drive.trajectorySequenceBuilder(redStartingPositionBottom)
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(15, -64), toRadians(0))
-                .splineToConstantHeading(new Vector2d(50, -64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(45, -64), toRadians(0))
                 .build();
     }
 
@@ -123,7 +123,8 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
                 return (redSide) ? redFromMiddleLevel : blueFromMiddleLevel;
             case BOTTOM:
                 return (redSide) ? redFromBottomLevel : blueFromBottomLevel;
-            default: return null;
+            default:
+                return null;
         }
     }
 }

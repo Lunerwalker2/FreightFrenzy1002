@@ -4,17 +4,12 @@ import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
-import org.firstinspires.ftc.teamcode.commands.FollowTrajectoryCommand;
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand;
-import org.firstinspires.ftc.teamcode.commands.MakeReadyToScoreCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveLiftPositionCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
@@ -65,25 +60,25 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                 new MoveLiftPositionCommand(lift,
                         (hubLevel == HubLevel.TOP) ? Lift.Positions.TOP :
                                 (hubLevel == HubLevel.MIDDLE) ? Lift.Positions.MIDDLE :
-                                        Lift.Positions.BOTTOM, 10),
+                                        Lift.Positions.BOTTOM, 5),
                 new SequentialCommandGroup(
-                        new WaitCommand(600),
+                        new WaitCommand(500),
                         new InstantCommand(() -> {
                             switch (hubLevel) {
                                 case TOP:
                                     scoringArm.scoringPosition();
                                     break;
                                 case MIDDLE:
-                                    scoringArm.setPosition(0.7);
+                                    scoringArm.setPosition(0.5);
                                     break;
                                 case BOTTOM:
-                                    scoringArm.setPosition(0.4);
+                                    scoringArm.setPosition(0.45);
                                     break;
                             }
                         })
                 ),
                 new SequentialCommandGroup(
-                        new WaitCommand(1000),
+                        new WaitCommand(1500),
                         new InstantCommand(bucket::dump)
                 )
         );
@@ -100,22 +95,22 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
 
     private void generateTrajectories() {
         blueDriveToTopLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
-                .lineTo(new Vector2d(-10, 50))
+                .lineTo(new Vector2d(-10, 55))
                 .build();
         blueDriveToMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
-                .lineTo(new Vector2d(-10, 45))
+                .lineTo(new Vector2d(-10, 50))
                 .build();
         blueDriveToBottomLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
-                .lineTo(new Vector2d(-10, 40))
+                .lineTo(new Vector2d(-10, 46))
                 .build();
         redDriveToTopLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-10, -50))
+                .lineTo(new Vector2d(-10, -55))
                 .build();
         redDriveToMiddleLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-10, -45))
+                .lineTo(new Vector2d(-10, -50))
                 .build();
         redDriveToBottomLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-10, -40))
+                .lineTo(new Vector2d(-10, -46))
                 .build();
     }
 
