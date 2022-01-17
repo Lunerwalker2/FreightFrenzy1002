@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.util.Extensions.*;
 
 import java.util.ArrayList;
 
+@Disabled
 @TeleOp(name="Just Mecanum Drive", group = "TeleOp")
 public class MecDriveTeleOp extends LinearOpMode {
 

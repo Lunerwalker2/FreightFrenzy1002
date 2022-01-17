@@ -4,6 +4,7 @@ import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 
@@ -43,6 +44,9 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
                 ),
                 new RunIntakeCommand(intake, !redSide, true)
         );
+
+
+        andThen(new InstantCommand(bucket::sensorUp));
 
     }
 }

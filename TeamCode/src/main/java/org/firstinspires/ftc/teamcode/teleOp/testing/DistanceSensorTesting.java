@@ -34,7 +34,7 @@ import static java.lang.Math.toRadians;
 import java.util.ArrayList;
 
 
-@TeleOp
+//@TeleOp
 public class DistanceSensorTesting extends CommandOpMode {
 
     private DistanceSensors distanceSensors;

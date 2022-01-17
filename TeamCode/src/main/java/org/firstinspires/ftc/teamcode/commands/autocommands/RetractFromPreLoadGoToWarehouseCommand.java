@@ -68,7 +68,7 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 new SequentialCommandGroup(
-                        new WaitCommand(800),
+                        new WaitCommand(400),
                         new MakeReadyToLoadCommand(lift, scoringArm, bucket),
                         new InstantCommand(bucket::sensorDown)
                 )

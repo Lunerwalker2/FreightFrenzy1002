@@ -19,8 +19,8 @@ class MoveLiftPositionCommand(private val lift: Lift, position: Lift.Positions, 
                 0.05, 0.0, 0.0,
                 TrapezoidProfile.Constraints(
                         //TODO: Find this empirically
-                        2700.0,
-                        2700.0
+                        2500.0,
+                        2500.0
                 )
         )
     }

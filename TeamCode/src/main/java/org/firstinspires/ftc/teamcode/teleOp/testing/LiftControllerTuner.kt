@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 
-@Config
-@TeleOp
+//@Config
+//@TeleOp
 class LiftControllerTuner() : LinearOpMode() {
 
     companion object{

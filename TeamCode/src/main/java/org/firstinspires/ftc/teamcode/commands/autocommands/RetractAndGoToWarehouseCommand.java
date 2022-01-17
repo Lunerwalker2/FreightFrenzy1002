@@ -49,7 +49,7 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 new SequentialCommandGroup(
-                        new WaitCommand(600),
+                        new WaitCommand(400),
                         new MakeReadyToLoadCommand(lift, scoringArm, bucket)
                 )
         );
