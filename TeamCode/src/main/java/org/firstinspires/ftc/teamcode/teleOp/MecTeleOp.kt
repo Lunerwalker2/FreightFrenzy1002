@@ -113,8 +113,8 @@ class MecTeleOp : CommandOpMode() {
                 Runnable { carouselWheel.setDirection(true) })
 
 
-        Trigger {gamepad1.left_trigger > 0.4}
-                .whenActive(Runnable {
+        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(Runnable {
                     if (gamepad1.x) intake.outtake()
                     else intake.intake()
                 })
@@ -206,7 +206,7 @@ class MecTeleOp : CommandOpMode() {
 
         /////////////////////////////////////////////////////////////// Drive Base
         //Set the slow mode one if either bumper is pressed
-        if (gamepad1.left_bumper || gamepad1.right_bumper) {
+        if (gamepad1.right_bumper) {
             powerMultiplier = 0.3
         }
         else {
@@ -234,9 +234,9 @@ class MecTeleOp : CommandOpMode() {
         var rx = if (abs(gamepad1.right_stick_x) > 0.02) gamepad1.right_stick_x.toDouble() else 0.0
 
         //Apply some minor cubing to help with driving
-        y = cubeInput(y, 0.4)
-        x = cubeInput(x, 0.4)
-        rx = cubeInput(rx, 0.4)
+        y = cubeInput(y, 0.2)
+        x = cubeInput(x, 0.2)
+        rx = cubeInput(rx, 0.2)
 
 
         //Get the field centric inputs

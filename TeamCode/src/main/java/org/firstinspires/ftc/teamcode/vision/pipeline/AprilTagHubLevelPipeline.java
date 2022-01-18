@@ -170,7 +170,7 @@ public class AprilTagHubLevelPipeline extends OpenCvPipeline
                 1,
                 1.5,
                 new Scalar(100, 100, 248),
-                2
+                3
         );
 
 

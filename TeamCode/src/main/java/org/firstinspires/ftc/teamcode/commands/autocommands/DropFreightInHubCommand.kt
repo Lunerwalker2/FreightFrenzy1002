@@ -29,7 +29,7 @@ class DropFreightInHubCommand(
                 .splineToConstantHeading(Vector2d(15.0, if (redSide) -64.0 else 64.0), Math.toRadians(180.0))
                 .splineToConstantHeading(
                         Vector2d(-10.0,
-                                if (redSide) -60.0 else 60.0), Math.toRadians(if (redSide) 160.0 else -160.0))
+                                if (redSide) -58.0 else 58.0), Math.toRadians(if (redSide) 160.0 else -160.0))
                 .build()
 
     init {
@@ -39,9 +39,9 @@ class DropFreightInHubCommand(
     override fun initialize() {
         addCommands(
                 //Drive to the hub and dump at the end, hopefully lift will have extended.
-                FollowTrajectorySequenceCommand(drive, getTrajectoryCommand())
-                        .andThen(InstantCommand(bucket::dump)),
+                FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 //Outtake to be safe in case we have other freight in the intake
+                InstantCommand(bucket::sensorUp),
                 SequentialCommandGroup(
                         InstantCommand(intake::outtake),
                         WaitCommand(500),
@@ -49,13 +49,17 @@ class DropFreightInHubCommand(
                 ),
                 //Move lift out pretty much instantly
                 SequentialCommandGroup(
-                        WaitCommand(100),
-                        MoveLiftPositionCommand(lift, Lift.Positions.TOP, 10.0),
+                        WaitCommand(800),
+                        MoveLiftPositionCommand(lift, Lift.Positions.TOP, 5.0, 1800.0, 1700.0),
                 ),
                 //Try to wait for the lift to extend before moving the arm
                 SequentialCommandGroup(
-                        WaitCommand(600),
+                        WaitCommand(1500),
                         InstantCommand(scoringArm::scoringPosition)
+                ),
+                SequentialCommandGroup(
+                        WaitCommand(2500),
+                        InstantCommand(bucket::dump)
                 )
         )
 

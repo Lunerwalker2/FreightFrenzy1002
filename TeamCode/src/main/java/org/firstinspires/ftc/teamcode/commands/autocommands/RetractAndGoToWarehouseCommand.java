@@ -25,10 +25,10 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
     private final boolean redSide;
 
     private static final Pose2d blueStartingPosition =
-            new Pose2d(-10, -60, toRadians(180));
+            new Pose2d(-10, -58, toRadians(180));
 
     private static final Pose2d redStartingPosition =
-            new Pose2d(-10, 60, toRadians(0));
+            new Pose2d(-10, 58, toRadians(0));
 
     public RetractAndGoToWarehouseCommand(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm,
@@ -49,7 +49,7 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 new SequentialCommandGroup(
-                        new WaitCommand(400),
+                        new WaitCommand(800),
                         new MakeReadyToLoadCommand(lift, scoringArm, bucket)
                 )
         );

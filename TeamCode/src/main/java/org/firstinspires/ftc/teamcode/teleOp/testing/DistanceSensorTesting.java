@@ -34,12 +34,12 @@ import static java.lang.Math.toRadians;
 import java.util.ArrayList;
 
 
-//@TeleOp
+@TeleOp
 public class DistanceSensorTesting extends CommandOpMode {
 
     private DistanceSensors distanceSensors;
     private SampleMecanumDrive drive;
-    private boolean redSide = true;
+    private boolean redSide = false;
     private RelocalizeCommand relocalizeCommand;
 
     private Pose2d distanceSensorPose = new Pose2d();

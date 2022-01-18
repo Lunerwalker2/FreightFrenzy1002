@@ -57,12 +57,15 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
         hubLevel = getHubLevel.get();
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getPreLoadTrajectory()),
-                new MoveLiftPositionCommand(lift,
-                        (hubLevel == HubLevel.TOP) ? Lift.Positions.TOP :
-                                (hubLevel == HubLevel.MIDDLE) ? Lift.Positions.MIDDLE :
-                                        Lift.Positions.BOTTOM, 5),
                 new SequentialCommandGroup(
                         new WaitCommand(500),
+                        new MoveLiftPositionCommand(lift,
+                                (hubLevel == HubLevel.TOP) ? Lift.Positions.TOP :
+                                        (hubLevel == HubLevel.MIDDLE) ? Lift.Positions.MIDDLE :
+                                                Lift.Positions.BOTTOM, 5, 1800, 1700)
+                ),
+                new SequentialCommandGroup(
+                        new WaitCommand(1000),
                         new InstantCommand(() -> {
                             switch (hubLevel) {
                                 case TOP:
@@ -78,7 +81,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                         })
                 ),
                 new SequentialCommandGroup(
-                        new WaitCommand(1500),
+                        new WaitCommand(2500),
                         new InstantCommand(bucket::dump)
                 )
         );
@@ -95,7 +98,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
 
     private void generateTrajectories() {
         blueDriveToTopLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
-                .lineTo(new Vector2d(-10, 55))
+                .lineTo(new Vector2d(-10, 58))
                 .build();
         blueDriveToMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
                 .lineTo(new Vector2d(-10, 50))
@@ -104,7 +107,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                 .lineTo(new Vector2d(-10, 46))
                 .build();
         redDriveToTopLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-10, -55))
+                .lineTo(new Vector2d(-10, -58))
                 .build();
         redDriveToMiddleLevel = drive.trajectorySequenceBuilder(redStartingPosition)
                 .lineTo(new Vector2d(-10, -50))

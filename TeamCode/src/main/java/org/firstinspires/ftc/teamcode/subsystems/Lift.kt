@@ -11,7 +11,7 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
     private val liftMotor: DcMotorEx
 
     enum class Positions(val targetPosition: Int) {
-        TOP(600),
+        TOP(500),
         MIDDLE(315),
         BOTTOM(130),
         IN_ROBOT(2)
@@ -31,6 +31,8 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
         liftMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
 
         liftMotor.direction = DcMotorSimple.Direction.REVERSE
+
+        liftMotor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     }
 
     override fun periodic() {

@@ -91,7 +91,7 @@ public class BlueCycleAuto extends AutoBase {
 
         teamMarkerDetector.startStream();
         while (!isStarted()) {
-//            hubLevel = teamMarkerDetector.getTeamMarkerPipeline().getHubLevel();
+            hubLevel = teamMarkerDetector.getTeamMarkerPipeline().getHubLevel();
             telemetry.addLine("Ready For Start!");
             telemetry.addData("Hub Level", hubLevel);
             telemetry.update();
@@ -107,7 +107,9 @@ public class BlueCycleAuto extends AutoBase {
                     telemetry.update();
                 }),
                 dropPreLoadFreightCommand.andThen(waitFor(1000)),
-                retractFromPreLoadGoToWarehouseCommand
+                retractFromPreLoadGoToWarehouseCommand,
+                dropFreightInHubCommand,
+                goToWarehouseCommand
 //                crawlForwardUntilIntakeCommand
 //                dropFreightInHubCommand.andThen(waitFor(500)),
 //                goToWarehouseCommand.andThen(waitFor(500))

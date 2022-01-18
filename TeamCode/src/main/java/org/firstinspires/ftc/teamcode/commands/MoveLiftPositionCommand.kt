@@ -5,25 +5,32 @@ import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile
 import org.firstinspires.ftc.teamcode.subsystems.Lift
 
-class MoveLiftPositionCommand(private val lift: Lift, position: Lift.Positions, tolerance: Double = 10.0) : ProfiledPIDCommand(
-        controller,
-        lift::getLiftRawPosition,
-        position.targetPosition.toDouble(),
-        {output, _ -> lift.setLiftPower(output)},
-        lift
-) {
 
-    companion object {
-
-        private val controller = ProfiledPIDController(
+class MoveLiftPositionCommand(private val lift: Lift,
+                              position: Lift.Positions,
+                              tolerance: Double = 10.0,
+                              maxVel: Double = 2300.0,
+                              maxAccel: Double = 2000.0
+) : ProfiledPIDCommand(
+        ProfiledPIDController(
                 0.05, 0.0, 0.0,
                 TrapezoidProfile.Constraints(
                         //TODO: Find this empirically
-                        2300.0,
-                        2000.0
+                        maxVel,
+                        maxAccel
                 )
-        )
-    }
+        ),
+        lift::getLiftRawPosition,
+        position.targetPosition.toDouble(),
+        { output, _ -> lift.setLiftPower(output) },
+        lift
+) {
+
+    constructor(lift: Lift,
+                position: Lift.Positions,
+                tolerance: Double = 10.0,
+                ) : this(lift, position, tolerance, 2300.0, 2000.0)
+
 
     init {
         controller.setTolerance(tolerance)
