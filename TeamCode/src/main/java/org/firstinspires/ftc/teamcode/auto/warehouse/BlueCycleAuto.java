@@ -62,7 +62,7 @@ public class BlueCycleAuto extends AutoBase {
         lift = new Lift(hardwareMap, telemetry);
         scoringArm = new ScoringArm(hardwareMap);
         bucket = new Bucket(hardwareMap);
-        teamMarkerDetector = new TeamMarkerDetector(hardwareMap);
+        teamMarkerDetector = new TeamMarkerDetector(hardwareMap, false);
 
         teamMarkerDetector.init();
 
@@ -106,7 +106,7 @@ public class BlueCycleAuto extends AutoBase {
                     telemetry.addLine("The program started!");
                     telemetry.update();
                 }),
-                dropPreLoadFreightCommand.andThen(waitFor(1000)),
+                dropPreLoadFreightCommand.andThen(waitFor(700)),
                 retractFromPreLoadGoToWarehouseCommand,
                 dropFreightInHubCommand,
                 goToWarehouseCommand

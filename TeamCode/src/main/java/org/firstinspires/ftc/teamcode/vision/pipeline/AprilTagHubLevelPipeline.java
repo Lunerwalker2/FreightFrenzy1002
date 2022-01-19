@@ -23,7 +23,6 @@ package org.firstinspires.ftc.teamcode.vision.pipeline;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.vision.HubLevel;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
@@ -69,7 +68,10 @@ public class AprilTagHubLevelPipeline extends OpenCvPipeline
         return hubLevel;
     }
 
-    public static double CENTER_MARGIN = 0.75;
+    private boolean redSide;
+
+    public static double CENTER_MARGIN_BLUE = 0.75;
+    public static double CENTER_MARGIN_RED = 0.5;
 
     // instance variables
 
@@ -89,7 +91,8 @@ public class AprilTagHubLevelPipeline extends OpenCvPipeline
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
 
-    public AprilTagHubLevelPipeline() {
+    public AprilTagHubLevelPipeline(boolean redSide) {
+        this.redSide = redSide;
         constructMatrix();
     }
 
@@ -131,7 +134,7 @@ public class AprilTagHubLevelPipeline extends OpenCvPipeline
         }
 
         //Set the default case
-        hubLevel = HubLevel.TOP;
+        hubLevel = (redSide) ? HubLevel.BOTTOM : HubLevel.TOP;
 
         // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
         // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
@@ -149,27 +152,42 @@ public class AprilTagHubLevelPipeline extends OpenCvPipeline
             bottom.
              */
             double x = detection.center.x;
-            if(x > input.width() * CENTER_MARGIN) hubLevel = HubLevel.MIDDLE;
-            else hubLevel = HubLevel.BOTTOM;
+            if(redSide) {
+                if (x > input.width() * CENTER_MARGIN_BLUE) hubLevel = HubLevel.MIDDLE;
+                else hubLevel = HubLevel.BOTTOM;
+            } else {
+                if(x > input.width() * CENTER_MARGIN_RED) hubLevel = HubLevel.MIDDLE;
+                else hubLevel = HubLevel.BOTTOM;
+            }
         }
 
         //draw the line
-        Imgproc.line(
-                input,
-                new Point((int)(CENTER_MARGIN * input.width()), 0),
-                new Point((int)(CENTER_MARGIN * input.width()), input.height()),
-                new Scalar(255, 20, 20),
-                2
-        );
+        if(redSide){
+            Imgproc.line(
+                    input,
+                    new Point((int)(CENTER_MARGIN_RED * input.width()), 0),
+                    new Point((int)(CENTER_MARGIN_RED * input.width()), input.height()),
+                    new Scalar(255, 20, 20),
+                    2
+            );
+        } else {
+            Imgproc.line(
+                    input,
+                    new Point((int)(CENTER_MARGIN_BLUE * input.width()), 0),
+                    new Point((int)(CENTER_MARGIN_BLUE * input.width()), input.height()),
+                    new Scalar(255, 20, 20),
+                    2
+            );
+        }
 
         //write the result to the screen
         Imgproc.putText(
                 input,
                 hubLevel.toString(),
-                new Point(10, 20),
+                new Point(10, 30),
                 1,
                 1.5,
-                new Scalar(100, 100, 248),
+                new Scalar(50, 200, 248),
                 3
         );
 

@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Lift
 class MoveLiftPositionCommand(private val lift: Lift,
                               position: Lift.Positions,
                               tolerance: Double = 10.0,
-                              maxVel: Double = 2300.0,
-                              maxAccel: Double = 2000.0
+                              maxVel: Double,
+                              maxAccel: Double
 ) : ProfiledPIDCommand(
         ProfiledPIDController(
                 0.05, 0.0, 0.0,
@@ -29,7 +29,7 @@ class MoveLiftPositionCommand(private val lift: Lift,
     constructor(lift: Lift,
                 position: Lift.Positions,
                 tolerance: Double = 10.0,
-                ) : this(lift, position, tolerance, 2300.0, 2000.0)
+                ) : this(lift, position, tolerance, 2500.0, 2400.0)
 
 
     init {

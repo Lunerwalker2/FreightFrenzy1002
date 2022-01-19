@@ -62,7 +62,7 @@ public class RedCycleAuto extends AutoBase {
         lift = new Lift(hardwareMap, telemetry);
         scoringArm = new ScoringArm(hardwareMap);
         bucket = new Bucket(hardwareMap);
-        teamMarkerDetector = new TeamMarkerDetector(hardwareMap);
+        teamMarkerDetector = new TeamMarkerDetector(hardwareMap, true);
 
         teamMarkerDetector.init();
 
@@ -106,7 +106,7 @@ public class RedCycleAuto extends AutoBase {
                     telemetry.addLine("The program started!");
                     telemetry.update();
                 }),
-                dropPreLoadFreightCommand.andThen(waitFor(300)),
+                dropPreLoadFreightCommand.andThen(waitFor(700)),
                 retractFromPreLoadGoToWarehouseCommand
 //                retractFromPreLoadAndCycleCommand.andThen(waitFor(500)),
 //                new CrawlForwardUntilIntakeCommand(

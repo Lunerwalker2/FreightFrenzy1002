@@ -81,7 +81,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                         })
                 ),
                 new SequentialCommandGroup(
-                        new WaitCommand(2500),
+                        new WaitCommand(2400),
                         new InstantCommand(bucket::dump)
                 )
         );

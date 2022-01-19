@@ -20,12 +20,17 @@ public class MakeReadyToLoadCommand extends ParallelCommandGroup {
 
 
     public MakeReadyToLoadCommand(Lift lift, ScoringArm scoringArm, Bucket bucket){
+        this(lift, scoringArm, bucket, false);
+    }
+
+    public MakeReadyToLoadCommand(Lift lift, ScoringArm scoringArm, Bucket bucket, boolean slow){
         addCommands(
                 new InstantCommand(scoringArm::loadingPosition, scoringArm),
                 new InstantCommand(bucket::load, bucket),
                 new SequentialCommandGroup(
-                        new WaitCommand(600),
-                        new MoveLiftPositionCommand(lift, Lift.Positions.IN_ROBOT, 5)
+                        new WaitCommand(700),
+                        new MoveLiftPositionCommand(lift, Lift.Positions.IN_ROBOT, 5,
+                                (slow) ? 2100 : 2000, (slow) ? 2500 : 2400)
                 )
         );
     }

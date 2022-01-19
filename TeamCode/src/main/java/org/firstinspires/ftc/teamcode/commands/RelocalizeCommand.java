@@ -6,6 +6,7 @@ import static java.lang.Math.toRadians;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -45,8 +46,8 @@ public class RelocalizeCommand extends CommandBase {
      * y is forward, x is left/right
      * Inches
      */
-    private static final Vector2d forwardSensorPosition = new Vector2d(5.875,6.65625); //TODO: fix
-    private static final Vector2d backwardSensorPosition = new Vector2d(-5.875,-6.65625);
+    private static final Vector2d forwardSensorPosition = new Vector2d(5.875, 6.65625); //TODO: fix
+    private static final Vector2d backwardSensorPosition = new Vector2d(-5.875, -6.65625);
     private static final Vector2d leftSensorPosition = new Vector2d(-6.125, -0.15625);
     private static final Vector2d rightSensorPosition = new Vector2d(5.125, -4.15625);
 
@@ -55,12 +56,12 @@ public class RelocalizeCommand extends CommandBase {
     private final DoubleSupplier headingSupplier;
     private final Consumer<Pose2d> poseConsumer;
     private final boolean leftSide;
-    private boolean firstRun = true;
+    private boolean done = false;
 
     //Keep the last instant position for debugging use
     public Pose2d lastInstantPosition = new Pose2d();
-    //Keep the average position for autonomous use
-    private Pose2d averagePosition = new Pose2d();
+    //Keep a timer so we can wait for the sensors to read.
+    private ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     /**
      * @param headingSupplier Supplier of the heading of the robot IN RADIANS.
@@ -81,6 +82,7 @@ public class RelocalizeCommand extends CommandBase {
     public void initialize() {
         //Start taking range measurements from the sensors
         distanceSensors.startReading();
+        timer.reset();
     }
 
     /*
@@ -89,66 +91,47 @@ public class RelocalizeCommand extends CommandBase {
 
     @Override
     public void execute() {
-        //Find our current heading once so we don't have to keep reading it
-        double heading = headingSupplier.getAsDouble();
 
-        //test for possible invalid values
-        if (!isValidReadings(
-                (leftSide) ?
-                        distanceSensors.getForwardRange(DistanceUnit.INCH) :
-                        distanceSensors.getBackwardRange(DistanceUnit.INCH),
-                (leftSide) ?
-                        distanceSensors.getLeftRange(DistanceUnit.INCH) :
-                        distanceSensors.getRightRange(DistanceUnit.INCH))
-        ) return;
+        if (timer.milliseconds() > 60) {//Find our current heading once so we don't have to keep reading it
+            double heading = headingSupplier.getAsDouble();
 
-        //Find the rotated distances
-        double[] rotatedDistances = findRotatedDistance(
-                (leftSide) ?
-                        distanceSensors.getForwardRange(DistanceUnit.INCH) :
-                        distanceSensors.getBackwardRange(DistanceUnit.INCH),
-                (leftSide) ?
-                        distanceSensors.getLeftRange(DistanceUnit.INCH) :
-                        distanceSensors.getRightRange(DistanceUnit.INCH),
-                heading,
-                leftSide
-        );
+            //test for possible invalid values
+            if (!isValidReadings(
+                    (leftSide) ?
+                            distanceSensors.getForwardRange(DistanceUnit.INCH) :
+                            distanceSensors.getBackwardRange(DistanceUnit.INCH),
+                    (leftSide) ?
+                            distanceSensors.getLeftRange(DistanceUnit.INCH) :
+                            distanceSensors.getRightRange(DistanceUnit.INCH))
+            ) return;
 
-
-        //Find our forward distance (x in field coordinates)
-        double x = (leftSide) ?
-                (FORWARD_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[0]) :
-                (BACKWARD_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[0]);
-
-        //Find our side distance (y in field coordinates)
-        double y = (leftSide) ?
-                (rotatedDistances[1] - RIGHT_SENSOR_BASE_DISTANCE_TO_WALL) :
-                (LEFT_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[1]);
+            //Find the rotated distances
+            double[] rotatedDistances = findRotatedDistance(
+                    (leftSide) ?
+                            distanceSensors.getForwardRange(DistanceUnit.INCH) :
+                            distanceSensors.getBackwardRange(DistanceUnit.INCH),
+                    (leftSide) ?
+                            distanceSensors.getLeftRange(DistanceUnit.INCH) :
+                            distanceSensors.getRightRange(DistanceUnit.INCH),
+                    heading,
+                    leftSide
+            );
 
 
-        //Put them together in a position
-//        Pose2d currentPosition = new Pose2d(x, y, heading);
-//
-//        //if its the first run we need to make sure we have an initial position for the average to work
-//        if (firstRun) {
-//            averagePosition =
-//                    new Pose2d(currentPosition.getX(), currentPosition.getY(), currentPosition.getHeading());
-//            lastInstantPosition =
-//                    new Pose2d(currentPosition.getX(), currentPosition.getY(), currentPosition.getHeading());
-//            firstRun = false;
-//        } else {
-//            //Average the two
-//            averagePosition = new Pose2d(
-//                    (averagePosition.getX() + currentPosition.getX()) / 2.0,
-//                    (averagePosition.getY() + currentPosition.getY()) / 2.0,
-//                    AngleUnit.normalizeRadians((averagePosition.getHeading() + currentPosition.getHeading()) / 2.0)
-//            );
-//            lastInstantPosition =
-//                    new Pose2d(currentPosition.getX(), currentPosition.getY(), currentPosition.getHeading());
-//        }
+            //Find our forward distance (x in field coordinates)
+            double x = (leftSide) ?
+                    (FORWARD_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[0]) :
+                    (BACKWARD_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[0]);
 
-        //Update the user with the new position
-        poseConsumer.accept(new Pose2d(x, y, heading));
+            //Find our side distance (y in field coordinates)
+            double y = (leftSide) ?
+                    (rotatedDistances[1] - RIGHT_SENSOR_BASE_DISTANCE_TO_WALL) :
+                    (LEFT_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[1]);
+
+            //Update the user with the new position
+            poseConsumer.accept(new Pose2d(x, y, heading));
+            done = true;
+        }
     }
 
     //This command will only run once
@@ -159,9 +142,10 @@ public class RelocalizeCommand extends CommandBase {
     }
 
     @Override
-    public boolean isFinished(){
-        return true;
+    public boolean isFinished() {
+        return done;
     }
+
     /**
      * Returns if the current range readings are valid or not. cm
      */
@@ -193,10 +177,11 @@ public class RelocalizeCommand extends CommandBase {
 
 
         //Rotate the vector with the sensor's position by the current heading
+        //TODO: find exact error, the front sensor is slightly turned in its mount
         Vector2d rotatedForwardSensorPosition = (leftSide) ?
-                forwardSensorPosition.rotated(headingRad) :
-                backwardSensorPosition.rotated(AngleUnit.RADIANS.normalize(
-                        headingRad + PI - toRadians(4))); //TODO: find exact error
+                forwardSensorPosition.rotated(AngleUnit.RADIANS.normalize(
+                        headingRad + PI - toRadians(4))) :
+                backwardSensorPosition.rotated(headingRad);
 
         //Do the same for the side sensor
         Vector2d rotatedSideSensorPosition = (leftSide) ?

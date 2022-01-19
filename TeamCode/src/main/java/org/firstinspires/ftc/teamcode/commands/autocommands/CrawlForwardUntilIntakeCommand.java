@@ -36,7 +36,7 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
                                 //Set it to go slow, even tho its really clunky
                                 .setVelConstraint(
                                         SampleMecanumDrive.getVelocityConstraint(
-                                                15, toRadians(180), DriveConstants.TRACK_WIDTH
+                                                10, toRadians(180), DriveConstants.TRACK_WIDTH
                                         )
                                 )
                                 .forward(15)
@@ -44,9 +44,6 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
                 ),
                 new RunIntakeCommand(intake, !redSide, true)
         );
-
-
-        andThen(new InstantCommand(bucket::sensorUp));
 
     }
 }

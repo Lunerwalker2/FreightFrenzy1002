@@ -4,6 +4,7 @@ import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -50,7 +51,7 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
                 new FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 new SequentialCommandGroup(
                         new WaitCommand(800),
-                        new MakeReadyToLoadCommand(lift, scoringArm, bucket)
+                        new MakeReadyToLoadCommand(lift, scoringArm, bucket, true)
                 )
         );
 
@@ -62,14 +63,14 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
 
     private void generateTrajectory() {
         blueTrajectory = drive.trajectorySequenceBuilder(blueStartingPosition)
-                .splineToConstantHeading(new Vector2d(15, 64), toRadians(0))
-                .splineToConstantHeading(new Vector2d(50, 64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(15, 64.5), toRadians(0))
+                .splineToConstantHeading(new Vector2d(45, 64), toRadians(0))
                 .build();
 
         redTrajectory = drive.trajectorySequenceBuilder(redStartingPosition)
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(15, -64), toRadians(0))
-                .splineToConstantHeading(new Vector2d(50, -64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(13, -64.5), toRadians(0))
+                .splineToConstantHeading(new Vector2d(45, -64), toRadians(0))
                 .build();
     }
 
