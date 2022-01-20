@@ -59,12 +59,10 @@ class MecTeleOp : CommandOpMode() {
     private lateinit var imu: BNO055IMU
     var offset = 0.0
     var prevSlowState = false
-    private var prevLiftUp = false
-    private var prevLiftDown = false
-    private var prevLiftStop = false
     //Drive power multiplier for slow mode
     private var powerMultiplier = 0.9
-    private val makeReadyToLoadCommand by lazy { MakeReadyToLoadCommand(lift, scoringArm, bucket) }
+    private val makeArmReadyToLoadCommand by lazy { MakeArmReadyToLoadCommand(lift, scoringArm, bucket) }
+//    private val makeReadyToLoadCommand by lazy { MakeReadyToLoadCommand(lift, scoringArm, bucket) }
     private val makeReadyToScoreCommand by lazy { MakeReadyToScoreCommand(lift, scoringArm)}
     private lateinit var manualLiftCommand: ManualLiftCommand
 
@@ -157,10 +155,10 @@ class MecTeleOp : CommandOpMode() {
         //If these are scheduled, then the lift command will be interrupted momentarily
         Trigger {-gamepad2.left_stick_y > 0.5}
                 .whenActive(makeReadyToScoreCommand)
-                .cancelWhenActive(makeReadyToLoadCommand)
+                .cancelWhenActive(makeArmReadyToLoadCommand)
 
         Trigger {-gamepad2.left_stick_y < -0.5}
-                .whenActive(makeReadyToLoadCommand)
+                .whenActive(makeArmReadyToLoadCommand)
                 .cancelWhenActive(makeReadyToScoreCommand)
 
 

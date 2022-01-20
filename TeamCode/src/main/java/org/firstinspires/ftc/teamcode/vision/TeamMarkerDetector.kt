@@ -23,7 +23,7 @@ probably be called until the end of init to get the last detection after randomi
 
 endStream() should be called after init, at start. It is blocking so it might have a slight delay.
  */
-class TeamMarkerDetector(private val hardwareMap: HardwareMap, private val redSide: Boolean) {
+class TeamMarkerDetector(private val hardwareMap: HardwareMap, redSide: Boolean) {
 
 
     constructor(hardwareMap: HardwareMap) : this(hardwareMap, false)
