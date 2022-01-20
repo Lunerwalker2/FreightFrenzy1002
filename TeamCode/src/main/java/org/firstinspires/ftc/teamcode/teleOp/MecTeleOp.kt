@@ -121,12 +121,12 @@ class MecTeleOp : CommandOpMode() {
                 .whenInactive(intake::stop)
 
 
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
                 .whenPressed(intake::stop)
                 .whenPressed(Runnable { intake.setSide(true) })
                 .whenPressed(SetHubLEDCommand(hardwareMap, Color.GREEN))
 
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
                 .whenPressed(intake::stop)
                 .whenPressed(Runnable { intake.setSide(false) })
                 .whenPressed(SetHubLEDCommand(hardwareMap, Color.RED))
