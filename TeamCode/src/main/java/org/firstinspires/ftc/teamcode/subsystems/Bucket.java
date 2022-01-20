@@ -27,7 +27,6 @@ public class Bucket extends SubsystemBase {
         sensorServo = hardwareMap.get(Servo.class, "sensorServo");
         colorSensor = hardwareMap.get(RevColorSensorV3.class, "intakeSensor");
         load();
-        sensorUp();
         this.telemetry = telemetry;
     }
 
@@ -64,14 +63,6 @@ public class Bucket extends SubsystemBase {
      */
     public boolean isDown(){
         return isDown;
-    }
-
-    public void sensorDown(){
-        sensorServo.setPosition(1.0);
-    }
-
-    public void sensorUp(){
-        sensorServo.setPosition(0.0);
     }
 
 

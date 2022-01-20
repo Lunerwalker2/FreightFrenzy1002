@@ -267,7 +267,11 @@ class MecTeleOp : CommandOpMode() {
         telemetry.addData("Offset", AngleUnit.DEGREES.fromRadians(offset))
 
         telemetry.update()
+    }
 
+    override fun reset() {
+        Extensions.HEADING_SAVER = getRobotAngle()
+        super.reset()
     }
 
     //Gets the robot angle in -pi to pi from the imu,

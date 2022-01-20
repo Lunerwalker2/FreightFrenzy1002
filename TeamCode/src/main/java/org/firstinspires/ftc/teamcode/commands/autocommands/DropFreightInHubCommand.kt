@@ -41,7 +41,6 @@ class DropFreightInHubCommand(
                 //Drive to the hub and dump at the end, hopefully lift will have extended.
                 FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 //Outtake to be safe in case we have other freight in the intake
-                InstantCommand(bucket::sensorUp),
                 SequentialCommandGroup(
                         InstantCommand(intake::outtake),
                         WaitCommand(500),

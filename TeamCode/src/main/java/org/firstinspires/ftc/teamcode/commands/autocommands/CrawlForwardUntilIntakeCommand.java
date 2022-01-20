@@ -7,6 +7,8 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.commands.RunIntakeCommand;
@@ -21,15 +23,16 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
             SampleMecanumDrive drive, Intake intake, Bucket bucket, boolean redSide) {
 
         super(
-                new CommandBase() {
-                    @Override
-                    public boolean isFinished(){
-                        return bucket.isFreightDetected();
-                    }
-                },
+//                new CommandBase() {
+//                    @Override
+//                    public boolean isFinished(){
+//                        return bucket.isFreightDetected();
+//                    }
+//                },
+                new WaitCommand(1000),
                 new FollowTrajectorySequenceCommand(drive,
                         drive.trajectorySequenceBuilder(
-                                new Pose2d(50, (redSide) ? -64 : 64,
+                                new Pose2d(45, (redSide) ? -64 : 64,
                                         (redSide) ? toRadians(180) : toRadians(0))
                         )
                                 .setReversed(redSide)

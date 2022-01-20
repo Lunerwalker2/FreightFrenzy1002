@@ -108,9 +108,9 @@ public class BlueCycleAuto extends AutoBase {
                 }),
                 dropPreLoadFreightCommand.andThen(waitFor(700)),
                 retractFromPreLoadGoToWarehouseCommand,
+                crawlForwardUntilIntakeCommand,
                 dropFreightInHubCommand,
                 goToWarehouseCommand
-//                crawlForwardUntilIntakeCommand
 //                dropFreightInHubCommand.andThen(waitFor(500)),
 //                goToWarehouseCommand.andThen(waitFor(500))
 
