@@ -6,6 +6,7 @@ import com.qualcomm.hardware.lynx.LynxDcMotorController;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.lynx.LynxServoController;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Blinker;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.teleOp.testing.AsyncRev2MSensor;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+@Disabled
 @TeleOp
 public class Async2mTestOpmode extends LinearOpMode {
 

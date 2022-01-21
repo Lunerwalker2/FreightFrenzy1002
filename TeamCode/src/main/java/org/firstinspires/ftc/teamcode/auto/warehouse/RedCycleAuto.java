@@ -107,14 +107,10 @@ public class RedCycleAuto extends AutoBase {
                     telemetry.update();
                 }),
                 dropPreLoadFreightCommand.andThen(waitFor(700)),
-                retractFromPreLoadGoToWarehouseCommand
-//                retractFromPreLoadAndCycleCommand.andThen(waitFor(500)),
-//                new CrawlForwardUntilIntakeCommand(
-//                        drive, intake, bucket, true
-//                )
-//                dropFreightInHubCommand.andThen(waitFor(500)),
-//                goToWarehouseCommand.andThen(waitFor(500))
-
+                retractFromPreLoadGoToWarehouseCommand,
+                crawlForwardUntilIntakeCommand,
+                dropFreightInHubCommand,
+                goToWarehouseCommand
         ));
 
 

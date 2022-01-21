@@ -23,14 +23,20 @@ class DropFreightInHubCommand(
     /**
      * This has to be a runtime function since we don't know where we will stop when intaking.
      */
-    private fun getTrajectoryCommand(): TrajectorySequence =
-        drive.trajectorySequenceBuilder(drive.poseEstimate)
-                .setReversed(!redSide)
-                .splineToConstantHeading(Vector2d(13.0, if (redSide) -64.5 else 64.5), Math.toRadians(180.0))
-                .splineToConstantHeading(
-                        Vector2d(-10.0,
-                                if (redSide) -58.0 else 58.0), Math.toRadians(if (redSide) 160.0 else -160.0))
-                .build()
+    private fun getTrajectoryCommand(): TrajectorySequence {
+        return if(redSide){
+            drive.trajectorySequenceBuilder(drive.poseEstimate)
+                    .splineToConstantHeading(Vector2d(13.0, -64.5), Math.toRadians(180.0))
+                    .splineToConstantHeading(Vector2d(-5.0, -58.0), Math.toRadians(160.0))
+                    .build()
+        } else {
+            drive.trajectorySequenceBuilder(drive.poseEstimate)
+                    .setReversed(true)
+                    .splineToConstantHeading(Vector2d(13.0, 64.5), Math.toRadians(180.0))
+                    .splineToConstantHeading(Vector2d(-10.0, 58.0), Math.toRadians(-160.0))
+                    .build()
+        }
+    }
 
     init {
         addRequirements(scoringArm, bucket, intake)

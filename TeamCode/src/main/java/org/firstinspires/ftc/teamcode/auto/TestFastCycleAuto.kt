@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.sendLine
 import java.lang.Math.toRadians
 
-
+@Disabled
 @Autonomous(name = "Red test cycle")
 class TestFastCycleAuto : AutoBase() {
 

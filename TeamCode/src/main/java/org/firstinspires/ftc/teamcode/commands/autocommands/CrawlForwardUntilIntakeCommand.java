@@ -29,7 +29,7 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
 //                        return bucket.isFreightDetected();
 //                    }
 //                },
-                new WaitCommand(1000),
+                new WaitCommand(3000),
                 new FollowTrajectorySequenceCommand(drive,
                         drive.trajectorySequenceBuilder(
                                 new Pose2d(45, (redSide) ? -64 : 64,

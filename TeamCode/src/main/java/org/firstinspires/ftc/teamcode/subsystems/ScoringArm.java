@@ -13,7 +13,7 @@ public class ScoringArm extends SubsystemBase {
     private final Servo armServo;
 
     //Position for in the robot and loading
-    public static final double loadingPosition = 0.1;
+    public static final double loadingPosition = 0.0;
 
     //Position for normal scoring
     public static final double scoringPosition = 1.0;

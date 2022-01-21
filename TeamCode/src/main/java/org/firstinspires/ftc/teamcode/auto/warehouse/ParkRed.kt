@@ -4,11 +4,13 @@ import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
 import com.arcrobotics.ftclib.command.WaitCommand
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.auto.AutoBase
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 
+@Disabled
 @Autonomous
 class ParkRed() : AutoBase()  {
 
