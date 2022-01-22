@@ -38,14 +38,14 @@ public class Bucket extends SubsystemBase {
     }
 
     public boolean isFreightDetected(){
-        return colorSensor.getRawLightDetected() > 200;
+        return colorSensor.getRawLightDetected() > 800;
     }
 
     /**
      * Moves the bucket down to the depositing position.
      */
     public void load(){
-        bucketServo.setPosition(0.4);
+        bucketServo.setPosition(0.35);
         isDown = true;
     }
 

@@ -70,7 +70,7 @@ public class AprilTagHubLevelPipeline extends OpenCvPipeline
 
     private boolean redSide;
 
-    public static double CENTER_MARGIN_BLUE = 0.75;
+    public static double CENTER_MARGIN_BLUE = 0.3;
     public static double CENTER_MARGIN_RED = 0.5;
 
     // instance variables
@@ -153,11 +153,13 @@ public class AprilTagHubLevelPipeline extends OpenCvPipeline
              */
             double x = detection.center.x;
             if(redSide) {
-                if (x > input.width() * CENTER_MARGIN_BLUE) hubLevel = HubLevel.MIDDLE;
+                if (x > input.width() * CENTER_MARGIN_RED) hubLevel = HubLevel.MIDDLE;
                 else hubLevel = HubLevel.BOTTOM;
             } else {
-                if(x > input.width() * CENTER_MARGIN_RED) hubLevel = HubLevel.MIDDLE;
-                else hubLevel = HubLevel.BOTTOM;
+                if(x < input.width() * 0.75){
+                    if (x > input.width() * CENTER_MARGIN_BLUE) hubLevel = HubLevel.MIDDLE;
+                    else hubLevel = HubLevel.BOTTOM;
+                }
             }
         }
 

@@ -65,7 +65,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                                                 Lift.Positions.BOTTOM, 5, 1800, 1700)
                 ),
                 new SequentialCommandGroup(
-                        new WaitCommand(1000),
+                        new WaitCommand(1400),
                         new InstantCommand(() -> {
                             switch (hubLevel) {
                                 case TOP:
@@ -81,7 +81,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                         })
                 ),
                 new SequentialCommandGroup(
-                        new WaitCommand(2400),
+                        new WaitCommand(2500),
                         new InstantCommand(bucket::dump)
                 )
         );

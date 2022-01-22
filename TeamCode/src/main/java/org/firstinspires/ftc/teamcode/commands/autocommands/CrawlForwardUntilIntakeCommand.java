@@ -42,10 +42,10 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
                                                 10, toRadians(180), DriveConstants.TRACK_WIDTH
                                         )
                                 )
-                                .forward(15)
+                                .forward(10)
                                 .build()
                 ),
-                new RunIntakeCommand(intake, !redSide, true)
+                new RunIntakeCommand(intake, true, true)
         );
 
     }
