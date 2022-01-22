@@ -57,18 +57,8 @@ public class DistanceSensorTesting extends CommandOpMode {
 
         relocalizeCommand = new RelocalizeCommand(
                 (pose) -> {
-                    //Do the useless average position update
-                    distanceSensorPose = new Pose2d(
-                        pose.getX(),
-                        pose.getY(),
-                        pose.getHeading()
-                    );
                     //More importantly, update the current pose estimate for live debugging
-                    drive.setPoseEstimate(new Pose2d(
-                            relocalizeCommand.lastInstantPosition.getX(),
-                            relocalizeCommand.lastInstantPosition.getY(),
-                            relocalizeCommand.lastInstantPosition.getHeading()
-                    ));
+                    drive.setPoseEstimate(pose);
                 },
                 distanceSensors,
                 drive::getExternalHeading,
@@ -87,6 +77,8 @@ public class DistanceSensorTesting extends CommandOpMode {
     public void run() {
 
         super.run();
+
+        if(!relocalizeCommand.isScheduled()) schedule(relocalizeCommand);
 
         //Send our joystick values to the rr drive class.
         drive.setWeightedDrivePower(
@@ -111,6 +103,7 @@ public class DistanceSensorTesting extends CommandOpMode {
         telemetry.addData("Distance Sensor Cycle Time (ms)", distanceSensors.getCycleTime());
         telemetry.addData("Distance Sensor is taking", distanceSensors.isTakingRangeReading());
         telemetry.addData("Forward Sensor MB1242 Range (in)", distanceSensors.getForwardRange(DistanceUnit.INCH));
+        telemetry.addData("Backward Sensor MB1242 Range (in)", distanceSensors.getBackwardRange(DistanceUnit.INCH));
         telemetry.addData("Left Sensor Rev TOF Range (in)", distanceSensors.getLeftRange(DistanceUnit.INCH));
         telemetry.addData("Right Sensor Rev TOF Range (in)", distanceSensors.getRightRange(DistanceUnit.INCH));
 

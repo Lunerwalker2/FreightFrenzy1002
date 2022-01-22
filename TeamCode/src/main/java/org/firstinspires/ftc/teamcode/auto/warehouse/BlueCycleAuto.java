@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.auto.AutoBase;
+import org.firstinspires.ftc.teamcode.commands.RelocalizeCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.CrawlForwardUntilIntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.DropFreightInHubCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.DropPreLoadFreightCommand;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.commands.autocommands.RetractAndGoToWareho
 import org.firstinspires.ftc.teamcode.commands.autocommands.RetractFromPreLoadGoToWarehouseCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
+import org.firstinspires.ftc.teamcode.subsystems.DistanceSensors;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.ScoringArm;
@@ -29,12 +31,14 @@ public class BlueCycleAuto extends AutoBase {
     private Lift lift;
     private ScoringArm scoringArm;
     private Bucket bucket;
+    private DistanceSensors distanceSensors;
 
     private DropPreLoadFreightCommand dropPreLoadFreightCommand;
     private RetractFromPreLoadGoToWarehouseCommand retractFromPreLoadGoToWarehouseCommand;
     private CrawlForwardUntilIntakeCommand crawlForwardUntilIntakeCommand;
     private DropFreightInHubCommand dropFreightInHubCommand;
     private RetractAndGoToWarehouseCommand goToWarehouseCommand;
+    private RelocalizeCommand relocalizeCommand;
 
     private TeamMarkerDetector teamMarkerDetector;
     private HubLevel hubLevel = HubLevel.TOP;
@@ -62,6 +66,7 @@ public class BlueCycleAuto extends AutoBase {
         lift = new Lift(hardwareMap, telemetry);
         scoringArm = new ScoringArm(hardwareMap);
         bucket = new Bucket(hardwareMap);
+        distanceSensors = new DistanceSensors(hardwareMap);
         teamMarkerDetector = new TeamMarkerDetector(hardwareMap, false);
 
         teamMarkerDetector.init();
@@ -89,6 +94,15 @@ public class BlueCycleAuto extends AutoBase {
                 drive, lift, scoringArm, bucket, false
         );
 
+        relocalizeCommand = new RelocalizeCommand(
+                (pose) -> {
+                    drive.setPoseEstimate(pose);
+                },
+                distanceSensors,
+                drive::getExternalHeading,
+                true
+        );
+
         teamMarkerDetector.startStream();
         while (!isStarted()) {
             hubLevel = HubLevel.valueOf(teamMarkerDetector.getTeamMarkerPipeline().getHubLevel().toString());
@@ -109,7 +123,13 @@ public class BlueCycleAuto extends AutoBase {
                 dropPreLoadFreightCommand.andThen(waitFor(700)),
                 retractFromPreLoadGoToWarehouseCommand,
                 crawlForwardUntilIntakeCommand,
+//                relocalizeCommand,
                 dropFreightInHubCommand,
+                goToWarehouseCommand,
+                crawlForwardUntilIntakeCommand,
+                dropFreightInHubCommand = new DropFreightInHubCommand(
+                        drive, lift, scoringArm, bucket, intake, false
+                ),
                 goToWarehouseCommand
         ));
 

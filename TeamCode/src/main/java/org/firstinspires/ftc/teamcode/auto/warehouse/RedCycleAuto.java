@@ -111,6 +111,7 @@ public class RedCycleAuto extends AutoBase {
                 crawlForwardUntilIntakeCommand,
                 dropFreightInHubCommand,
                 goToWarehouseCommand
+                //TODO: DO NOT IMPLEMENT DISTANCE SENSORS UNTIL WIRE IS FIXED
         ));
 
 

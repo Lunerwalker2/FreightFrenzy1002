@@ -23,13 +23,13 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
             SampleMecanumDrive drive, Intake intake, Bucket bucket, boolean redSide) {
 
         super(
-//                new CommandBase() {
-//                    @Override
-//                    public boolean isFinished(){
-//                        return bucket.isFreightDetected();
-//                    }
-//                },
-                new WaitCommand(3000),
+                new CommandBase() {
+                    @Override
+                    public boolean isFinished(){
+                        return bucket.isFreightDetected();
+                    }
+                },
+//                new WaitCommand(3000),
                 new FollowTrajectorySequenceCommand(drive,
                         drive.trajectorySequenceBuilder(
                                 new Pose2d(45, (redSide) ? -64 : 64,
@@ -45,7 +45,10 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
                                 .forward(10)
                                 .build()
                 ),
-                new RunIntakeCommand(intake, true, true)
+                new SequentialCommandGroup(
+                        new InstantCommand(() -> {intake.setSide(redSide);}),
+                        new InstantCommand(intake::intake)
+                )
         );
 
     }

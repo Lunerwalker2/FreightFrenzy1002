@@ -47,7 +47,7 @@ public class RelocalizeCommand extends CommandBase {
      * Inches
      */
     private static final Vector2d forwardSensorPosition = new Vector2d(5.875, 6.65625); //TODO: fix
-    private static final Vector2d backwardSensorPosition = new Vector2d(-5.875, -6.65625);
+    private static final Vector2d backwardSensorPosition = new Vector2d(5.875, -6.65625);
     private static final Vector2d leftSensorPosition = new Vector2d(-6.125, -0.15625);
     private static final Vector2d rightSensorPosition = new Vector2d(5.125, -4.15625);
 
@@ -58,8 +58,6 @@ public class RelocalizeCommand extends CommandBase {
     private final boolean leftSide;
     private boolean done = false;
 
-    //Keep the last instant position for debugging use
-    public Pose2d lastInstantPosition = new Pose2d();
     //Keep a timer so we can wait for the sensors to read.
     private ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 

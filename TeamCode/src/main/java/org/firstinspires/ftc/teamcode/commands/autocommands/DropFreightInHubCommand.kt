@@ -38,10 +38,6 @@ class DropFreightInHubCommand(
         }
     }
 
-    init {
-        addRequirements(scoringArm, bucket, intake)
-    }
-
     override fun initialize() {
         addCommands(
                 //Drive to the hub and dump at the end, hopefully lift will have extended.

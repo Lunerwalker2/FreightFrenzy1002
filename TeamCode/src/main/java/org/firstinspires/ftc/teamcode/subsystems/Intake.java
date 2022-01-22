@@ -20,13 +20,15 @@ public class Intake extends SubsystemBase {
 
 
     public enum State {
-        INTAKE(0.55),
-        OUTTAKE(-0.5),
-        STOP(0.0);
+        INTAKE(0.55, 0.4),
+        OUTTAKE(-0.5, 0.5),
+        STOP(0.0, 0.0);
 
-        public double power;
-        State(double power){
-            this.power = power;
+        public double powerFront;
+        public double powerBack;
+        State(double powerFront, double powerBack){
+            this.powerFront = powerFront;
+            this.powerBack = powerBack;
         }
     }
 
@@ -52,8 +54,8 @@ public class Intake extends SubsystemBase {
     }
 
     public void setState(State state){
-        if(front) frontIntake.setPower(state.power);
-        else backIntake.setPower(state.power);
+        if(front) frontIntake.setPower(state.powerFront);
+        else backIntake.setPower(state.powerBack);
         this.state = state;
     }
 
