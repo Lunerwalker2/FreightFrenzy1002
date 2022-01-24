@@ -69,7 +69,7 @@ public class BlueDuckAuto extends AutoBase {
         scoringArm = new ScoringArm(hardwareMap);
         bucket = new Bucket(hardwareMap);
         carouselWheel = new CarouselWheel(hardwareMap);
-        teamMarkerDetector = new TeamMarkerDetector(hardwareMap, false);
+        teamMarkerDetector = new TeamMarkerDetector(hardwareMap, false,  true);
 
         backFromCarousel = drive.trajectorySequenceBuilder(new Pose2d(-57, 55, toRadians(-30)))
                 .forward(10)
@@ -95,7 +95,7 @@ public class BlueDuckAuto extends AutoBase {
 
         teamMarkerDetector.startStream();
         while (!isStarted()) {
-            hubLevel = HubLevel.valueOf(teamMarkerDetector.getTeamMarkerPipeline().getHubLevel().toString());
+            hubLevel = HubLevel.valueOf(teamMarkerDetector.getHubLevel().toString());
             telemetry.addLine("Ready For Start!");
             telemetry.addData("Hub Level", hubLevel);
             telemetry.update();

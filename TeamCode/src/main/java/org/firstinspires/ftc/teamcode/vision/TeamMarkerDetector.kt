@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode.vision
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.vision.pipeline.AprilTagHubLevelPipeline
+import org.firstinspires.ftc.teamcode.vision.pipeline.AprilTagHubLevelPipelineDuck
 import org.firstinspires.ftc.teamcode.vision.pipeline.TeamMarkerPipeline
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCamera.AsyncCameraOpenListener
 import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
+import org.openftc.easyopencv.OpenCvPipeline
 
 /*
 Class that abstracts our vision pipeline and all the EOCV things needed to run it.
@@ -23,14 +25,16 @@ probably be called until the end of init to get the last detection after randomi
 
 endStream() should be called after init, at start. It is blocking so it might have a slight delay.
  */
-class TeamMarkerDetector(private val hardwareMap: HardwareMap, redSide: Boolean) {
+class TeamMarkerDetector(private val hardwareMap: HardwareMap, redSide: Boolean,
+                         private val duckSide: Boolean) {
 
 
-    constructor(hardwareMap: HardwareMap) : this(hardwareMap, false)
+    constructor(hardwareMap: HardwareMap) : this(hardwareMap, false, false)
 
     private lateinit var camera: OpenCvCamera
 
-    val teamMarkerPipeline: AprilTagHubLevelPipeline = AprilTagHubLevelPipeline(redSide)
+    val teamMarkerPipeline: OpenCvPipeline =
+            if(duckSide) AprilTagHubLevelPipeline(redSide) else AprilTagHubLevelPipelineDuck(redSide)
 
 
 
@@ -54,6 +58,15 @@ class TeamMarkerDetector(private val hardwareMap: HardwareMap, redSide: Boolean)
 
             }
         })
+    }
+
+    fun getHubLevel(): HubLevel {
+        if(duckSide) {
+            return (teamMarkerPipeline as AprilTagHubLevelPipelineDuck).hubLevel
+        }
+        else {
+            return (teamMarkerPipeline as AprilTagHubLevelPipeline).hubLevel
+        }
     }
 
     fun endStream(){

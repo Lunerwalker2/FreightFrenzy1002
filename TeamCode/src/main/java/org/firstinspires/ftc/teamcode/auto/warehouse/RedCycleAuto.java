@@ -70,7 +70,7 @@ public class RedCycleAuto extends AutoBase {
         lift = new Lift(hardwareMap, telemetry);
         scoringArm = new ScoringArm(hardwareMap);
         bucket = new Bucket(hardwareMap);
-        teamMarkerDetector = new TeamMarkerDetector(hardwareMap, true);
+        teamMarkerDetector = new TeamMarkerDetector(hardwareMap, true, false);
 
         teamMarkerDetector.init();
 
@@ -103,7 +103,7 @@ public class RedCycleAuto extends AutoBase {
 
         teamMarkerDetector.startStream();
         while (!isStarted()) {
-            hubLevel = teamMarkerDetector.getTeamMarkerPipeline().getHubLevel();
+            hubLevel = HubLevel.valueOf(teamMarkerDetector.getHubLevel().toString());
             telemetry.addLine("Ready For Start!");
             telemetry.addData("Hub Level", hubLevel);
             telemetry.update();
@@ -123,14 +123,14 @@ public class RedCycleAuto extends AutoBase {
                 crawlForwardUntilIntakeCommand1 = new CrawlForwardUntilIntakeCommand(
                         drive, intake, bucket, telemetry, true
                 ),
-                dropFreightInHubCommand1
+                dropFreightInHubCommand1,
+                goToWarehouseCommand1
 //                goToWarehouseCommand1,
 //                crawlForwardUntilIntakeCommand2,
 //                dropFreightInHubCommand2,
 //                goToWarehouseCommand2
                 //TODO: DO NOT IMPLEMENT DISTANCE SENSORS UNTIL WIRE IS FIXED
         ));
-
 
 
     }

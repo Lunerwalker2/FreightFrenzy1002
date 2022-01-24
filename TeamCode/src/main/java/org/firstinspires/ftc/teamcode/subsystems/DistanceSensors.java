@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.teleOp.testing.AsyncRev2MSensor;
 import org.firstinspires.ftc.teamcode.util.MB1242;
 
 public class DistanceSensors extends SubsystemBase {
@@ -14,8 +15,8 @@ public class DistanceSensors extends SubsystemBase {
     private final MB1242 forwardSensor;
     private final MB1242 backwardSensor;
     //The two TOF Distance sensors on the sides.
-    private final Rev2mDistanceSensor rightSensor;
-    private final Rev2mDistanceSensor leftSensor;
+    private final AsyncRev2MSensor rightSensor;
+    private final AsyncRev2MSensor leftSensor;
 
     //Debugging rate timer
     private final ElapsedTime cycleTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -26,9 +27,12 @@ public class DistanceSensors extends SubsystemBase {
         //Get the sensors from the hardware map
         forwardSensor = hardwareMap.get(MB1242.class, "forwardSensor");
         backwardSensor = hardwareMap.get(MB1242.class, "backwardSensor");
-        rightSensor = hardwareMap.get(Rev2mDistanceSensor.class, "rightSensor");
-        leftSensor = hardwareMap.get(Rev2mDistanceSensor.class, "leftSensor");
+        rightSensor =
+                new AsyncRev2MSensor(hardwareMap.get(Rev2mDistanceSensor.class, "rightSensor"));
+        leftSensor =
+                new AsyncRev2MSensor(hardwareMap.get(Rev2mDistanceSensor.class, "leftSensor"));
 
+        rightSensor.setMeasurementIntervalMs(60);
         cycleTimer.reset();
 
     }

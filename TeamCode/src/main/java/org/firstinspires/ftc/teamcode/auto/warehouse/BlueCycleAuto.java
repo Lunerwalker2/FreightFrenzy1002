@@ -75,7 +75,7 @@ public class BlueCycleAuto extends AutoBase {
         scoringArm = new ScoringArm(hardwareMap);
         bucket = new Bucket(hardwareMap);
         distanceSensors = new DistanceSensors(hardwareMap);
-        teamMarkerDetector = new TeamMarkerDetector(hardwareMap, false);
+        teamMarkerDetector = new TeamMarkerDetector(hardwareMap, false, false);
 
         teamMarkerDetector.init();
 
@@ -124,7 +124,7 @@ public class BlueCycleAuto extends AutoBase {
 
         teamMarkerDetector.startStream();
         while (!isStarted()) {
-            hubLevel = HubLevel.valueOf(teamMarkerDetector.getTeamMarkerPipeline().getHubLevel().toString());
+            hubLevel = HubLevel.valueOf(teamMarkerDetector.getHubLevel().toString());
             telemetry.addLine("Ready For Start!");
             telemetry.addData("Hub Level", hubLevel);
             telemetry.update();
@@ -153,10 +153,10 @@ public class BlueCycleAuto extends AutoBase {
                         crawlForwardUntilIntakeCommand2 = new CrawlForwardUntilIntakeCommand2(
                                 drive, intake, bucket, telemetry, false
                         ),
-//                        new ParallelDeadlineGroup(
-//                                new WaitCommand(100),
-//                                relocalizeCommand
-//                        ),
+                        new ParallelDeadlineGroup(
+                                new WaitCommand(100),
+                                relocalizeCommand
+                        ),
                         dropFreightInHubCommand2,
                         goToWarehouseCommand2
                 )

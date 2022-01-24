@@ -27,7 +27,7 @@ class DropFreightInHubCommand2(
         return if(redSide){
             drive.trajectorySequenceBuilder(drive.poseEstimate)
                     .splineToConstantHeading(Vector2d(13.0, -64.5), Math.toRadians(180.0))
-                    .splineToConstantHeading(Vector2d(-10.0, -58.0), Math.toRadians(160.0))
+                    .splineToConstantHeading(Vector2d(-5.0, -58.0), Math.toRadians(160.0))
                     .build()
         } else {
             drive.trajectorySequenceBuilder(drive.poseEstimate)

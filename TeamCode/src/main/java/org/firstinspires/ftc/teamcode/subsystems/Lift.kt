@@ -11,9 +11,9 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
     private val liftMotor: DcMotorEx
 
     enum class Positions(val targetPosition: Int) {
-        TOP(450),
-        MIDDLE(315),
-        BOTTOM(210),
+        TOP(651),    // 651
+        MIDDLE(456), // 456
+        BOTTOM(304), // 304
         IN_ROBOT(2)
     }
 
@@ -51,11 +51,11 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
     fun setLiftPower(power: Double) = run { liftMotor.power = power }
 
     fun atUpperLimit(): Boolean {
-        return getLiftRawPosition() > 710
+        return getLiftRawPosition() > 1000
     }
 
     fun atLowerLimit(): Boolean {
-        return getLiftRawPosition() < 3
+        return getLiftRawPosition() < 0
     }
 
     fun stopLift() {
