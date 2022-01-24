@@ -4,7 +4,6 @@ import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -20,7 +19,7 @@ import org.firstinspires.ftc.teamcode.vision.HubLevel;
 
 import java.util.function.Supplier;
 
-public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup {
+public class RetractFromPreLoadCommandDuck extends ParallelCommandGroup {
 
 
     private final SampleMecanumDrive drive;
@@ -46,7 +45,7 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
 
 
 
-    public RetractFromPreLoadGoToWarehouseCommand(
+    public RetractFromPreLoadCommandDuck(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm,
             Bucket bucket, boolean redSide, Supplier<HubLevel> getHubLevel
     ) {
@@ -84,31 +83,40 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
 
     public void generateTrajectories() {
         blueFromTopLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
-                .splineToConstantHeading(new Vector2d(13, 64.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(45, 64), toRadians(0))
+                .lineToConstantHeading(new Vector2d(-35, 50))
+                .lineToConstantHeading(new Vector2d(-50, 40))
+                .turn(toRadians(-30))
+                .lineToConstantHeading(new Vector2d(-57, 55))
                 .build();
         blueFromMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPositionMiddle)
-                .splineToConstantHeading(new Vector2d(13, 64.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(45, 64), toRadians(0))
+                .lineToConstantHeading(new Vector2d(-35, 50))
+                .lineToConstantHeading(new Vector2d(-50, 40))
+                .turn(toRadians(-30))
+                .lineToConstantHeading(new Vector2d(-57, 55))
                 .build();
         blueFromBottomLevel = drive.trajectorySequenceBuilder(blueStartingPositionBottom)
-                .splineToConstantHeading(new Vector2d(13, 64.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(45, 64), toRadians(0))
+                .lineToConstantHeading(new Vector2d(-35, 50))
+                .lineToConstantHeading(new Vector2d(-50, 40))
+                .turn(toRadians(-30))
+                .lineToConstantHeading(new Vector2d(-57, 55))
                 .build();
         redFromTopLevel = drive.trajectorySequenceBuilder(redStartingPositionTop)
-                .setReversed(true)
-                .splineToConstantHeading(new Vector2d(13, -64.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(45, -64), toRadians(0))
+                .lineToConstantHeading(new Vector2d(-35, -50))
+                .lineToConstantHeading(new Vector2d(-50, -40))
+                .turn(toRadians(-150))
+                .lineToConstantHeading(new Vector2d(-57, -55))
                 .build();
         redFromMiddleLevel = drive.trajectorySequenceBuilder(redStartingPositionMiddle)
-                .setReversed(true)
-                .splineToConstantHeading(new Vector2d(13, -64.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(45, -64), toRadians(0))
+                .lineToConstantHeading(new Vector2d(-35, -50))
+                .lineToConstantHeading(new Vector2d(-50, -40))
+                .turn(toRadians(-150))
+                .lineToConstantHeading(new Vector2d(-57, -55))
                 .build();
         redFromBottomLevel = drive.trajectorySequenceBuilder(redStartingPositionBottom)
-                .setReversed(true)
-                .splineToConstantHeading(new Vector2d(13, -64.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(45, -64), toRadians(0))
+                .lineToConstantHeading(new Vector2d(-35, -50))
+                .lineToConstantHeading(new Vector2d(-50, -40))
+                .turn(toRadians(-150))
+                .lineToConstantHeading(new Vector2d(-57, -55))
                 .build();
     }
 

@@ -18,4 +18,10 @@ abstract class AutoBase : CommandOpMode() {
         schedule(BulkCacheCommand(hardwareMap))
     }
 
+    override fun run() {
+        super.run()
+
+        telemetry.update()
+    }
+
 }

@@ -33,10 +33,10 @@ public class RelocalizeCommand extends CommandBase {
      *
      * //TODO: Find these
      */
-    private static final double FORWARD_SENSOR_BASE_DISTANCE_TO_WALL = 65.34375; //TODO: fux
-    private static final double BACKWARD_SENSOR_BASE_DISTANCE_TO_WALL = 65.34375;
-    private static final double LEFT_SENSOR_BASE_DISTANCE_TO_WALL = 65.875;
-    private static final double RIGHT_SENSOR_BASE_DISTANCE_TO_WALL = 66.875;
+    private static final double FORWARD_SENSOR_BASE_DISTANCE_TO_WALL = 63.125; //TODO: fix
+    private static final double BACKWARD_SENSOR_BASE_DISTANCE_TO_WALL = 64.75;
+    private static final double LEFT_SENSOR_BASE_DISTANCE_TO_WALL = 64.75;
+    private static final double RIGHT_SENSOR_BASE_DISTANCE_TO_WALL = 66.0625;
 
     /*
      * These are the relative positions of each sensor from the center of the
@@ -46,16 +46,16 @@ public class RelocalizeCommand extends CommandBase {
      * y is forward, x is left/right
      * Inches
      */
-    private static final Vector2d forwardSensorPosition = new Vector2d(5.875, 6.65625); //TODO: fix
-    private static final Vector2d backwardSensorPosition = new Vector2d(5.875, -6.65625);
-    private static final Vector2d leftSensorPosition = new Vector2d(-6.125, -0.15625);
-    private static final Vector2d rightSensorPosition = new Vector2d(5.125, -4.15625);
+    private static final Vector2d forwardSensorPosition = new Vector2d(-3.5, 5.53125); //TODO: fix
+    private static final Vector2d backwardSensorPosition = new Vector2d(-3.5, -8.59375);
+    private static final Vector2d leftSensorPosition = new Vector2d(-7.1875, -1.15625);
+    private static final Vector2d rightSensorPosition = new Vector2d(4, -4.78125);
 
 
     private final DistanceSensors distanceSensors;
     private final DoubleSupplier headingSupplier;
     private final Consumer<Pose2d> poseConsumer;
-    private final boolean leftSide;
+    private final boolean redSide;
     private boolean done = false;
 
     //Keep a timer so we can wait for the sensors to read.
@@ -64,12 +64,12 @@ public class RelocalizeCommand extends CommandBase {
     /**
      * @param headingSupplier Supplier of the heading of the robot IN RADIANS.
      */
-    public RelocalizeCommand(Consumer<Pose2d> poseConsumer, DistanceSensors distanceSensors, DoubleSupplier headingSupplier, boolean leftSide) {
+    public RelocalizeCommand(Consumer<Pose2d> poseConsumer, DistanceSensors distanceSensors, DoubleSupplier headingSupplier, boolean redSide) {
         super();
         this.distanceSensors = distanceSensors;
         this.headingSupplier = headingSupplier;
         this.poseConsumer = poseConsumer;
-        this.leftSide = leftSide;
+        this.redSide = redSide;
         addRequirements(distanceSensors);
     }
 
@@ -78,9 +78,11 @@ public class RelocalizeCommand extends CommandBase {
      */
     @Override
     public void initialize() {
+        super.initialize();
         //Start taking range measurements from the sensors
-        distanceSensors.startReading();
+        distanceSensors.pingAll();
         timer.reset();
+        done = false;
     }
 
     /*
@@ -90,41 +92,42 @@ public class RelocalizeCommand extends CommandBase {
     @Override
     public void execute() {
 
-        if (timer.milliseconds() > 60) {//Find our current heading once so we don't have to keep reading it
+        if(timer.milliseconds() > 70){
+            //Find our current heading once so we don't have to keep reading it
             double heading = headingSupplier.getAsDouble();
 
             //test for possible invalid values
             if (!isValidReadings(
-                    (leftSide) ?
+                    (!redSide) ?
                             distanceSensors.getForwardRange(DistanceUnit.INCH) :
                             distanceSensors.getBackwardRange(DistanceUnit.INCH),
-                    (leftSide) ?
+                    (!redSide) ?
                             distanceSensors.getLeftRange(DistanceUnit.INCH) :
                             distanceSensors.getRightRange(DistanceUnit.INCH))
             ) return;
 
             //Find the rotated distances
             double[] rotatedDistances = findRotatedDistance(
-                    (leftSide) ?
+                    (!redSide) ?
                             distanceSensors.getForwardRange(DistanceUnit.INCH) :
                             distanceSensors.getBackwardRange(DistanceUnit.INCH),
-                    (leftSide) ?
+                    (!redSide) ?
                             distanceSensors.getLeftRange(DistanceUnit.INCH) :
                             distanceSensors.getRightRange(DistanceUnit.INCH),
                     heading,
-                    leftSide
+                    redSide
             );
 
 
             //Find our forward distance (x in field coordinates)
-            double x = (leftSide) ?
+            double x = (!redSide) ?
                     (FORWARD_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[0]) :
                     (BACKWARD_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[0]);
 
             //Find our side distance (y in field coordinates)
-            double y = (leftSide) ?
-                    (rotatedDistances[1] - RIGHT_SENSOR_BASE_DISTANCE_TO_WALL) :
-                    (LEFT_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[1]);
+            double y = (!redSide) ?
+                    (LEFT_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[1]) :
+                    (rotatedDistances[1] - RIGHT_SENSOR_BASE_DISTANCE_TO_WALL);
 
             //Update the user with the new position
             poseConsumer.accept(new Pose2d(x, y, heading));
@@ -136,7 +139,7 @@ public class RelocalizeCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        distanceSensors.stopReading();
+
     }
 
     @Override
@@ -167,24 +170,27 @@ public class RelocalizeCommand extends CommandBase {
      * @param forwardDistance Forward distance sensor value, inches.
      * @param sideDistance    Side distance sensor value, inches
      * @param headingRad      Heading value, radians, euler
-     * @param leftSide        Side of the robot that the side sensor is on.
+     * @param redSide         Side of the robot that the side sensor is on.
      * @return Array with (forward, side) absolute distances of the robot to the field walls.
      */
-    private static double[] findRotatedDistance(double forwardDistance, double sideDistance, double headingRad, boolean leftSide) {
+    private static double[] findRotatedDistance(double forwardDistance, double sideDistance, double headingRad, boolean redSide) {
         double[] newDistances = new double[2];
 
 
         //Rotate the vector with the sensor's position by the current heading
         //TODO: find exact error, the front sensor is slightly turned in its mount
-        Vector2d rotatedForwardSensorPosition = (leftSide) ?
+        Vector2d rotatedForwardSensorPosition = (redSide) ?
                 forwardSensorPosition.rotated(AngleUnit.RADIANS.normalize(
-                        headingRad + PI - toRadians(4))) :
-                backwardSensorPosition.rotated(headingRad);
+                        headingRad - toRadians(4))) :
+                backwardSensorPosition.rotated(AngleUnit.RADIANS.normalize(
+                        headingRad + PI)
+                );
 
         //Do the same for the side sensor
-        Vector2d rotatedSideSensorPosition = (leftSide) ?
+        Vector2d rotatedSideSensorPosition = (!redSide) ?
                 leftSensorPosition.rotated(headingRad) :
-                rightSensorPosition.rotated(headingRad);
+                rightSensorPosition.rotated(AngleUnit.RADIANS.normalize(
+                        headingRad + PI));
 
         /*
         Now find the theoretical distances from the walls, assuming no offset from one of the axes.

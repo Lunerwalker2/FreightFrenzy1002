@@ -20,9 +20,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Bucket;
 import org.firstinspires.ftc.teamcode.subsystems.DistanceSensors;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
-public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
+public class CrawlForwardUntilIntakeCommand2 extends ParallelDeadlineGroup {
 
-    public CrawlForwardUntilIntakeCommand(
+    public CrawlForwardUntilIntakeCommand2(
             SampleMecanumDrive drive, Intake intake, Bucket bucket, Telemetry telemetry,
             boolean redSide) {
 

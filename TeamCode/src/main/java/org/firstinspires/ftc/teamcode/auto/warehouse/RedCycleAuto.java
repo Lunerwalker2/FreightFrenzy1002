@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.auto.AutoBase;
+import org.firstinspires.ftc.teamcode.commands.RelocalizeCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.CrawlForwardUntilIntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.DropFreightInHubCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.DropPreLoadFreightCommand;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.commands.autocommands.RetractAndGoToWareho
 import org.firstinspires.ftc.teamcode.commands.autocommands.RetractFromPreLoadGoToWarehouseCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
+import org.firstinspires.ftc.teamcode.subsystems.DistanceSensors;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.ScoringArm;
@@ -29,12 +31,18 @@ public class RedCycleAuto extends AutoBase {
     private Lift lift;
     private ScoringArm scoringArm;
     private Bucket bucket;
+    private DistanceSensors distanceSensors;
 
     private DropPreLoadFreightCommand dropPreLoadFreightCommand;
     private RetractFromPreLoadGoToWarehouseCommand retractFromPreLoadGoToWarehouseCommand;
-    private CrawlForwardUntilIntakeCommand crawlForwardUntilIntakeCommand;
-    private DropFreightInHubCommand dropFreightInHubCommand;
-    private RetractAndGoToWarehouseCommand goToWarehouseCommand;
+    private CrawlForwardUntilIntakeCommand crawlForwardUntilIntakeCommand1;
+    private CrawlForwardUntilIntakeCommand crawlForwardUntilIntakeCommand2;
+    private DropFreightInHubCommand dropFreightInHubCommand1;
+    private DropFreightInHubCommand dropFreightInHubCommand2;
+    private RetractAndGoToWarehouseCommand goToWarehouseCommand1;
+    private RetractAndGoToWarehouseCommand goToWarehouseCommand2;
+    private RelocalizeCommand relocalizeCommand1;
+    private RelocalizeCommand relocalizeCommand2;
 
     private TeamMarkerDetector teamMarkerDetector;
     private HubLevel hubLevel = HubLevel.TOP;
@@ -77,15 +85,19 @@ public class RedCycleAuto extends AutoBase {
                 drive, lift, scoringArm, bucket, true, () -> hubLevel
         );
 
-        crawlForwardUntilIntakeCommand = new CrawlForwardUntilIntakeCommand(
-                drive, intake, bucket, true
-        );
-
-        dropFreightInHubCommand = new DropFreightInHubCommand(
+        dropFreightInHubCommand1 = new DropFreightInHubCommand(
                 drive, lift, scoringArm, bucket, intake, true
         );
 
-        goToWarehouseCommand = new RetractAndGoToWarehouseCommand(
+        dropFreightInHubCommand2 = new DropFreightInHubCommand(
+                drive, lift, scoringArm, bucket, intake, true
+        );
+
+        goToWarehouseCommand1 = new RetractAndGoToWarehouseCommand(
+                drive, lift, scoringArm, bucket, true
+        );
+
+        goToWarehouseCommand2 = new RetractAndGoToWarehouseCommand(
                 drive, lift, scoringArm, bucket, true
         );
 
@@ -108,9 +120,14 @@ public class RedCycleAuto extends AutoBase {
                 }),
                 dropPreLoadFreightCommand.andThen(waitFor(700)),
                 retractFromPreLoadGoToWarehouseCommand,
-                crawlForwardUntilIntakeCommand,
-                dropFreightInHubCommand,
-                goToWarehouseCommand
+                crawlForwardUntilIntakeCommand1 = new CrawlForwardUntilIntakeCommand(
+                        drive, intake, bucket, telemetry, true
+                ),
+                dropFreightInHubCommand1
+//                goToWarehouseCommand1,
+//                crawlForwardUntilIntakeCommand2,
+//                dropFreightInHubCommand2,
+//                goToWarehouseCommand2
                 //TODO: DO NOT IMPLEMENT DISTANCE SENSORS UNTIL WIRE IS FIXED
         ));
 

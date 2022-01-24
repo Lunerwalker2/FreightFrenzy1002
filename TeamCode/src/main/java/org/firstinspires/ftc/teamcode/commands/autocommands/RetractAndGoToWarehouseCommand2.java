@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.ScoringArm;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
+public class RetractAndGoToWarehouseCommand2 extends ParallelCommandGroup {
 
     private final SampleMecanumDrive drive;
     private final Lift lift;
@@ -29,9 +29,9 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
             new Pose2d(-10, 58, toRadians(0));
 
     private static final Pose2d redStartingPosition =
-            new Pose2d(-10, -58, toRadians(180));
+            new Pose2d(-5, -58, toRadians(180));
 
-    public RetractAndGoToWarehouseCommand(
+    public RetractAndGoToWarehouseCommand2(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm,
             Bucket bucket, boolean redSide
     ) {

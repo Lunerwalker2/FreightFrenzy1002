@@ -28,8 +28,8 @@ import static java.lang.Math.toRadians;
 public class SmolBot {
 
 
-    public static double MAX_VEL = 45;
-    public static double MAX_ACCEL = 45;
+    public static double MAX_VEL = 35;
+    public static double MAX_ACCEL = 35;
     public static double MAX_ANG_VEL = toRadians(200);
     public static double MAX_ANG_ACCEL = toRadians(200);
     public static double TRACK_WIDTH = 12.1;
@@ -41,6 +41,11 @@ public class SmolBot {
 
     private static final Pose2d blueStartingPosition = new Pose2d(8.34375, 65.375, toRadians(0));
     private static final Pose2d redStartingPosition =
+            blueStartingPosition.copy(blueStartingPosition.getX(), -blueStartingPosition.getY(),
+                    Angle.normDelta(blueStartingPosition.getHeading() + toRadians(180)));
+
+    private static final Pose2d blueStartingPositionDuck = new Pose2d(-31.96875, 65.375, toRadians(0));
+    private static final Pose2d redStartingPositionDuck =
             blueStartingPosition.copy(blueStartingPosition.getX(), -blueStartingPosition.getY(),
                     Angle.normDelta(blueStartingPosition.getHeading() + toRadians(180)));
 
@@ -101,6 +106,66 @@ public class SmolBot {
                                 .build()
                 );
 
+        RoadRunnerBotEntity blueDuckRoute = new DefaultBotBuilder(mm)
+                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
+                .setDimensions(13, 18)
+                .setColorScheme(new ColorSchemeBlueDark())
+                .followTrajectorySequence(drive ->
+                        drive.trajectorySequenceBuilder(blueStartingPositionDuck)
+                                .lineToConstantHeading(new Vector2d(-10, 58))
+                                .waitSeconds(0.5)
+                                .addDisplacementMarker(() -> System.out.println("Lift out"))
+                                .waitSeconds(0.5)
+                                .addDisplacementMarker(() -> System.out.println("Lift in"))
+                                .lineToConstantHeading(new Vector2d(-35, 50))
+                                .lineToConstantHeading(new Vector2d(-50, 40))
+                                .turn(toRadians(-30))
+                                .lineToConstantHeading(new Vector2d(-57, 55))
+                                .waitSeconds(3)
+                                .forward(10)
+                                .turn(toRadians(30))
+                                .forward(20)
+                                .strafeLeft(10)
+                                .back(20,
+                                        getVelocityConstraint(10, toRadians(180), 13)
+                                )
+                                .lineToConstantHeading(new Vector2d(-10, 58))
+                                .waitSeconds(3)
+                                .back(20)
+                                .lineToLinearHeading(new Pose2d(-60, 40, toRadians(0)))
+                                .build()
+                );
+
+        RoadRunnerBotEntity redDuckRoute = new DefaultBotBuilder(mm)
+                .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, TRACK_WIDTH)
+                .setDimensions(13, 18)
+                .setColorScheme(new ColorSchemeRedDark())
+                .followTrajectorySequence(drive ->
+                        drive.trajectorySequenceBuilder(redStartingPositionDuck)
+                                .lineToConstantHeading(new Vector2d(-10, -58))
+                                .waitSeconds(0.5)
+                                .addDisplacementMarker(() -> System.out.println("Lift out"))
+                                .waitSeconds(0.5)
+                                .addDisplacementMarker(() -> System.out.println("Lift in"))
+                                .lineToConstantHeading(new Vector2d(-35, -50))
+                                .lineToConstantHeading(new Vector2d(-50, -40))
+                                .turn(toRadians(-150))
+                                .lineToConstantHeading(new Vector2d(-57, -55))
+                                .waitSeconds(3)
+                                .forward(10)
+                                .turn(toRadians(-30))
+                                .forward(20)
+                                .strafeRight(10)
+                                .back(20,
+                                        getVelocityConstraint(10, toRadians(180), 13)
+                                )
+                                .lineToConstantHeading(new Vector2d(-10, -58))
+                                .waitSeconds(3)
+                                .back(20)
+                                .lineToLinearHeading(new Pose2d(-60, -40, toRadians(0)))
+                                .build()
+                );
+
 
         mm
                 .setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)
@@ -108,6 +173,8 @@ public class SmolBot {
                 .setBackgroundAlpha(0.95f)
                 .addEntity(blueCycleRoute)
                 .addEntity(redCycleRoute)
+                .addEntity(blueDuckRoute)
+                .addEntity(redDuckRoute)
                 .start();
 
     }

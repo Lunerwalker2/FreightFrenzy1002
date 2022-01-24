@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.Bucket
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
 
-open class DropFreightInHubCommand(
+class DropFreightInHubCommand2(
         private val drive: SampleMecanumDrive, private val lift: Lift,
         private val scoringArm: ScoringArm, private val bucket: Bucket,
         private val intake: Intake, private val redSide: Boolean) : ParallelCommandGroup() {

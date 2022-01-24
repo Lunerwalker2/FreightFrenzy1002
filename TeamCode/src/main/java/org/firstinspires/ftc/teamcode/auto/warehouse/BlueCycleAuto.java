@@ -4,15 +4,20 @@ import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.auto.AutoBase;
 import org.firstinspires.ftc.teamcode.commands.RelocalizeCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.CrawlForwardUntilIntakeCommand;
+import org.firstinspires.ftc.teamcode.commands.autocommands.CrawlForwardUntilIntakeCommand2;
 import org.firstinspires.ftc.teamcode.commands.autocommands.DropFreightInHubCommand;
+import org.firstinspires.ftc.teamcode.commands.autocommands.DropFreightInHubCommand2;
 import org.firstinspires.ftc.teamcode.commands.autocommands.DropPreLoadFreightCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.RetractAndGoToWarehouseCommand;
+import org.firstinspires.ftc.teamcode.commands.autocommands.RetractAndGoToWarehouseCommand2;
 import org.firstinspires.ftc.teamcode.commands.autocommands.RetractFromPreLoadGoToWarehouseCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
@@ -35,9 +40,12 @@ public class BlueCycleAuto extends AutoBase {
 
     private DropPreLoadFreightCommand dropPreLoadFreightCommand;
     private RetractFromPreLoadGoToWarehouseCommand retractFromPreLoadGoToWarehouseCommand;
-    private CrawlForwardUntilIntakeCommand crawlForwardUntilIntakeCommand;
-    private DropFreightInHubCommand dropFreightInHubCommand;
-    private RetractAndGoToWarehouseCommand goToWarehouseCommand;
+    private CrawlForwardUntilIntakeCommand crawlForwardUntilIntakeCommand1;
+    private CrawlForwardUntilIntakeCommand2 crawlForwardUntilIntakeCommand2;
+    private DropFreightInHubCommand dropFreightInHubCommand1;
+    private DropFreightInHubCommand2 dropFreightInHubCommand2;
+    private RetractAndGoToWarehouseCommand goToWarehouseCommand1;
+    private RetractAndGoToWarehouseCommand2 goToWarehouseCommand2;
     private RelocalizeCommand relocalizeCommand;
 
     private TeamMarkerDetector teamMarkerDetector;
@@ -82,26 +90,37 @@ public class BlueCycleAuto extends AutoBase {
                 drive, lift, scoringArm, bucket, false, () -> hubLevel
         );
 
-        crawlForwardUntilIntakeCommand = new CrawlForwardUntilIntakeCommand(
-                drive, intake, bucket, false
-        );
-
-        dropFreightInHubCommand = new DropFreightInHubCommand(
+        dropFreightInHubCommand1 = new DropFreightInHubCommand(
                 drive, lift, scoringArm, bucket, intake, false
         );
 
-        goToWarehouseCommand = new RetractAndGoToWarehouseCommand(
+        dropFreightInHubCommand2 = new DropFreightInHubCommand2(
+                drive, lift, scoringArm, bucket, intake, false
+        );
+
+        goToWarehouseCommand1 = new RetractAndGoToWarehouseCommand(
+                drive, lift, scoringArm, bucket, false
+        );
+
+        goToWarehouseCommand2 = new RetractAndGoToWarehouseCommand2(
                 drive, lift, scoringArm, bucket, false
         );
 
         relocalizeCommand = new RelocalizeCommand(
                 (pose) -> {
-                    drive.setPoseEstimate(pose);
+                    drive.setPoseEstimate(
+                            new Pose2d(
+                                    pose.getX(),
+                                    pose.getY(),
+                                    pose.getHeading()
+                            )
+                    );
                 },
                 distanceSensors,
                 drive::getExternalHeading,
-                true
+                false
         );
+
 
         teamMarkerDetector.startStream();
         while (!isStarted()) {
@@ -116,22 +135,32 @@ public class BlueCycleAuto extends AutoBase {
         //Happens on start now
 
         schedule(new SequentialCommandGroup(
-                new InstantCommand(() -> {
-                    telemetry.addLine("The program started!");
-                    telemetry.update();
-                }),
-                dropPreLoadFreightCommand.andThen(waitFor(700)),
-                retractFromPreLoadGoToWarehouseCommand,
-                crawlForwardUntilIntakeCommand,
-//                relocalizeCommand,
-                dropFreightInHubCommand,
-                goToWarehouseCommand,
-                crawlForwardUntilIntakeCommand,
-                dropFreightInHubCommand = new DropFreightInHubCommand(
-                        drive, lift, scoringArm, bucket, intake, false
-                ),
-                goToWarehouseCommand
-        ));
+                        new InstantCommand(() -> {
+                            telemetry.addLine("The program started!");
+                            telemetry.update();
+                        }),
+                        dropPreLoadFreightCommand.andThen(waitFor(700)),
+                        retractFromPreLoadGoToWarehouseCommand,
+                        crawlForwardUntilIntakeCommand1 = new CrawlForwardUntilIntakeCommand(
+                                drive, intake, bucket, telemetry, false
+                        ),
+                        new ParallelDeadlineGroup(
+                                new WaitCommand(100),
+                                relocalizeCommand
+                        ),
+                        dropFreightInHubCommand1,
+                        goToWarehouseCommand1,
+                        crawlForwardUntilIntakeCommand2 = new CrawlForwardUntilIntakeCommand2(
+                                drive, intake, bucket, telemetry, false
+                        ),
+//                        new ParallelDeadlineGroup(
+//                                new WaitCommand(100),
+//                                relocalizeCommand
+//                        ),
+                        dropFreightInHubCommand2,
+                        goToWarehouseCommand2
+                )
+        );
 
 
     }

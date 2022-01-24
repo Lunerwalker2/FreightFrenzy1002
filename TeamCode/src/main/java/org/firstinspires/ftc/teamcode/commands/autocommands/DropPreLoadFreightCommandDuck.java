@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.vision.HubLevel;
 
 import java.util.function.Supplier;
 
-public class DropPreLoadFreightCommand extends ParallelCommandGroup {
+public class DropPreLoadFreightCommandDuck extends ParallelCommandGroup {
 
     private final SampleMecanumDrive drive;
     private final Lift lift;
@@ -31,13 +31,13 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
     private final boolean redSide;
 
     private static final Pose2d blueStartingPosition =
-            new Pose2d(8.34375, 65.375, toRadians(0.0));
+            new Pose2d(-31.96875, 65.375, toRadians(0.0));
 
     private static final Pose2d redStartingPosition =
-            new Pose2d(8.34375, -65.375, toRadians(180.0));
+            new Pose2d(-31.96875, -65.375, toRadians(180.0));
 
 
-    public DropPreLoadFreightCommand(
+    public DropPreLoadFreightCommandDuck(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm, Bucket bucket,
             Supplier<HubLevel> getHubLevel, boolean redSide) {
         this.drive = drive;
@@ -107,13 +107,13 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                 .lineTo(new Vector2d(-10, 46))
                 .build();
         redDriveToTopLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-10, -58))
+                .lineTo(new Vector2d(-5, -58))
                 .build();
         redDriveToMiddleLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-10, -50))
+                .lineTo(new Vector2d(-5, -50))
                 .build();
         redDriveToBottomLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-10, -46))
+                .lineTo(new Vector2d(-5, -46))
                 .build();
     }
 

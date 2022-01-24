@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.util.MB1242;
 
 public class DistanceSensors extends SubsystemBase {
 
-
     //forward sensor
     private final MB1242 forwardSensor;
     private final MB1242 backwardSensor;
@@ -18,20 +17,9 @@ public class DistanceSensors extends SubsystemBase {
     private final Rev2mDistanceSensor rightSensor;
     private final Rev2mDistanceSensor leftSensor;
 
-    //Timer object for the delay
-    private final ElapsedTime delayTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     //Debugging rate timer
     private final ElapsedTime cycleTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     private double cycleTime = 0.0;
-    //Delay in ms between pings
-    private final int readingDelayMs = 60;
-    //Whether we should be active
-    private boolean takingRangeReading = false;
-    //Last read range in cm
-    private double forwardRange = 0.0;
-    private double backwardRange = 0.0;
-    private double leftRange = 0.0;
-    private double rightRange = 0.0;
 
     public DistanceSensors(HardwareMap hardwareMap) {
 
@@ -41,74 +29,38 @@ public class DistanceSensors extends SubsystemBase {
         rightSensor = hardwareMap.get(Rev2mDistanceSensor.class, "rightSensor");
         leftSensor = hardwareMap.get(Rev2mDistanceSensor.class, "leftSensor");
 
-        //Set initial values, usage must be careful to account for the first read as it might be incorrect
-        forwardRange = forwardSensor.getDistance(DistanceUnit.CM);
-        backwardRange = backwardSensor.getDistance(DistanceUnit.CM);
-        leftRange = leftSensor.getDistance(DistanceUnit.CM);
-        rightRange = rightSensor.getDistance(DistanceUnit.CM);
-
         cycleTimer.reset();
-        delayTimer.reset();
 
     }
 
 
     @Override
     public void periodic() {
-        //Only take readings if we are supposed to, it's an unnecessary hardware call otherwise
-        if (takingRangeReading) {
-            //Check if its been longer than our delay to properly let the sensor perform
-            if (hasDelayExpired()) {
-                backwardRange = backwardSensor.getDistance(DistanceUnit.CM);
-                forwardRange = forwardSensor.getDistance(DistanceUnit.CM);
-                backwardSensor.ping();
-                forwardSensor.ping();
-                rightRange = rightSensor.getDistance(DistanceUnit.CM);
-                leftRange = leftSensor.getDistance(DistanceUnit.CM);
-                delayTimer.reset();
-            }
-        }
         cycleTime = cycleTimer.milliseconds();
         cycleTimer.reset();
     }
 
 
+    public void pingAll(){
+        forwardSensor.ping();
+        backwardSensor.ping();
+    }
+
     //Get the left sensor range in cm
     public double getLeftRange(DistanceUnit unit) {
-        return unit.fromCm(leftRange);
+        return unit.fromCm(leftSensor.getDistance(DistanceUnit.CM));
     }
 
     public double getRightRange(DistanceUnit unit) {
-        return unit.fromCm(rightRange);
+        return unit.fromCm(leftSensor.getDistance(DistanceUnit.CM));
     }
 
     public double getForwardRange(DistanceUnit unit) {
-        return unit.fromCm(forwardRange);
+        return unit.fromCm(leftSensor.getDistance(DistanceUnit.CM));
     }
 
     public double getBackwardRange(DistanceUnit unit) {
-        return unit.fromCm(backwardRange);
-    }
-
-
-    //Start taking range readings
-    public void startReading() {
-        takingRangeReading = true;
-    }
-
-    //Stop taking range readings
-    public void stopReading() {
-        takingRangeReading = false;
-    }
-
-    public boolean isTakingRangeReading() {
-        return takingRangeReading;
-    }
-
-
-    //Tells if the delay timer has expired or not
-    public boolean hasDelayExpired() {
-        return delayTimer.milliseconds() >= readingDelayMs;
+        return unit.fromCm(leftSensor.getDistance(DistanceUnit.CM));
     }
 
     /**

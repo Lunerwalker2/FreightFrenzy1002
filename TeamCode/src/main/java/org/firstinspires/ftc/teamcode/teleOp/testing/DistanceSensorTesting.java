@@ -58,7 +58,12 @@ public class DistanceSensorTesting extends CommandOpMode {
         relocalizeCommand = new RelocalizeCommand(
                 (pose) -> {
                     //More importantly, update the current pose estimate for live debugging
-                    drive.setPoseEstimate(pose);
+                    drive.setPoseEstimate(new Pose2d(
+                            pose.getX(),
+                            pose.getY(),
+                            pose.getHeading()
+                    ));
+                    distanceSensorPose = pose;
                 },
                 distanceSensors,
                 drive::getExternalHeading,
@@ -95,17 +100,20 @@ public class DistanceSensorTesting extends CommandOpMode {
         drive.update();
 
         Pose2d poseEstimate = drive.getPoseEstimate();
+        telemetry.addData("Is scheduled", relocalizeCommand.isScheduled());
         telemetry.addLine("Red side "+redSide);
         telemetry.addData("Robot X (in)", "%.3f", poseEstimate.getX());
         telemetry.addData("Robot Y (in)", "%.3f", poseEstimate.getY());
         telemetry.addData("Robot Heading (rad)/(deg)", "%.3f / %.3f",
                 poseEstimate.getHeading(), toDegrees(poseEstimate.getHeading()));
-        telemetry.addData("Distance Sensor Cycle Time (ms)", distanceSensors.getCycleTime());
-        telemetry.addData("Distance Sensor is taking", distanceSensors.isTakingRangeReading());
-        telemetry.addData("Forward Sensor MB1242 Range (in)", distanceSensors.getForwardRange(DistanceUnit.INCH));
-        telemetry.addData("Backward Sensor MB1242 Range (in)", distanceSensors.getBackwardRange(DistanceUnit.INCH));
-        telemetry.addData("Left Sensor Rev TOF Range (in)", distanceSensors.getLeftRange(DistanceUnit.INCH));
-        telemetry.addData("Right Sensor Rev TOF Range (in)", distanceSensors.getRightRange(DistanceUnit.INCH));
+        telemetry.addData("Reported X (in)", "%.3f", distanceSensorPose.getX());
+        telemetry.addData("Reported Y (in)", "%.3f", distanceSensorPose.getY());
+        telemetry.addData("Reported R (deg)", "%.3f", toDegrees(distanceSensorPose.getHeading()));
+        telemetry.addData("Distance Sensor Cycle Time (ms)", "%.3f",distanceSensors.getCycleTime());
+        telemetry.addData("Forward Sensor MB1242 Range (in)", "%.3f",distanceSensors.getForwardRange(DistanceUnit.INCH));
+        telemetry.addData("Backward Sensor MB1242 Range (in)","%.3f", distanceSensors.getBackwardRange(DistanceUnit.INCH));
+        telemetry.addData("Left Sensor Rev TOF Range (in)", "%.3f",distanceSensors.getLeftRange(DistanceUnit.INCH));
+        telemetry.addData("Right Sensor Rev TOF Range (in)", "%.3f",distanceSensors.getRightRange(DistanceUnit.INCH));
 
         telemetry.update();
 
