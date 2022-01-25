@@ -34,7 +34,7 @@ class TeamMarkerDetector(private val hardwareMap: HardwareMap, redSide: Boolean,
     private lateinit var camera: OpenCvCamera
 
     val teamMarkerPipeline: OpenCvPipeline =
-            if(duckSide) AprilTagHubLevelPipeline(redSide) else AprilTagHubLevelPipelineDuck(redSide)
+            if(duckSide) AprilTagHubLevelPipelineDuck(redSide) else AprilTagHubLevelPipeline(redSide)
 
 
 
