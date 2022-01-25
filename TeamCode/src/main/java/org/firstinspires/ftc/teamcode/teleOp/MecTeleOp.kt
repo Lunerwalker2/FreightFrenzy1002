@@ -65,6 +65,7 @@ class MecTeleOp : CommandOpMode() {
 //    private val makeReadyToLoadCommand by lazy { MakeReadyToLoadCommand(lift, scoringArm, bucket) }
     private val makeReadyToScoreCommand by lazy { MakeReadyToScoreCommand(lift, scoringArm)}
     private lateinit var manualLiftCommand: ManualLiftCommand
+    private lateinit var manualLiftResetBottomCommand: ManualLiftResetBottomCommand
 
     override fun initialize() {
 
@@ -143,6 +144,13 @@ class MecTeleOp : CommandOpMode() {
                         scoringArm::scoringPosition,
                         scoringArm::loadingPosition
                 )
+
+        manualLiftResetBottomCommand = ManualLiftResetBottomCommand(
+                lift, manipulator
+        )
+
+        manipulator.getGamepadButton(GamepadKeys.Button.Y)
+                .whenHeld(manualLiftResetBottomCommand)
 
         //Set up the default command for the lift, for more info see the class file of the command
         manualLiftCommand = ManualLiftCommand(

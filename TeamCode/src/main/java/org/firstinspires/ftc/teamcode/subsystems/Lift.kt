@@ -67,5 +67,13 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
         return liftMotor.currentPosition.toDouble()
     }
 
+    /**
+     * Resets the lift motor encoder to the current position
+     */
+    fun resetZeroPosition(){
+        liftMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        liftMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+    }
+
 
 }

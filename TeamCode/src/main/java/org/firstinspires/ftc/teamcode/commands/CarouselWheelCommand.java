@@ -28,7 +28,7 @@ public class CarouselWheelCommand extends CommandBase {
 
     @Override
     public void initialize(){
-        carouselWheel.setWheelPower(0.6);
+        carouselWheel.setWheelPower((forward) ? 0.6 : -0.6);
     }
 
     @Override

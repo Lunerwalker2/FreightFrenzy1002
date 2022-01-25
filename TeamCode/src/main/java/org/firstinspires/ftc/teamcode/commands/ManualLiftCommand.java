@@ -47,7 +47,6 @@ public class ManualLiftCommand extends CommandBase {
         }
         //Then check if the down is pressed
         else if (manipulator.getButton(GamepadKeys.Button.DPAD_DOWN) && !lift.atLowerLimit()) {
-            //Check if its at the bottom or if it's near the bottom but the arm and bucket are still out
             lift.setLiftPower(-0.4);
         }
         //Otherwise, do nothing
