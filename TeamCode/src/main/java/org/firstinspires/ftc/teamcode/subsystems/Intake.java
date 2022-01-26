@@ -20,7 +20,7 @@ public class Intake extends SubsystemBase {
 
 
     public enum State {
-        INTAKE(0.57, 0.34),
+        INTAKE(0.57, 0.38),
         OUTTAKE(-0.5, -0.5),
         STOP(0.0, 0.0);
 

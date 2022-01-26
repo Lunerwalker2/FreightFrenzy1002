@@ -27,7 +27,7 @@ open class DropFreightInHubCommand(
         return if(redSide){
             drive.trajectorySequenceBuilder(drive.poseEstimate)
                     .splineToConstantHeading(Vector2d(13.0, -64.5), Math.toRadians(180.0))
-                    .splineToConstantHeading(Vector2d(-5.0, -58.0), Math.toRadians(160.0))
+                    .splineToConstantHeading(Vector2d(0.0, -58.0), Math.toRadians(160.0))
                     .build()
         } else {
             drive.trajectorySequenceBuilder(drive.poseEstimate)
@@ -50,16 +50,16 @@ open class DropFreightInHubCommand(
                 ),
                 //Move lift out pretty much instantly
                 SequentialCommandGroup(
-                        WaitCommand(1300),
+                        WaitCommand(2000),
                         MoveLiftPositionCommand(lift, Lift.Positions.TOP, 5.0, 1800.0, 1700.0),
                 ),
                 //Try to wait for the lift to extend before moving the arm
                 SequentialCommandGroup(
-                        WaitCommand(2000),
+                        WaitCommand(2700),
                         InstantCommand(scoringArm::scoringPosition)
                 ),
                 SequentialCommandGroup(
-                        WaitCommand(3000),
+                        WaitCommand(3700),
                         InstantCommand(bucket::dump)
                 )
         )

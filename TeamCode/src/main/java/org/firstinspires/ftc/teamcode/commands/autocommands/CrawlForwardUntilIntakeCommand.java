@@ -44,10 +44,10 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
                                 //Set it to go slow, even tho its really clunky
                                 .setVelConstraint(
                                         SampleMecanumDrive.getVelocityConstraint(
-                                                10, toRadians(180), DriveConstants.TRACK_WIDTH
+                                                5, toRadians(180), DriveConstants.TRACK_WIDTH
                                         )
                                 )
-                                .forward(5)
+                                .forward(7)
                                 .build()
                 ),
                 new SequentialCommandGroup(

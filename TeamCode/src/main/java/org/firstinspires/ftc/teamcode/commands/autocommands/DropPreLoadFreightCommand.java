@@ -58,14 +58,14 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getPreLoadTrajectory()),
                 new SequentialCommandGroup(
-                        new WaitCommand(1000),
+                        new WaitCommand(1500),
                         new MoveLiftPositionCommand(lift,
                                 (hubLevel == HubLevel.TOP) ? Lift.Positions.TOP :
                                         (hubLevel == HubLevel.MIDDLE) ? Lift.Positions.MIDDLE :
                                                 Lift.Positions.BOTTOM, 5, 1800, 1700)
                 ),
                 new SequentialCommandGroup(
-                        new WaitCommand(1900),
+                        new WaitCommand(2400),
                         new InstantCommand(() -> {
                             switch (hubLevel) {
                                 case TOP:
@@ -81,7 +81,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                         })
                 ),
                 new SequentialCommandGroup(
-                        new WaitCommand(3000),
+                        new WaitCommand(3500),
                         new InstantCommand(bucket::dump)
                 )
         );
@@ -107,13 +107,13 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                 .lineTo(new Vector2d(-10, 46))
                 .build();
         redDriveToTopLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-5, -58))
+                .lineTo(new Vector2d(0, -58))
                 .build();
         redDriveToMiddleLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-5, -50))
+                .lineTo(new Vector2d(0, -50))
                 .build();
         redDriveToBottomLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-5, -46))
+                .lineTo(new Vector2d(0, -46))
                 .build();
     }
 
