@@ -29,7 +29,7 @@ class MoveLiftPositionCommand(private val lift: Lift,
     constructor(lift: Lift,
                 position: Lift.Positions,
                 tolerance: Double = 10.0,
-                ) : this(lift, position, tolerance, 2500.0, 2400.0)
+                ) : this(lift, position, tolerance, 2300.0, 2300.0)
 
 
     init {

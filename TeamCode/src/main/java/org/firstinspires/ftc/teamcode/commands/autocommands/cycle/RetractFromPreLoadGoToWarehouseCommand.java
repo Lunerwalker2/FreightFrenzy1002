@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commands.autocommands;
+package org.firstinspires.ftc.teamcode.commands.autocommands.cycle;
 
 import static java.lang.Math.toRadians;
 

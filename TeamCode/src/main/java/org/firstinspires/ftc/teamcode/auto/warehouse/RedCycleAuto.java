@@ -8,12 +8,11 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.auto.AutoBase;
-import org.firstinspires.ftc.teamcode.commands.RelocalizeCommand;
-import org.firstinspires.ftc.teamcode.commands.autocommands.CrawlForwardUntilIntakeCommand;
-import org.firstinspires.ftc.teamcode.commands.autocommands.DropFreightInHubCommand;
-import org.firstinspires.ftc.teamcode.commands.autocommands.DropPreLoadFreightCommand;
-import org.firstinspires.ftc.teamcode.commands.autocommands.RetractAndGoToWarehouseCommand;
-import org.firstinspires.ftc.teamcode.commands.autocommands.RetractFromPreLoadGoToWarehouseCommand;
+import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.CrawlForwardUntilIntakeCommand;
+import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.DropFreightInHubCommand;
+import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.DropPreLoadFreightCommand;
+import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.RetractAndGoToWarehouseCommand;
+import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.RetractFromPreLoadGoToWarehouseCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
 import org.firstinspires.ftc.teamcode.subsystems.DistanceSensors;

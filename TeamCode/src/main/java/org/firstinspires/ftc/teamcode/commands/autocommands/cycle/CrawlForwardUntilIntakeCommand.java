@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commands.autocommands;
+package org.firstinspires.ftc.teamcode.commands.autocommands.cycle;
 
 import static java.lang.Math.toRadians;
 
@@ -20,9 +20,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Bucket;
 import org.firstinspires.ftc.teamcode.subsystems.DistanceSensors;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
-public class CrawlForwardUntilIntakeCommand2 extends ParallelDeadlineGroup {
+public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
 
-    public CrawlForwardUntilIntakeCommand2(
+    public CrawlForwardUntilIntakeCommand(
             SampleMecanumDrive drive, Intake intake, Bucket bucket, Telemetry telemetry,
             boolean redSide) {
 
@@ -44,10 +44,10 @@ public class CrawlForwardUntilIntakeCommand2 extends ParallelDeadlineGroup {
                                 //Set it to go slow, even tho its really clunky
                                 .setVelConstraint(
                                         SampleMecanumDrive.getVelocityConstraint(
-                                                10, toRadians(180), DriveConstants.TRACK_WIDTH
+                                                5, toRadians(180), DriveConstants.TRACK_WIDTH
                                         )
                                 )
-                                .forward(5)
+                                .forward(7)
                                 .build()
                 ),
                 new SequentialCommandGroup(

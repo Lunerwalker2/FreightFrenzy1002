@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commands.autocommands
+package org.firstinspires.ftc.teamcode.commands.autocommands.cycle
 
 import com.acmerobotics.roadrunner.geometry.Vector2d
 import org.firstinspires.ftc.teamcode.subsystems.Lift
@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.Bucket
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
 
-class DropFreightInHubCommand2(
+open class DropFreightInHubCommand(
         private val drive: SampleMecanumDrive, private val lift: Lift,
         private val scoringArm: ScoringArm, private val bucket: Bucket,
         private val intake: Intake, private val redSide: Boolean) : ParallelCommandGroup() {
