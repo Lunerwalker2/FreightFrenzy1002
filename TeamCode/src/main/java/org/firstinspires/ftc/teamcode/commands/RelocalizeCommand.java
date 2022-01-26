@@ -31,9 +31,9 @@ public class RelocalizeCommand extends CommandBase {
      * from each sensor to the wall they are pointing at would be the following
      * in inches.
      *
-     * //TODO: Find these
+     *
      */
-    private static final double FORWARD_SENSOR_BASE_DISTANCE_TO_WALL = 63.125; //TODO: fix
+    private static final double FORWARD_SENSOR_BASE_DISTANCE_TO_WALL = 63.125;
     private static final double BACKWARD_SENSOR_BASE_DISTANCE_TO_WALL = 64.75;
     private static final double LEFT_SENSOR_BASE_DISTANCE_TO_WALL = 64.75;
     private static final double RIGHT_SENSOR_BASE_DISTANCE_TO_WALL = 66.0625;
@@ -46,7 +46,7 @@ public class RelocalizeCommand extends CommandBase {
      * y is forward, x is left/right
      * Inches
      */
-    private static final Vector2d forwardSensorPosition = new Vector2d(-3.5, 5.53125); //TODO: fix
+    private static final Vector2d forwardSensorPosition = new Vector2d(-3.5, 5.53125);
     private static final Vector2d backwardSensorPosition = new Vector2d(-3.5, -8.59375);
     private static final Vector2d leftSensorPosition = new Vector2d(-7.1875, -1.15625);
     private static final Vector2d rightSensorPosition = new Vector2d(4, -4.78125);
@@ -96,24 +96,22 @@ public class RelocalizeCommand extends CommandBase {
             //Find our current heading once so we don't have to keep reading it
             double heading = headingSupplier.getAsDouble();
 
+
+            double forward = (!redSide) ?
+                    distanceSensors.getForwardRange(DistanceUnit.INCH) :
+                    distanceSensors.getBackwardRange(DistanceUnit.INCH);
+
+            double side = (!redSide) ?
+                    distanceSensors.getLeftRange(DistanceUnit.INCH) :
+                    distanceSensors.getRightRange(DistanceUnit.INCH);
+
             //test for possible invalid values
-            if (!isValidReadings(
-                    (!redSide) ?
-                            distanceSensors.getForwardRange(DistanceUnit.INCH) :
-                            distanceSensors.getBackwardRange(DistanceUnit.INCH),
-                    (!redSide) ?
-                            distanceSensors.getLeftRange(DistanceUnit.INCH) :
-                            distanceSensors.getRightRange(DistanceUnit.INCH))
-            ) return;
+            if (!isValidReadings(forward, side)) return;
 
             //Find the rotated distances
             double[] rotatedDistances = findRotatedDistance(
-                    (!redSide) ?
-                            distanceSensors.getForwardRange(DistanceUnit.INCH) :
-                            distanceSensors.getBackwardRange(DistanceUnit.INCH),
-                    (!redSide) ?
-                            distanceSensors.getLeftRange(DistanceUnit.INCH) :
-                            distanceSensors.getRightRange(DistanceUnit.INCH),
+                    forward,
+                    side,
                     heading,
                     redSide
             );
@@ -153,7 +151,6 @@ public class RelocalizeCommand extends CommandBase {
     private static boolean isValidReadings(double front, double side) {
         return !(front < 6 ||
                 front > 96 ||
-                side < 3 ||
                 side > 100);
     }
 

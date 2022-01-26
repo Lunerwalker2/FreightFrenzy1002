@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 
 @Disabled
 @Autonomous
-class ParkRed() : AutoBase()  {
+class SimplePark() : AutoBase() {
 
     private lateinit var drive: SampleMecanumDrive
 
@@ -33,9 +33,9 @@ class ParkRed() : AutoBase()  {
                 SequentialCommandGroup(
                         WaitCommand(400),
                         FollowTrajectorySequenceCommand(drive,
-                        drive.trajectorySequenceBuilder(startPose)
-                                .forward(30.0)
-                                .build()
+                                drive.trajectorySequenceBuilder(startPose)
+                                        .forward(30.0)
+                                        .build()
                         )
                 )
         )

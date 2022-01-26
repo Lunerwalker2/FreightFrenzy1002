@@ -109,11 +109,13 @@ public class RedCycleAuto extends AutoBase {
                 new CrawlForwardUntilIntakeCommand(
                         drive, intake, bucket, telemetry, true
                 ),
+                //relocalize
                 dropFreightInHubCommand1,
                 goToWarehouseCommand1,
                 new CrawlForwardUntilIntakeCommand(
                         drive, intake, bucket, telemetry, true
                 ),
+                //relocalize
                 new DropFreightInHubCommand(
                         drive, lift, scoringArm, bucket, intake, true
                 ),

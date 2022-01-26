@@ -40,12 +40,8 @@ public class BlueCycleAuto extends AutoBase {
 
     private DropPreLoadFreightCommand dropPreLoadFreightCommand;
     private RetractFromPreLoadGoToWarehouseCommand retractFromPreLoadGoToWarehouseCommand;
-    private CrawlForwardUntilIntakeCommand crawlForwardUntilIntakeCommand1;
-    private CrawlForwardUntilIntakeCommand2 crawlForwardUntilIntakeCommand2;
     private DropFreightInHubCommand dropFreightInHubCommand1;
-    private DropFreightInHubCommand2 dropFreightInHubCommand2;
     private RetractAndGoToWarehouseCommand goToWarehouseCommand1;
-    private RetractAndGoToWarehouseCommand2 goToWarehouseCommand2;
     private RelocalizeCommand relocalizeCommand;
 
     private TeamMarkerDetector teamMarkerDetector;
@@ -94,32 +90,10 @@ public class BlueCycleAuto extends AutoBase {
                 drive, lift, scoringArm, bucket, intake, false
         );
 
-        dropFreightInHubCommand2 = new DropFreightInHubCommand2(
-                drive, lift, scoringArm, bucket, intake, false
-        );
-
         goToWarehouseCommand1 = new RetractAndGoToWarehouseCommand(
                 drive, lift, scoringArm, bucket, false
         );
 
-        goToWarehouseCommand2 = new RetractAndGoToWarehouseCommand2(
-                drive, lift, scoringArm, bucket, false
-        );
-
-        relocalizeCommand = new RelocalizeCommand(
-                (pose) -> {
-                    drive.setPoseEstimate(
-                            new Pose2d(
-                                    pose.getX(),
-                                    pose.getY(),
-                                    pose.getHeading()
-                            )
-                    );
-                },
-                distanceSensors,
-                drive::getExternalHeading,
-                false
-        );
 
 
         teamMarkerDetector.startStream();
@@ -141,24 +115,38 @@ public class BlueCycleAuto extends AutoBase {
                         }),
                         dropPreLoadFreightCommand.andThen(waitFor(700)),
                         retractFromPreLoadGoToWarehouseCommand,
-                        crawlForwardUntilIntakeCommand1 = new CrawlForwardUntilIntakeCommand(
+                        new CrawlForwardUntilIntakeCommand(
                                 drive, intake, bucket, telemetry, false
                         ),
                         new ParallelDeadlineGroup(
                                 new WaitCommand(100),
-                                relocalizeCommand
+                                new RelocalizeCommand(
+                                        drive::setPoseEstimate,
+                                        distanceSensors,
+                                        drive::getExternalHeading,
+                                        false
+                                )
                         ),
                         dropFreightInHubCommand1,
                         goToWarehouseCommand1,
-                        crawlForwardUntilIntakeCommand2 = new CrawlForwardUntilIntakeCommand2(
+                        new CrawlForwardUntilIntakeCommand(
                                 drive, intake, bucket, telemetry, false
                         ),
                         new ParallelDeadlineGroup(
                                 new WaitCommand(100),
-                                relocalizeCommand
+                                new RelocalizeCommand(
+                                        drive::setPoseEstimate,
+                                        distanceSensors,
+                                        drive::getExternalHeading,
+                                        false
+                                )
                         ),
-                        dropFreightInHubCommand2,
-                        goToWarehouseCommand2
+                        new DropFreightInHubCommand(
+                                drive, lift, scoringArm, bucket, intake, false
+                        ),
+                        new RetractAndGoToWarehouseCommand(
+                                drive, lift, scoringArm, bucket, false
+                        )
                 )
         );
 
