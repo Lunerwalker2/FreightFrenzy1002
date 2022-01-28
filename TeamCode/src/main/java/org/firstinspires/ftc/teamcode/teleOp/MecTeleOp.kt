@@ -107,8 +107,8 @@ class MecTeleOp : CommandOpMode() {
         //Carousel wheel
         Trigger { gamepad2.right_trigger > 0.2 }
                 .whileActiveContinuous(Runnable {
-                    if (gamepad2.right_trigger < 0.9) carouselWheel.setWheelPower(0.5)
-                    else carouselWheel.setWheelPower(0.75)
+                    if (gamepad2.right_trigger < 0.9) carouselWheel.setWheelPower(0.52)
+                    else carouselWheel.setWheelPower(0.8)
                 })
                 .whenInactive(Runnable { carouselWheel.setWheelPower(0.0) })
 
