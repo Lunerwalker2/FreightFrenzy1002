@@ -13,7 +13,7 @@ class MoveLiftPositionCommand(private val lift: Lift,
                               maxAccel: Double
 ) : ProfiledPIDCommand(
         ProfiledPIDController(
-                0.05, 0.0, 0.0,
+                0.04, 0.0, 0.0,
                 TrapezoidProfile.Constraints(
                         //TODO: Find this empirically
                         maxVel,

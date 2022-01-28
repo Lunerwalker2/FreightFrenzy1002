@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleOp
 
 import android.graphics.Color
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.arcrobotics.ftclib.command.CommandBase
 import com.arcrobotics.ftclib.command.CommandOpMode
@@ -15,6 +17,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.PIDFCoefficients
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
+import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
@@ -59,11 +62,13 @@ class MecTeleOp : CommandOpMode() {
     private lateinit var imu: BNO055IMU
     var offset = 0.0
     var prevSlowState = false
+
     //Drive power multiplier for slow mode
     private var powerMultiplier = 0.9
     private val makeArmReadyToLoadCommand by lazy { MakeArmReadyToLoadCommand(lift, scoringArm, bucket) }
-//    private val makeReadyToLoadCommand by lazy { MakeReadyToLoadCommand(lift, scoringArm, bucket) }
-    private val makeReadyToScoreCommand by lazy { MakeReadyToScoreCommand(lift, scoringArm)}
+
+    //    private val makeReadyToLoadCommand by lazy { MakeReadyToLoadCommand(lift, scoringArm, bucket) }
+    private val makeReadyToScoreCommand by lazy { MakeReadyToScoreCommand(lift, scoringArm) }
     private lateinit var manualLiftCommand: ManualLiftCommand
     private lateinit var manualLiftResetBottomCommand: ManualLiftResetBottomCommand
 
@@ -105,11 +110,11 @@ class MecTeleOp : CommandOpMode() {
                     if (gamepad2.right_trigger < 0.9) carouselWheel.setWheelPower(0.5)
                     else carouselWheel.setWheelPower(0.75)
                 })
-                .whenInactive(Runnable { carouselWheel.setWheelPower(0.0)})
+                .whenInactive(Runnable { carouselWheel.setWheelPower(0.0) })
 
         manipulator.getGamepadButton(GamepadKeys.Button.B)
                 .toggleWhenPressed(Runnable { carouselWheel.setDirection(false) },
-                Runnable { carouselWheel.setDirection(true) })
+                        Runnable { carouselWheel.setDirection(true) })
 
 
         driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
@@ -135,13 +140,16 @@ class MecTeleOp : CommandOpMode() {
 
         manipulator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .toggleWhenPressed(
-                        bucket::dump,
+                        bucket::dump    ,
                         bucket::load
                 )
 
         manipulator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .toggleWhenPressed(
-                        scoringArm::scoringPosition,
+                        Runnable {
+                            if (gamepad2.left_trigger < 0.4) scoringArm::scoringPosition
+                            else scoringArm.position = 0.5 //shared hub
+                        },
                         scoringArm::loadingPosition
                 )
 
@@ -161,11 +169,11 @@ class MecTeleOp : CommandOpMode() {
         lift.defaultCommand = PerpetualCommand(manualLiftCommand)
 
         //If these are scheduled, then the lift command will be interrupted momentarily
-        Trigger {-gamepad2.left_stick_y > 0.5}
+        Trigger { -gamepad2.left_stick_y > 0.5 }
                 .whenActive(makeReadyToScoreCommand)
                 .cancelWhenActive(makeArmReadyToLoadCommand)
 
-        Trigger {-gamepad2.left_stick_y < -0.5}
+        Trigger { -gamepad2.left_stick_y < -0.5 }
                 .whenActive(makeArmReadyToLoadCommand)
                 .cancelWhenActive(makeReadyToScoreCommand)
 
@@ -214,8 +222,7 @@ class MecTeleOp : CommandOpMode() {
         //Set the slow mode one if either bumper is pressed
         if (gamepad1.right_bumper) {
             powerMultiplier = 0.3
-        }
-        else {
+        } else {
             powerMultiplier = 0.9
         }
 

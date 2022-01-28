@@ -34,7 +34,7 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
 //                        return bucket.isFreightDetected();
 //                    }
 //                },
-                new WaitCommand(5000),
+                new WaitCommand(3000),
                 new FollowTrajectorySequenceCommand(drive,
                         drive.trajectorySequenceBuilder(
                                 new Pose2d(45, (redSide) ? -64 : 64,
@@ -47,7 +47,8 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
                                                 5, toRadians(180), DriveConstants.TRACK_WIDTH
                                         )
                                 )
-                                .forward(7)
+                                .back(5)
+                                .forward(5)
                                 .build()
                 ),
                 new SequentialCommandGroup(

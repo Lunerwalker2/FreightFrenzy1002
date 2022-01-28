@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.control.PIDCoefficients
 import com.acmerobotics.roadrunner.control.PIDFController
 import org.firstinspires.ftc.robotcore.external.Telemetry
@@ -46,6 +48,9 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
             }
         }
         telemetry?.addData("Lift Position", liftMotor.currentPosition)
+        val t = TelemetryPacket()
+        t.put("Lift Current Position", getLiftRawPosition())
+        FtcDashboard.getInstance().sendTelemetryPacket(t)
     }
 
     fun setLiftPower(power: Double) = run { liftMotor.power = power }

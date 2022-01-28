@@ -38,11 +38,11 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
     private static final Pose2d blueStartingPositionBottom =
             new Pose2d(-10, 46, toRadians(0));
     private static final Pose2d redStartingPositionTop =
-            new Pose2d(0, -58, toRadians(180));
+            new Pose2d(-12, -58, toRadians(180));
     private static final Pose2d redStartingPositionMiddle =
-            new Pose2d(0, -50, toRadians(180));
+            new Pose2d(-12, -50, toRadians(180));
     private static final Pose2d redStartingPositionBottom =
-            new Pose2d(0, -46, toRadians(180));
+            new Pose2d(-12, -46, toRadians(180));
 
 
 

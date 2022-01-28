@@ -107,13 +107,13 @@ public class DropPreLoadFreightCommandDuck extends ParallelCommandGroup {
                 .lineTo(new Vector2d(-10, 46))
                 .build();
         redDriveToTopLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(0, -58))
+                .lineTo(new Vector2d(-10, -58))
                 .build();
         redDriveToMiddleLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(0, -50))
+                .lineTo(new Vector2d(-10, -50))
                 .build();
         redDriveToBottomLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(0, -46))
+                .lineTo(new Vector2d(-10, -46))
                 .build();
     }
 

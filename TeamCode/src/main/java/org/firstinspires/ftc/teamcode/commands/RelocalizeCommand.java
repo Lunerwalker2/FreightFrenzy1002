@@ -102,8 +102,8 @@ public class RelocalizeCommand extends CommandBase {
                     distanceSensors.getBackwardRange(DistanceUnit.INCH);
 
             double side = (!redSide) ?
-                    distanceSensors.getLeftRange(DistanceUnit.INCH) :
-                    distanceSensors.getRightRange(DistanceUnit.INCH);
+                    distanceSensors.getRightRange(DistanceUnit.INCH) :
+                    distanceSensors.getLeftRange(DistanceUnit.INCH);
 
             //test for possible invalid values
             if (!isValidReadings(forward, side)) return;
@@ -124,8 +124,8 @@ public class RelocalizeCommand extends CommandBase {
 
             //Find our side distance (y in field coordinates)
             double y = (!redSide) ?
-                    (LEFT_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[1]) :
-                    (rotatedDistances[1] - RIGHT_SENSOR_BASE_DISTANCE_TO_WALL);
+                    (RIGHT_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[1]) :
+                    (rotatedDistances[1] - LEFT_SENSOR_BASE_DISTANCE_TO_WALL);
 
             //Update the user with the new position
             poseConsumer.accept(new Pose2d(x, y, heading));
@@ -184,10 +184,10 @@ public class RelocalizeCommand extends CommandBase {
                 );
 
         //Do the same for the side sensor
-        Vector2d rotatedSideSensorPosition = (!redSide) ?
-                leftSensorPosition.rotated(headingRad) :
-                rightSensorPosition.rotated(AngleUnit.RADIANS.normalize(
-                        headingRad + PI));
+        Vector2d rotatedSideSensorPosition = (redSide) ?
+                leftSensorPosition.rotated(AngleUnit.RADIANS.normalize(
+                        headingRad + PI)) :
+                rightSensorPosition.rotated(headingRad);
 
         /*
         Now find the theoretical distances from the walls, assuming no offset from one of the axes.

@@ -4,10 +4,13 @@ import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.auto.AutoBase;
+import org.firstinspires.ftc.teamcode.commands.RelocalizeCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.CrawlForwardUntilIntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.DropFreightInHubCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.DropPreLoadFreightCommand;
@@ -63,6 +66,7 @@ public class RedCycleAuto extends AutoBase {
         lift = new Lift(hardwareMap, telemetry);
         scoringArm = new ScoringArm(hardwareMap);
         bucket = new Bucket(hardwareMap);
+        distanceSensors = new DistanceSensors(hardwareMap);
         teamMarkerDetector = new TeamMarkerDetector(hardwareMap, true, false);
 
         teamMarkerDetector.init();
@@ -108,13 +112,29 @@ public class RedCycleAuto extends AutoBase {
                 new CrawlForwardUntilIntakeCommand(
                         drive, intake, bucket, telemetry, true
                 ),
-                //relocalize
+                new ParallelDeadlineGroup(
+                        new WaitCommand(100),
+                        new RelocalizeCommand(
+                                drive::setPoseEstimate,
+                                distanceSensors,
+                                drive::getExternalHeading,
+                                false
+                        )
+                ),
                 dropFreightInHubCommand1,
                 goToWarehouseCommand1,
                 new CrawlForwardUntilIntakeCommand(
                         drive, intake, bucket, telemetry, true
                 ),
-                //relocalize
+                new ParallelDeadlineGroup(
+                        new WaitCommand(100),
+                        new RelocalizeCommand(
+                                drive::setPoseEstimate,
+                                distanceSensors,
+                                drive::getExternalHeading,
+                                false
+                        )
+                ),
                 new DropFreightInHubCommand(
                         drive, lift, scoringArm, bucket, intake, true
                 ),

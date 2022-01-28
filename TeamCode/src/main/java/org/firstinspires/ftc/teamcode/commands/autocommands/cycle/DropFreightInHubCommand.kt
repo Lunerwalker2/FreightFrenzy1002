@@ -27,7 +27,7 @@ open class DropFreightInHubCommand(
         return if(redSide){
             drive.trajectorySequenceBuilder(drive.poseEstimate)
                     .splineToConstantHeading(Vector2d(13.0, -64.5), Math.toRadians(180.0))
-                    .splineToConstantHeading(Vector2d(0.0, -58.0), Math.toRadians(160.0))
+                    .splineToConstantHeading(Vector2d(-12.0, -58.0), Math.toRadians(160.0))
                     .build()
         } else {
             drive.trajectorySequenceBuilder(drive.poseEstimate)
@@ -59,7 +59,7 @@ open class DropFreightInHubCommand(
                         InstantCommand(scoringArm::scoringPosition)
                 ),
                 SequentialCommandGroup(
-                        WaitCommand(3700),
+                        WaitCommand(4000),
                         InstantCommand(bucket::dump)
                 )
         )

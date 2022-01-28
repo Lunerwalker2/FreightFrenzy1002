@@ -33,6 +33,7 @@ public class DistanceSensors extends SubsystemBase {
                 new AsyncRev2MSensor(hardwareMap.get(Rev2mDistanceSensor.class, "leftSensor"));
 
         rightSensor.setMeasurementIntervalMs(60);
+        leftSensor.setMeasurementIntervalMs(60);
         cycleTimer.reset();
 
     }
@@ -56,15 +57,15 @@ public class DistanceSensors extends SubsystemBase {
     }
 
     public double getRightRange(DistanceUnit unit) {
-        return unit.fromCm(leftSensor.getDistance(DistanceUnit.CM));
+        return unit.fromCm(rightSensor.getDistance(DistanceUnit.CM));
     }
 
     public double getForwardRange(DistanceUnit unit) {
-        return unit.fromCm(leftSensor.getDistance(DistanceUnit.CM));
+        return unit.fromCm(forwardSensor.getDistance(DistanceUnit.CM));
     }
 
     public double getBackwardRange(DistanceUnit unit) {
-        return unit.fromCm(leftSensor.getDistance(DistanceUnit.CM));
+        return unit.fromCm(backwardSensor.getDistance(DistanceUnit.CM));
     }
 
     /**
