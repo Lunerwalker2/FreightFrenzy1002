@@ -147,8 +147,8 @@ class MecTeleOp : CommandOpMode() {
         manipulator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .toggleWhenPressed(
                         Runnable {
-                            if (gamepad2.left_trigger < 0.4) scoringArm::scoringPosition
-                            else scoringArm.position = 0.5 //shared hub
+                            if (gamepad2.left_trigger < 0.4) scoringArm.scoringPosition()
+                            else scoringArm.position = 0.4 //shared hub
                         },
                         scoringArm::loadingPosition
                 )
