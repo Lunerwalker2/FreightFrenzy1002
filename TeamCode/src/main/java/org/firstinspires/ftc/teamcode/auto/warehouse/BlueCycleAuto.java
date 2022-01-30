@@ -91,8 +91,6 @@ public class BlueCycleAuto extends AutoBase {
                 drive, lift, scoringArm, bucket, false
         );
 
-
-
         teamMarkerDetector.startStream();
         while (!isStarted()) {
             hubLevel = HubLevel.valueOf(teamMarkerDetector.getHubLevel().toString());
@@ -110,6 +108,7 @@ public class BlueCycleAuto extends AutoBase {
                             telemetry.addLine("The program started!");
                             telemetry.update();
                         }),
+                        new WaitCommand(8000),
                         dropPreLoadFreightCommand.andThen(waitFor(700)),
                         retractFromPreLoadGoToWarehouseCommand,
                         new CrawlForwardUntilIntakeCommand(
@@ -125,25 +124,25 @@ public class BlueCycleAuto extends AutoBase {
                                 )
                         ),
                         dropFreightInHubCommand1,
-                        goToWarehouseCommand1,
-                        new CrawlForwardUntilIntakeCommand(
-                                drive, intake, bucket, telemetry, false
-                        ),
-                        new ParallelDeadlineGroup(
-                                new WaitCommand(100),
-                                new RelocalizeCommand(
-                                        drive::setPoseEstimate,
-                                        distanceSensors,
-                                        drive::getExternalHeading,
-                                        false
-                                )
-                        ),
-                        new DropFreightInHubCommand(
-                                drive, lift, scoringArm, bucket, intake, false
-                        ),
-                        new RetractAndGoToWarehouseCommand(
-                                drive, lift, scoringArm, bucket, false
-                        )
+                        goToWarehouseCommand1
+//                        new CrawlForwardUntilIntakeCommand(
+//                                drive, intake, bucket, telemetry, false
+//                        ),
+//                        new ParallelDeadlineGroup(
+//                                new WaitCommand(100),
+//                                new RelocalizeCommand(
+//                                        drive::setPoseEstimate,
+//                                        distanceSensors,
+//                                        drive::getExternalHeading,
+//                                        false
+//                                )
+//                        ),
+//                        new DropFreightInHubCommand(
+//                                drive, lift, scoringArm, bucket, intake, false
+//                        ),
+//                        new RetractAndGoToWarehouseCommand(
+//                                drive, lift, scoringArm, bucket, false
+//                        )
                 )
         );
 

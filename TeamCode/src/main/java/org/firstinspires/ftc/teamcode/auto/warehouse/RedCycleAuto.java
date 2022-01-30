@@ -102,47 +102,50 @@ public class RedCycleAuto extends AutoBase {
 
         //Happens on start now
 
+
+
         schedule(new SequentialCommandGroup(
-                new InstantCommand(() -> {
-                    telemetry.addLine("The program started!");
-                    telemetry.update();
-                }),
-                dropPreLoadFreightCommand.andThen(waitFor(700)),
-                retractFromPreLoadGoToWarehouseCommand,
-                new CrawlForwardUntilIntakeCommand(
-                        drive, intake, bucket, telemetry, true
-                ),
-                new ParallelDeadlineGroup(
-                        new WaitCommand(100),
-                        new RelocalizeCommand(
-                                drive::setPoseEstimate,
-                                distanceSensors,
-                                drive::getExternalHeading,
-                                false
-                        )
-                ),
-                dropFreightInHubCommand1,
-                goToWarehouseCommand1,
-                new CrawlForwardUntilIntakeCommand(
-                        drive, intake, bucket, telemetry, true
-                ),
-                new ParallelDeadlineGroup(
-                        new WaitCommand(100),
-                        new RelocalizeCommand(
-                                drive::setPoseEstimate,
-                                distanceSensors,
-                                drive::getExternalHeading,
-                                false
-                        )
-                ),
-                new DropFreightInHubCommand(
-                        drive, lift, scoringArm, bucket, intake, true
-                ),
-                new RetractAndGoToWarehouseCommand(
-                        drive, lift, scoringArm, bucket, true
+                        new InstantCommand(() -> {
+                            telemetry.addLine("The program started!");
+                            telemetry.update();
+                        }),
+                        new WaitCommand(11000),
+                        dropPreLoadFreightCommand.andThen(waitFor(700)),
+                        retractFromPreLoadGoToWarehouseCommand,
+                        new CrawlForwardUntilIntakeCommand(
+                                drive, intake, bucket, telemetry, true
+                        ),
+//                        new ParallelDeadlineGroup(
+//                                new WaitCommand(100),
+//                                new RelocalizeCommand(
+//                                        drive::setPoseEstimate,
+//                                        distanceSensors,
+//                                        drive::getExternalHeading,
+//                                        true
+//                                )
+//                        ),
+                        dropFreightInHubCommand1,
+                        goToWarehouseCommand1
+//                        new CrawlForwardUntilIntakeCommand(
+//                                drive, intake, bucket, telemetry, true
+//                        ),
+//                        new ParallelDeadlineGroup(
+//                                new WaitCommand(100),
+//                                new RelocalizeCommand(
+//                                        drive::setPoseEstimate,
+//                                        distanceSensors,
+//                                        drive::getExternalHeading,
+//                                        false
+//                                )
+//                        ),
+//                        new DropFreightInHubCommand(
+//                                drive, lift, scoringArm, bucket, intake, true
+//                        ),
+//                        new RetractAndGoToWarehouseCommand(
+//                                drive, lift, scoringArm, bucket, true
+//                        )
                 )
-                //TODO: DO NOT IMPLEMENT DISTANCE SENSORS UNTIL WIRE IS FIXED
-        ));
+        );
 
 
     }
