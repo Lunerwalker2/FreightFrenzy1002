@@ -135,7 +135,7 @@ public class RedCycleAuto extends AutoBase {
 //                                        drive::setPoseEstimate,
 //                                        distanceSensors,
 //                                        drive::getExternalHeading,
-//                                        false
+//                                        true
 //                                )
 //                        ),
 //                        new DropFreightInHubCommand(
