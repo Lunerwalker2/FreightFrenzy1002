@@ -92,7 +92,7 @@ public class RelocalizeCommand extends CommandBase {
     @Override
     public void execute() {
 
-        if(timer.milliseconds() > 70){
+        if (timer.milliseconds() > 80) {
             //Find our current heading once so we don't have to keep reading it
             double heading = headingSupplier.getAsDouble();
 
@@ -106,7 +106,7 @@ public class RelocalizeCommand extends CommandBase {
                     distanceSensors.getLeftRange(DistanceUnit.INCH);
 
             //test for possible invalid values
-            if (!isValidReadings(forward, side)) return;
+//            if (!isValidReadings(forward, side)) return;
 
             //Find the rotated distances
             double[] rotatedDistances = findRotatedDistance(
@@ -176,11 +176,20 @@ public class RelocalizeCommand extends CommandBase {
 
         //Rotate the vector with the sensor's position by the current heading
         //TODO: find exact error, the front sensor is slightly turned in its mount
+
+        /*
+        Red is the back of the robot facing the front wall, and the left side facing the side wall
+        Blue is the front of the robot facing the front wall, and the right side facing the side wall
+
+        For the red side, we need to rotate our heading by 180 since the robot is backwards.
+        For the blue side, we don't, but the sensor is placed a little oddly in its case
+         */
         Vector2d rotatedForwardSensorPosition = (redSide) ?
-                forwardSensorPosition.rotated(AngleUnit.RADIANS.normalize(
-                        headingRad - toRadians(4))) :
                 backwardSensorPosition.rotated(AngleUnit.RADIANS.normalize(
-                        headingRad + PI)
+                        headingRad + PI)) :
+                forwardSensorPosition.rotated(AngleUnit.RADIANS.normalize(
+                        headingRad - toRadians(4))
+
                 );
 
         //Do the same for the side sensor

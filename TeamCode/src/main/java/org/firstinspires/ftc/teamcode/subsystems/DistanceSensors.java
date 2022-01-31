@@ -34,6 +34,7 @@ public class DistanceSensors extends SubsystemBase {
 
         rightSensor.setMeasurementIntervalMs(60);
         leftSensor.setMeasurementIntervalMs(60);
+        pingAll();
         cycleTimer.reset();
 
     }
