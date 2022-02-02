@@ -119,7 +119,7 @@ class MecTeleOp : CommandOpMode() {
 
         driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(Runnable {
-                    if (gamepad1.x) intake.outtake()
+                    if (gamepad1.x) intake.outtakeBoth()
                     else intake.intake()
                 })
                 .whenInactive(intake::stop)
