@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Bucket extends SubsystemBase {
 
     private final Servo bucketServo;
+    private final RevColorSensorV3 intakeSensor;
     private final Telemetry telemetry;
     private boolean isDown = false;
 
@@ -22,6 +23,7 @@ public class Bucket extends SubsystemBase {
 
     public Bucket(HardwareMap hardwareMap, Telemetry telemetry){
         bucketServo = hardwareMap.get(Servo.class, "bucketServo");
+        intakeSensor = hardwareMap.get(RevColorSensorV3.class, "intakeSensor");
         load();
         this.telemetry = telemetry;
     }
@@ -31,6 +33,11 @@ public class Bucket extends SubsystemBase {
         if(telemetry != null){
             telemetry.addData("Bucket Down", isDown);
         }
+    }
+
+    //TODO: Find correct value
+    public boolean freightDetected(){
+        return intakeSensor.getRawLightDetected() > 800;
     }
 
     /**

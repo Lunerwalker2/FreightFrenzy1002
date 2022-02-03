@@ -61,9 +61,9 @@ public class SmolBot {
                 .setColorScheme(new ColorSchemeBlueDark())
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(blueStartingPosition)
-                                .splineToConstantHeading(new Vector2d(8, 50), toRadians(-90))
-                                .splineToSplineHeading(new Pose2d(8, 45, toRadians(-30)), toRadians(-90))
-//                                .lineToLinearHeading(new Pose2d(10, 58, toRadians(-30)))
+//                                .splineToConstantHeading(new Vector2d(8, 50), toRadians(-90))
+//                                .splineToSplineHeading(new Pose2d(8, 45, toRadians(-30)), toRadians(-90))
+                                .lineToLinearHeading(new Pose2d(10, 58, toRadians(-30)))
                                 .waitSeconds(0.5)
                                 .addDisplacementMarker(() -> System.out.println("Lift out"))
                                 .waitSeconds(0.5)
