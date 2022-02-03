@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DistanceSensors;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.ScoringArm;
+import org.firstinspires.ftc.teamcode.util.Extensions;
 import org.firstinspires.ftc.teamcode.vision.HubLevel;
 import org.firstinspires.ftc.teamcode.vision.TeamMarkerDetector;
 
@@ -148,6 +149,12 @@ public class BlueCycleAuto extends AutoBase {
         );
 
 
+    }
+
+    @Override
+    public void reset(){
+        super.reset();
+        Extensions.HEADING_SAVER = drive.getExternalHeading();
     }
 
 

@@ -28,4 +28,8 @@ class FollowTrajectoryCommand(private val drive: SampleMecanumDrive,
     override fun isFinished(): Boolean {
         return !drive.isBusy
     }
+
+    override fun end(interrupted: Boolean){
+        drive.breakFollowing()
+    }
 }
