@@ -64,13 +64,13 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
     private void generateTrajectory() {
         blueTrajectory = drive.trajectorySequenceBuilder(blueStartingPosition)
                 .splineToConstantHeading(new Vector2d(13, 64.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(45, 64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(40, 64), toRadians(0))
                 .build();
 
         redTrajectory = drive.trajectorySequenceBuilder(redStartingPosition)
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(13, -64.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(45, -64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(40, -64), toRadians(0))
                 .build();
     }
 

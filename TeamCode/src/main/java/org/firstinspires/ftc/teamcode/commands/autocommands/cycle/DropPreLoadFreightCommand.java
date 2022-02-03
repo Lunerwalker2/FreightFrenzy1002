@@ -104,7 +104,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                 .lineTo(new Vector2d(-10, 50))
                 .build();
         blueDriveToBottomLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
-                .lineTo(new Vector2d(-10, 46))
+                .lineTo(new Vector2d(-10, 49.5))
                 .build();
         redDriveToTopLevel = drive.trajectorySequenceBuilder(redStartingPosition)
                 .lineTo(new Vector2d(-12, -58))

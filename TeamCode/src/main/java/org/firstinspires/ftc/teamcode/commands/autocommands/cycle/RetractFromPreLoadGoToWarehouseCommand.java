@@ -85,7 +85,7 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
     public void generateTrajectories() {
         blueFromTopLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
                 .splineToConstantHeading(new Vector2d(13, 64.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(45, 64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(40, 64), toRadians(0))
                 .build();
         blueFromMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPositionMiddle)
                 .splineToConstantHeading(new Vector2d(13, 64.5), toRadians(0))
@@ -93,22 +93,22 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
                 .build();
         blueFromBottomLevel = drive.trajectorySequenceBuilder(blueStartingPositionBottom)
                 .splineToConstantHeading(new Vector2d(13, 64.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(45, 64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(40, 64), toRadians(0))
                 .build();
         redFromTopLevel = drive.trajectorySequenceBuilder(redStartingPositionTop)
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(13, -64.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(45, -64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(40, -64), toRadians(0))
                 .build();
         redFromMiddleLevel = drive.trajectorySequenceBuilder(redStartingPositionMiddle)
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(13, -64.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(45, -64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(40, -64), toRadians(0))
                 .build();
         redFromBottomLevel = drive.trajectorySequenceBuilder(redStartingPositionBottom)
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(13, -64.5), toRadians(0))
-                .splineToConstantHeading(new Vector2d(45, -64), toRadians(0))
+                .splineToConstantHeading(new Vector2d(40, -64), toRadians(0))
                 .build();
     }
 

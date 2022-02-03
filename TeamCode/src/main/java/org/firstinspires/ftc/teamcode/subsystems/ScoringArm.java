@@ -16,7 +16,7 @@ public class ScoringArm extends SubsystemBase {
     public static final double loadingPosition = 0.1;
 
     //Position for normal scoring
-    public static final double scoringPosition = 1.0;
+    public static final double scoringPosition = 0.95;
 
 
     public ScoringArm(HardwareMap hardwareMap) {

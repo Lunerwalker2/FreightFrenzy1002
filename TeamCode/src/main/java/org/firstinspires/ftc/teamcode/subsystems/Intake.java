@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,16 +13,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Intake extends SubsystemBase {
 
 
-    private DcMotorSimple frontIntake;
-    private DcMotorSimple backIntake;
+    private DcMotor frontIntake;
+    private DcMotor backIntake;
     private Telemetry telemetry;
     private State state = State.STOP;
     private boolean front = true;
 
 
     public enum State {
-        INTAKE(0.57, 0.38),
-        OUTTAKE(-0.5, -0.5),
+        INTAKE(1.0, 1.0),//0.57, 0.38
+        OUTTAKE(-0.75, -0.75),
         STOP(0.0, 0.0);
 
         public double powerFront;
@@ -40,8 +41,11 @@ public class Intake extends SubsystemBase {
 
     public Intake(HardwareMap hardwareMap, Telemetry telemetry){
 
-        frontIntake = hardwareMap.get(DcMotorSimple.class, "frontIntake");
-        backIntake = hardwareMap.get(DcMotorSimple.class, "backIntake");
+        frontIntake = hardwareMap.get(DcMotor.class, "frontIntake");
+        backIntake = hardwareMap.get(DcMotor.class, "backIntake");
+
+        frontIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         backIntake.setDirection(DcMotorSimple.Direction.REVERSE);
 
