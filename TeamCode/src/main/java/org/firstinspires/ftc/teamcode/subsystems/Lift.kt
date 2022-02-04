@@ -48,9 +48,6 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
             }
         }
         telemetry?.addData("Lift Position", liftMotor.currentPosition)
-        val t = TelemetryPacket()
-        t.put("Lift Current Position", getLiftRawPosition())
-        FtcDashboard.getInstance().sendTelemetryPacket(t)
     }
 
     fun setLiftPower(power: Double) = run { liftMotor.power = power }

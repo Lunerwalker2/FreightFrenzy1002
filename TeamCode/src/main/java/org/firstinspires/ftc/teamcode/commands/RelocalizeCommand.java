@@ -101,9 +101,7 @@ public class RelocalizeCommand extends CommandBase {
                     distanceSensors.getForwardRange(DistanceUnit.INCH) :
                     distanceSensors.getBackwardRange(DistanceUnit.INCH);
 
-            double side = (!redSide) ?
-                    distanceSensors.getRightRange(DistanceUnit.INCH) :
-                    distanceSensors.getLeftRange(DistanceUnit.INCH);
+            double side = distanceSensors.getLeftRange(DistanceUnit.INCH);
 
             //test for possible invalid values
 //            if (!isValidReadings(forward, side)) return;
