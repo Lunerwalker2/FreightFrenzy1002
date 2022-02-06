@@ -80,7 +80,7 @@ public class RedCycleAuto extends AutoBase {
         );
 
         retractFromPreLoadGoToWarehouseCommand = new RetractFromPreLoadGoToWarehouseCommand(
-                drive, lift, scoringArm, bucket, true, () -> hubLevel
+                drive, lift, scoringArm, bucket, intake, true, () -> hubLevel
         );
 
         dropFreightInHubCommand1 = new DropFreightInHubCommand(
@@ -88,7 +88,7 @@ public class RedCycleAuto extends AutoBase {
         );
 
         goToWarehouseCommand1 = new RetractAndGoToWarehouseCommand(
-                drive, lift, scoringArm, bucket, true
+                drive, lift, scoringArm, bucket, intake,  true
         );
 
         teamMarkerDetector.startStream();
@@ -110,23 +110,24 @@ public class RedCycleAuto extends AutoBase {
                             telemetry.addLine("The program started!");
                             telemetry.update();
                         }),
-                        new WaitCommand(11000),
                         dropPreLoadFreightCommand.andThen(waitFor(700)),
                         retractFromPreLoadGoToWarehouseCommand,
                         new CrawlForwardUntilIntakeCommand(
                                 drive, intake, bucket, telemetry, true
                         ),
-//                        new ParallelDeadlineGroup(
-//                                new WaitCommand(100),
-//                                new RelocalizeCommand(
-//                                        drive::setPoseEstimate,
-//                                        distanceSensors,
-//                                        drive::getExternalHeading,
-//                                        true
-//                                )
-//                        ),
+                        new ParallelDeadlineGroup(
+                                new WaitCommand(100),
+                                new RelocalizeCommand(
+                                        drive::setPoseEstimate,
+                                        distanceSensors,
+                                        drive::getExternalHeading,
+                                        true
+                                )
+                        ),
                         dropFreightInHubCommand1,
-                        goToWarehouseCommand1
+                        goToWarehouseCommand1,
+                        new InstantCommand(intake::stop)
+
 //                        new CrawlForwardUntilIntakeCommand(
 //                                drive, intake, bucket, telemetry, true
 //                        ),

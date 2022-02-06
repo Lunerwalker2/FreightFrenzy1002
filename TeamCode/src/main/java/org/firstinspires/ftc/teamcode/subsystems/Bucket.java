@@ -3,17 +3,20 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import android.graphics.Color;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.outoftheboxrobotics.neutrinoi2c.Rev2mDistanceSensor.AsyncRev2MSensor;
 
 public class Bucket extends SubsystemBase {
 
     private final Servo bucketServo;
-    private final RevColorSensorV3 intakeSensor;
+    private final AsyncRev2MSensor intakeSensor;
     private final Telemetry telemetry;
     private boolean isDown = false;
 
@@ -23,8 +26,10 @@ public class Bucket extends SubsystemBase {
 
     public Bucket(HardwareMap hardwareMap, Telemetry telemetry){
         bucketServo = hardwareMap.get(Servo.class, "bucketServo");
-        intakeSensor = hardwareMap.get(RevColorSensorV3.class, "intakeSensor");
+        intakeSensor =
+                new AsyncRev2MSensor(hardwareMap.get(Rev2mDistanceSensor.class, "intakeSensor"));
         load();
+        intakeSensor.setSensorAccuracyMode(AsyncRev2MSensor.AccuracyMode.MODE_HIGH_SPEED);
         this.telemetry = telemetry;
     }
 
@@ -37,14 +42,14 @@ public class Bucket extends SubsystemBase {
 
     //TODO: Find correct value
     public boolean freightDetected(){
-        return intakeSensor.getRawLightDetected() > 800;
+        return intakeSensor.getDistance(DistanceUnit.INCH) < 4;
     }
 
     /**
      * Moves the bucket down to the depositing position.
      */
     public void load(){
-        bucketServo.setPosition(0.35);
+        bucketServo.setPosition(0.1);
         isDown = true;
     }
 

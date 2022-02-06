@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.PIDFCoefficients
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
+import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
@@ -63,8 +64,13 @@ class MecTeleOp : CommandOpMode() {
     var offset = 0.0
     var prevSlowState = false
 
+    private val matchTimer = ElapsedTime()
+    private var isStart = true
+    private var endgameRumblePassed = false
+    private var intakeHasBeenDetected = false
+
     //Drive power multiplier for slow mode
-    private var powerMultiplier = 0.9
+    private var powerMultiplier = 1.0
     private val makeArmReadyToLoadCommand by lazy { MakeArmReadyToLoadCommand(lift, scoringArm, bucket) }
 
     //    private val makeReadyToLoadCommand by lazy { MakeReadyToLoadCommand(lift, scoringArm, bucket) }
@@ -121,6 +127,13 @@ class MecTeleOp : CommandOpMode() {
                 .whenPressed(Runnable {
                     if (gamepad1.x) intake.outtakeBoth()
                     else intake.intake()
+                    intakeHasBeenDetected = false
+                })
+                .whileActiveContinuous(Runnable {
+                    if(!intakeHasBeenDetected && bucket.freightDetected()){
+                        gamepad1.rumble(0.0, 1.0, 300)
+                        intakeHasBeenDetected = true
+                    }
                 })
                 .whenInactive(intake::stop)
 
@@ -217,20 +230,34 @@ class MecTeleOp : CommandOpMode() {
     override fun run() {
         super.run()
 
+        if(isStart){
+            matchTimer.reset()
+            isStart = false
+        }
+
+        if(!endgameRumblePassed && matchTimer.seconds() > 125){
+            gamepad1.rumble(400)
+            gamepad2.rumble(400)
+            endgameRumblePassed = true
+        }
+
 
         /////////////////////////////////////////////////////////////// Drive Base
         //Set the slow mode one if either bumper is pressed
         if (gamepad1.right_bumper) {
             powerMultiplier = 0.3
         } else {
-            powerMultiplier = 0.9
+            powerMultiplier = 1.0
         }
 
         //Store the heading of the robot
         val heading = getRobotAngle()
 
         //If we need to reset our zero angle, increment the offset with the current heading to do so
-        if (gamepad1.a && !prevSlowState) offset += heading
+        if (gamepad1.a && !prevSlowState){
+            offset += heading
+            gamepad1.rumble(0.0, 1.0, 300)
+        }
         prevSlowState = gamepad1.a
 
 
@@ -280,6 +307,10 @@ class MecTeleOp : CommandOpMode() {
         telemetry.addLine("Press the left bumper to re-zero the heading.")
         telemetry.addData("Current Heading with offset", AngleUnit.DEGREES.fromRadians(getRobotAngle()))
         telemetry.addData("Offset", AngleUnit.DEGREES.fromRadians(offset))
+
+        val mins = (matchTimer.seconds() / 60).toInt()
+        val secs = matchTimer.seconds() % 60
+        telemetry.addData("Time Remaining", "%d:%d", mins, secs)
 
         telemetry.update()
     }

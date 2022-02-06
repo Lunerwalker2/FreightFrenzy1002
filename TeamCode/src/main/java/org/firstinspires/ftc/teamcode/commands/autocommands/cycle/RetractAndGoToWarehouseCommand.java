@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.commands.MakeReadyToLoadCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.ScoringArm;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -23,6 +24,7 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
     private final Lift lift;
     private final ScoringArm scoringArm;
     private final Bucket bucket;
+    private final Intake intake;
     private final boolean redSide;
 
     private static final Pose2d blueStartingPosition =
@@ -33,12 +35,13 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
 
     public RetractAndGoToWarehouseCommand(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm,
-            Bucket bucket, boolean redSide
+            Bucket bucket, Intake intake, boolean redSide
     ) {
         this.drive = drive;
         this.lift = lift;
         this.scoringArm = scoringArm;
         this.bucket = bucket;
+        this.intake = intake;
         this.redSide = redSide;
 
         generateTrajectory();
@@ -52,6 +55,13 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
                 new SequentialCommandGroup(
                         new WaitCommand(800),
                         new MakeReadyToLoadCommand(lift, scoringArm, bucket, true)
+                ),
+                new SequentialCommandGroup(
+                        new WaitCommand(800),
+                        new InstantCommand(() -> {
+                            intake.setSide(redSide);
+                            intake.intake();
+                        })
                 )
         );
 

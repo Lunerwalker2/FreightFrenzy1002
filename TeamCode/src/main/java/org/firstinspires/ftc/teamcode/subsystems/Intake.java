@@ -3,9 +3,12 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -13,8 +16,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Intake extends SubsystemBase {
 
 
-    private DcMotor frontIntake;
-    private DcMotor backIntake;
+    private final DcMotorEx frontIntake;
+    private final DcMotorEx backIntake;
+    private final Servo frontFlap;
+    private final Servo backFlap;
     private Telemetry telemetry;
     private State state = State.STOP;
     private boolean front = true;
@@ -41,11 +46,20 @@ public class Intake extends SubsystemBase {
 
     public Intake(HardwareMap hardwareMap, Telemetry telemetry){
 
-        frontIntake = hardwareMap.get(DcMotor.class, "frontIntake");
-        backIntake = hardwareMap.get(DcMotor.class, "backIntake");
+        frontIntake = hardwareMap.get(DcMotorEx.class, "frontIntake");
+        backIntake = hardwareMap.get(DcMotorEx.class, "backIntake");
+
+        frontFlap = hardwareMap.get(Servo.class, "frontFlap");
+        backFlap = hardwareMap.get(Servo.class, "backFlap");
 
         frontIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        MotorConfigurationType type = frontIntake.getMotorType();
+        type.setAchieveableMaxRPMFraction(0.9);
+        frontIntake.setMotorType(type);
         backIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        MotorConfigurationType type2 = backIntake.getMotorType();
+        type.setAchieveableMaxRPMFraction(0.9);
+        backIntake.setMotorType(type2);
 
         backIntake.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -57,7 +71,7 @@ public class Intake extends SubsystemBase {
         if (telemetry != null) telemetry.addData("Intake State", state);
     }
 
-    public void setState(State state){
+    public void setState    (State state){
         if(state != State.STOP){
             if (front) frontIntake.setPower(state.powerFront);
             else backIntake.setPower(state.powerBack);
@@ -75,6 +89,13 @@ public class Intake extends SubsystemBase {
 
     public void setSide(boolean front){
         this.front = front;
+        if(front){
+            frontFlap.setPosition(0.0);
+            backFlap.setPosition(1.0);
+        } else {
+            frontFlap.setPosition(1.0);
+            backFlap.setPosition(0.0);
+        }
     }
 
     /**

@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand;
@@ -35,7 +36,8 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
 //                        return bucket.isFreightDetected();
 //                    }
 //                },
-                new WaitCommand(2500),
+                new WaitUntilCommand(bucket::freightDetected),
+//                new WaitCommand(2500),
                 new FollowTrajectorySequenceCommand(drive,
                         drive.trajectorySequenceBuilder(
                                 new Pose2d(40, (redSide) ? -64 : 64,
@@ -48,12 +50,9 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
                                                 5, toRadians(180), DriveConstants.TRACK_WIDTH
                                         )
                                 )
-                                .forward((!redSide) ? 5 : -5)
-                                .back((!redSide) ? 5 : -5)
+                                .forward((!redSide) ? 10 : -10)
+//                                .back((!redSide) ? 5 : -5)
                                 .build()
-                ),
-                new SequentialCommandGroup(
-                        new RunIntakeCommand(intake, redSide, true)
                 )
         );
 

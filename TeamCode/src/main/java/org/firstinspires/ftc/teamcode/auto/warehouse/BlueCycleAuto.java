@@ -81,7 +81,7 @@ public class BlueCycleAuto extends AutoBase {
         );
 
         retractFromPreLoadGoToWarehouseCommand = new RetractFromPreLoadGoToWarehouseCommand(
-                drive, lift, scoringArm, bucket, false, () -> hubLevel
+                drive, lift, scoringArm, bucket, intake, false, () -> hubLevel
         );
 
         dropFreightInHubCommand1 = new DropFreightInHubCommand(
@@ -89,7 +89,7 @@ public class BlueCycleAuto extends AutoBase {
         );
 
         goToWarehouseCommand1 = new RetractAndGoToWarehouseCommand(
-                drive, lift, scoringArm, bucket, false
+                drive, lift, scoringArm, bucket, intake, false
         );
 
         teamMarkerDetector.startStream();
@@ -109,7 +109,6 @@ public class BlueCycleAuto extends AutoBase {
                             telemetry.addLine("The program started!");
                             telemetry.update();
                         }),
-                        new WaitCommand(8000),
                         dropPreLoadFreightCommand.andThen(waitFor(700)),
                         retractFromPreLoadGoToWarehouseCommand,
                         new CrawlForwardUntilIntakeCommand(
@@ -125,7 +124,8 @@ public class BlueCycleAuto extends AutoBase {
                                 )
                         ),
                         dropFreightInHubCommand1,
-                        goToWarehouseCommand1
+                        goToWarehouseCommand1,
+                        new InstantCommand(intake::stop)
 //                        new CrawlForwardUntilIntakeCommand(
 //                                drive, intake, bucket, telemetry, false
 //                        ),

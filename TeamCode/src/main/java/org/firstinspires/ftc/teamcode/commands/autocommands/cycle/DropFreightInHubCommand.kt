@@ -33,7 +33,7 @@ open class DropFreightInHubCommand(
             drive.trajectorySequenceBuilder(drive.poseEstimate)
                     .setReversed(true)
                     .splineToConstantHeading(Vector2d(13.0, 64.5), Math.toRadians(180.0))
-                    .splineToConstantHeading(Vector2d(-10.0, 58.0), Math.toRadians(-160.0))
+                    .splineToConstantHeading(Vector2d(-10.0, 56.0), Math.toRadians(-160.0))
                     .build()
         }
     }
@@ -60,7 +60,8 @@ open class DropFreightInHubCommand(
                 ),
                 SequentialCommandGroup(
                         WaitCommand(4000),
-                        InstantCommand(bucket::dump)
+                        InstantCommand(bucket::dump),
+                        WaitCommand(300)
                 )
         )
 

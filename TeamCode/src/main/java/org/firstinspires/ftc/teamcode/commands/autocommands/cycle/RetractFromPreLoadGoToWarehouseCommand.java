@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.commands.MakeReadyToLoadCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.ScoringArm;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -27,6 +28,7 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
     private final Lift lift;
     private final ScoringArm scoringArm;
     private final Bucket bucket;
+    private final Intake intake;
     private final boolean redSide;
     private final Supplier<HubLevel> getHubLevel;
     private HubLevel hubLevel;
@@ -48,13 +50,14 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
 
     public RetractFromPreLoadGoToWarehouseCommand(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm,
-            Bucket bucket, boolean redSide, Supplier<HubLevel> getHubLevel
+            Bucket bucket, Intake intake, boolean redSide, Supplier<HubLevel> getHubLevel
     ) {
 
         this.drive = drive;
         this.lift = lift;
         this.scoringArm = scoringArm;
         this.bucket = bucket;
+        this.intake = intake;
         this.redSide = redSide;
         this.getHubLevel = getHubLevel;
 
@@ -70,6 +73,13 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
                 new SequentialCommandGroup(
                         new WaitCommand(800),
                         new MakeReadyToLoadCommand(lift, scoringArm, bucket, true)
+                ),
+                new SequentialCommandGroup(
+                        new WaitCommand(800),
+                        new InstantCommand(() -> {
+                            intake.setSide(redSide);
+                            intake.intake();
+                        })
                 )
         );
         super.initialize();
