@@ -113,7 +113,7 @@ class MecTeleOp : CommandOpMode() {
         //Carousel wheel
         Trigger { gamepad2.right_trigger > 0.2 }
                 .whileActiveContinuous(Runnable {
-                    if (gamepad2.right_trigger < 0.9) carouselWheel.setWheelPower(0.52)
+                    if (gamepad2.right_trigger < 0.8) carouselWheel.setWheelPower(0.52)
                     else carouselWheel.setWheelPower(0.8)
                 })
                 .whenInactive(Runnable { carouselWheel.setWheelPower(0.0) })
@@ -235,7 +235,7 @@ class MecTeleOp : CommandOpMode() {
             isStart = false
         }
 
-        if(!endgameRumblePassed && matchTimer.seconds() > 125){
+        if(!endgameRumblePassed && matchTimer.seconds() > 85){
             gamepad1.rumble(400)
             gamepad2.rumble(400)
             endgameRumblePassed = true
@@ -309,7 +309,7 @@ class MecTeleOp : CommandOpMode() {
         telemetry.addData("Offset", AngleUnit.DEGREES.fromRadians(offset))
 
         val mins = (matchTimer.seconds() / 60).toInt()
-        val secs = matchTimer.seconds() % 60
+        val secs = (matchTimer.seconds() % 60).toInt()
         telemetry.addData("Time Remaining", "%d:%d", mins, secs)
 
         telemetry.update()

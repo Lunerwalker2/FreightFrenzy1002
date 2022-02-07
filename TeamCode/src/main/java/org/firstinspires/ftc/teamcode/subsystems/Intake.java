@@ -26,7 +26,7 @@ public class Intake extends SubsystemBase {
 
 
     public enum State {
-        INTAKE(1.0, 1.0),//0.57, 0.38
+        INTAKE(0.8, 0.8),//0.57, 0.38
         OUTTAKE(-0.75, -0.75),
         STOP(0.0, 0.0);
 
@@ -61,7 +61,8 @@ public class Intake extends SubsystemBase {
         type.setAchieveableMaxRPMFraction(0.9);
         backIntake.setMotorType(type2);
 
-        backIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+//        backIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontIntake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.telemetry = telemetry;
     }

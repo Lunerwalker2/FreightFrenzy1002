@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.teleOp.testing
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 
 @TeleOp
 class IntakeSpeedTest(): LinearOpMode(){
@@ -16,6 +20,16 @@ class IntakeSpeedTest(): LinearOpMode(){
         val back = hardwareMap.get(DcMotorEx::class.java, "backIntake")
 
         back.direction = DcMotorSimple.Direction.REVERSE
+
+        front.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        back.mode = DcMotor.RunMode.RUN_USING_ENCODER
+
+        val type: MotorConfigurationType = front.getMotorType()
+        type.achieveableMaxRPMFraction = 0.9
+        front.setMotorType(type)
+        val type2: MotorConfigurationType = back.getMotorType()
+        type2.achieveableMaxRPMFraction = 0.9
+        back.setMotorType(type2)
 
         var frontSpeed = 0.5
         var backSpeed = 0.5
@@ -49,6 +63,12 @@ class IntakeSpeedTest(): LinearOpMode(){
 
             telemetry.addData("Front", frontSpeed)
             telemetry.addData("Back", backSpeed)
+            telemetry.addData("Front Velo (deg/s)", front.getVelocity(AngleUnit.DEGREES))
+            telemetry.addData("Back Velo (deg/s)", back.getVelocity(AngleUnit.DEGREES))
+            val packet = TelemetryPacket()
+            packet.put("Front Ticks/sec", front.velocity)
+            packet.put("Back Ticks/sec", back.velocity)
+            FtcDashboard.getInstance().sendTelemetryPacket(packet)
 
             telemetry.update()
 
