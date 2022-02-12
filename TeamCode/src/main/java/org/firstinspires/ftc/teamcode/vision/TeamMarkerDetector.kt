@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.teamcode.vision
 
+import com.acmerobotics.dashboard.FtcDashboard
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.vision.pipeline.AprilTagHubLevelPipeline
 import org.firstinspires.ftc.teamcode.vision.pipeline.AprilTagHubLevelPipelineDuck
 import org.firstinspires.ftc.teamcode.vision.pipeline.TeamMarkerPipeline
-import org.openftc.easyopencv.OpenCvCamera
+import org.openftc.easyopencv.*
 import org.openftc.easyopencv.OpenCvCamera.AsyncCameraOpenListener
-import org.openftc.easyopencv.OpenCvCameraFactory
-import org.openftc.easyopencv.OpenCvCameraRotation
-import org.openftc.easyopencv.OpenCvPipeline
 
 /*
 Class that abstracts our vision pipeline and all the EOCV things needed to run it.
@@ -31,7 +29,7 @@ class TeamMarkerDetector(private val hardwareMap: HardwareMap, redSide: Boolean,
 
     constructor(hardwareMap: HardwareMap) : this(hardwareMap, false, false)
 
-    private lateinit var camera: OpenCvCamera
+    private lateinit var camera: OpenCvWebcam
 
     val teamMarkerPipeline: OpenCvPipeline =
             if(duckSide) AprilTagHubLevelPipelineDuck(redSide) else AprilTagHubLevelPipeline(redSide)
@@ -58,6 +56,7 @@ class TeamMarkerDetector(private val hardwareMap: HardwareMap, redSide: Boolean,
 
             }
         })
+        FtcDashboard.getInstance().startCameraStream(camera, 10.0)
     }
 
     fun getHubLevel(): HubLevel {

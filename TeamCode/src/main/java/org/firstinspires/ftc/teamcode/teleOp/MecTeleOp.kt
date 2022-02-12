@@ -91,6 +91,8 @@ class MecTeleOp : CommandOpMode() {
         scoringArm = ScoringArm(hardwareMap, telemetry)
         bucket = Bucket(hardwareMap, telemetry)
 
+        DistanceSensors(hardwareMap).disableAll()
+
         telemetry.sendLine("Setting bulk cache mode....")
 
         //Schedule a clear of the bulk cache each loop

@@ -80,9 +80,9 @@ public class RelocalizeCommand extends CommandBase {
     public void initialize() {
         super.initialize();
         //Start taking range measurements from the sensors
-        distanceSensors.pingAll();
         timer.reset();
         done = false;
+        distanceSensors.enableAll();
     }
 
     /*
@@ -126,7 +126,7 @@ public class RelocalizeCommand extends CommandBase {
                     (rotatedDistances[1] - LEFT_SENSOR_BASE_DISTANCE_TO_WALL);
 
             //Update the user with the new position
-            poseConsumer.accept(new Pose2d(x, y, heading));
+            if(forward < 80) poseConsumer.accept(new Pose2d(x, y, heading));
             done = true;
         }
     }

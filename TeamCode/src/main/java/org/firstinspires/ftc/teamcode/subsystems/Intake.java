@@ -26,8 +26,8 @@ public class Intake extends SubsystemBase {
 
 
     public enum State {
-        INTAKE(0.8, 0.8),//0.57, 0.38
-        OUTTAKE(-0.75, -0.75),
+        INTAKE(0.7, 0.7),//0.57, 0.38
+        OUTTAKE(-0.8, -0.8),
         STOP(0.0, 0.0);
 
         public double powerFront;
@@ -72,7 +72,7 @@ public class Intake extends SubsystemBase {
         if (telemetry != null) telemetry.addData("Intake State", state);
     }
 
-    public void setState    (State state){
+    public void setState(State state){
         if(state != State.STOP){
             if (front) frontIntake.setPower(state.powerFront);
             else backIntake.setPower(state.powerBack);
@@ -91,10 +91,10 @@ public class Intake extends SubsystemBase {
     public void setSide(boolean front){
         this.front = front;
         if(front){
-            frontFlap.setPosition(0.0);
+            frontFlap.setPosition(1.0);
             backFlap.setPosition(1.0);
         } else {
-            frontFlap.setPosition(1.0);
+            frontFlap.setPosition(0.0);
             backFlap.setPosition(0.0);
         }
     }

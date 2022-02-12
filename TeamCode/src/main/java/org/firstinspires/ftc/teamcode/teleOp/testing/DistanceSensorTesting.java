@@ -113,7 +113,6 @@ public class DistanceSensorTesting extends CommandOpMode {
         telemetry.addData("Forward Sensor MB1242 Range (in)", "%.3f",distanceSensors.getForwardRange(DistanceUnit.INCH));
         telemetry.addData("Backward Sensor MB1242 Range (in)","%.3f", distanceSensors.getBackwardRange(DistanceUnit.INCH));
         telemetry.addData("Left Sensor Rev TOF Range (in)", "%.3f",distanceSensors.getLeftRange(DistanceUnit.INCH));
-        telemetry.addData("Right Sensor Rev TOF Range (in)", "%.3f",distanceSensors.getRightRange(DistanceUnit.INCH));
 
         telemetry.update();
 

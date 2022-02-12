@@ -114,15 +114,15 @@ public class BlueCycleAuto extends AutoBase {
                         new CrawlForwardUntilIntakeCommand(
                                 drive, intake, bucket, telemetry, false
                         ),
-                        new ParallelDeadlineGroup(
-                                new WaitCommand(100),
-                                new RelocalizeCommand(
-                                        drive::setPoseEstimate,
-                                        distanceSensors,
-                                        drive::getExternalHeading,
-                                        false
-                                )
-                        ),
+//                        new ParallelDeadlineGroup(
+//                                new WaitCommand(100),
+//                                new RelocalizeCommand(
+//                                        drive::setPoseEstimate,
+//                                        distanceSensors,
+//                                        drive::getExternalHeading,
+//                                        false
+//                                )
+//                        ),
                         dropFreightInHubCommand1,
                         goToWarehouseCommand1,
                         new InstantCommand(intake::stop)

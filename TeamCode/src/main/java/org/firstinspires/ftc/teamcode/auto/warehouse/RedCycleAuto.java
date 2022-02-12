@@ -88,7 +88,7 @@ public class RedCycleAuto extends AutoBase {
         );
 
         goToWarehouseCommand1 = new RetractAndGoToWarehouseCommand(
-                drive, lift, scoringArm, bucket, intake,  true
+                drive, lift, scoringArm, bucket, intake, true
         );
 
         teamMarkerDetector.startStream();
@@ -104,7 +104,6 @@ public class RedCycleAuto extends AutoBase {
         //Happens on start now
 
 
-
         schedule(new SequentialCommandGroup(
                         new InstantCommand(() -> {
                             telemetry.addLine("The program started!");
@@ -115,17 +114,21 @@ public class RedCycleAuto extends AutoBase {
                         new CrawlForwardUntilIntakeCommand(
                                 drive, intake, bucket, telemetry, true
                         ),
-                        new ParallelDeadlineGroup(
-                                new WaitCommand(100),
-                                new RelocalizeCommand(
-                                        drive::setPoseEstimate,
-                                        distanceSensors,
-                                        drive::getExternalHeading,
-                                        true
-                                )
+//                        new ParallelDeadlineGroup(
+//                                new WaitCommand(100),
+//                                new RelocalizeCommand(
+//                                        drive::setPoseEstimate,
+//                                        distanceSensors,
+//                                        drive::getExternalHeading,
+//                                        true
+//                                )
+//                        ),
+                        new DropFreightInHubCommand(
+                                drive, lift, scoringArm, bucket, intake, true
                         ),
-                        dropFreightInHubCommand1,
-                        goToWarehouseCommand1,
+                        new RetractAndGoToWarehouseCommand(
+                                drive, lift, scoringArm, bucket, intake, true
+                        ),
                         new InstantCommand(intake::stop)
 
 //                        new CrawlForwardUntilIntakeCommand(
@@ -152,7 +155,7 @@ public class RedCycleAuto extends AutoBase {
     }
 
     @Override
-    public void reset(){
+    public void reset() {
         super.reset();
         Extensions.HEADING_SAVER = drive.getExternalHeading();
     }

@@ -7,13 +7,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.util.MB1242;
+import org.outoftheboxrobotics.neutrinoi2c.MB1242.AsyncMB1242;
 import org.outoftheboxrobotics.neutrinoi2c.Rev2mDistanceSensor.AsyncRev2MSensor;
 
 public class DistanceSensors extends SubsystemBase {
 
     //forward sensors
-    private final MB1242 forwardSensor;
-    private final MB1242 backwardSensor;
+    private final AsyncMB1242 forwardSensor;
+    private final AsyncMB1242 backwardSensor;
     //The TOF Distance sensor on the sides.
     private final AsyncRev2MSensor leftSensor;
 
@@ -25,17 +26,31 @@ public class DistanceSensors extends SubsystemBase {
 
         //Get the sensors from the hardware map
         //TODO: YES I KNOW ITS REVERSED BUT I REFUSE TO SWITCH THE WIRING AROUND NOW
-        forwardSensor = hardwareMap.get(MB1242.class, "backwardSensor");
-        backwardSensor = hardwareMap.get(MB1242.class, "forwardSensor");
+        forwardSensor = hardwareMap.get(AsyncMB1242.class, "backwardSensor");
+        backwardSensor = hardwareMap.get(AsyncMB1242.class, "forwardSensor");
         leftSensor =
                 new AsyncRev2MSensor(hardwareMap.get(Rev2mDistanceSensor.class, "leftSensor"));
 
+        forwardSensor.setMinRunDelayMs(80);
+        backwardSensor.setMinRunDelayMs(80);
         leftSensor.setMeasurementIntervalMs(60);
-        pingAll();
+
+        disableAll();
         cycleTimer.reset();
 
     }
 
+    public void enableAll(){
+        leftSensor.enable();
+        forwardSensor.enable();
+        backwardSensor.enable();
+    }
+
+    public void disableAll(){
+        leftSensor.disable();
+        forwardSensor.disable();
+        backwardSensor.disable();
+    }
 
     @Override
     public void periodic() {
@@ -44,18 +59,9 @@ public class DistanceSensors extends SubsystemBase {
     }
 
 
-    public void pingAll(){
-        forwardSensor.ping();
-        backwardSensor.ping();
-    }
-
     //Get the left sensor range in cm
     public double getLeftRange(DistanceUnit unit) {
         return unit.fromCm(leftSensor.getDistance(DistanceUnit.CM));
-    }
-
-    public double getRightRange(DistanceUnit unit) {
-        return 0;
     }
 
     public double getForwardRange(DistanceUnit unit) {
@@ -75,7 +81,6 @@ public class DistanceSensors extends SubsystemBase {
 
     //Tests the sensor by running a range command and seeing if there's an output, takes at least 100ms
     public boolean test() {
-        forwardSensor.ping();
         ElapsedTime timer = new ElapsedTime();
         while (timer.milliseconds() < 80) ;
         return forwardSensor.getDistance(DistanceUnit.CM) > 20 || //20cm is the minimum range, so we test with it
