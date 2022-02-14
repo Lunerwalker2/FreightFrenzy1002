@@ -82,7 +82,7 @@ public class RelocalizeCommand extends CommandBase {
         //Start taking range measurements from the sensors
         timer.reset();
         done = false;
-        distanceSensors.enableAll();
+        distanceSensors.pingAll();
     }
 
     /*
@@ -92,7 +92,7 @@ public class RelocalizeCommand extends CommandBase {
     @Override
     public void execute() {
 
-        if (timer.milliseconds() > 80) {
+        if (timer.milliseconds() > 80 && !done) {
             //Find our current heading once so we don't have to keep reading it
             double heading = headingSupplier.getAsDouble();
 
@@ -126,7 +126,7 @@ public class RelocalizeCommand extends CommandBase {
                     (rotatedDistances[1] - LEFT_SENSOR_BASE_DISTANCE_TO_WALL);
 
             //Update the user with the new position
-            if(forward < 80) poseConsumer.accept(new Pose2d(x, y, heading));
+            if(forward < 50 && forward > 10) poseConsumer.accept(new Pose2d(x, y, heading));
             done = true;
         }
     }

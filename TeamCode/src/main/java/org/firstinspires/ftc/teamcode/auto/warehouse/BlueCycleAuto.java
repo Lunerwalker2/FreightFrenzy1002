@@ -111,39 +111,43 @@ public class BlueCycleAuto extends AutoBase {
                         }),
                         dropPreLoadFreightCommand.andThen(waitFor(700)),
                         retractFromPreLoadGoToWarehouseCommand,
+                        //cycle
+
                         new CrawlForwardUntilIntakeCommand(
                                 drive, intake, bucket, telemetry, false
                         ),
-//                        new ParallelDeadlineGroup(
-//                                new WaitCommand(100),
-//                                new RelocalizeCommand(
-//                                        drive::setPoseEstimate,
-//                                        distanceSensors,
-//                                        drive::getExternalHeading,
-//                                        false
-//                                )
-//                        ),
+                        new ParallelDeadlineGroup(
+                                new WaitCommand(100),
+                                new RelocalizeCommand(
+                                        drive::setPoseEstimate,
+                                        distanceSensors,
+                                        drive::getExternalHeading,
+                                        false
+                                )
+                        ),
                         dropFreightInHubCommand1,
                         goToWarehouseCommand1,
+                        //cycle
+                        new CrawlForwardUntilIntakeCommand(
+                                drive, intake, bucket, telemetry, false
+                        ),
+                        new ParallelDeadlineGroup(
+                                new WaitCommand(100),
+                                new RelocalizeCommand(
+                                        drive::setPoseEstimate,
+                                        distanceSensors,
+                                        drive::getExternalHeading,
+                                        false
+                                )
+                        ),
+                        new DropFreightInHubCommand(
+                                drive, lift, scoringArm, bucket, intake, false
+                        ),
+                        //park
+                        new RetractAndGoToWarehouseCommand(
+                                drive, lift, scoringArm, bucket, intake, false
+                        ),
                         new InstantCommand(intake::stop)
-//                        new CrawlForwardUntilIntakeCommand(
-//                                drive, intake, bucket, telemetry, false
-//                        ),
-//                        new ParallelDeadlineGroup(
-//                                new WaitCommand(100),
-//                                new RelocalizeCommand(
-//                                        drive::setPoseEstimate,
-//                                        distanceSensors,
-//                                        drive::getExternalHeading,
-//                                        false
-//                                )
-//                        ),
-//                        new DropFreightInHubCommand(
-//                                drive, lift, scoringArm, bucket, intake, false
-//                        ),
-//                        new RetractAndGoToWarehouseCommand(
-//                                drive, lift, scoringArm, bucket, false
-//                        )
                 )
         );
 
@@ -151,7 +155,7 @@ public class BlueCycleAuto extends AutoBase {
     }
 
     @Override
-    public void reset(){
+    public void reset() {
         super.reset();
         Extensions.HEADING_SAVER = drive.getExternalHeading();
     }

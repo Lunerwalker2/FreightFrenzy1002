@@ -111,44 +111,42 @@ public class RedCycleAuto extends AutoBase {
                         }),
                         dropPreLoadFreightCommand.andThen(waitFor(700)),
                         retractFromPreLoadGoToWarehouseCommand,
+                        //cycle
                         new CrawlForwardUntilIntakeCommand(
                                 drive, intake, bucket, telemetry, true
                         ),
-//                        new ParallelDeadlineGroup(
-//                                new WaitCommand(100),
-//                                new RelocalizeCommand(
-//                                        drive::setPoseEstimate,
-//                                        distanceSensors,
-//                                        drive::getExternalHeading,
-//                                        true
-//                                )
-//                        ),
+                        new ParallelDeadlineGroup(
+                                new WaitCommand(100),
+                                new RelocalizeCommand(
+                                        drive::setPoseEstimate,
+                                        distanceSensors,
+                                        drive::getExternalHeading,
+                                        true
+                                )
+                        ),
+                        dropFreightInHubCommand1,
+                        goToWarehouseCommand1,
+                        //cycle
+                        new CrawlForwardUntilIntakeCommand(
+                                drive, intake, bucket, telemetry, true
+                        ),
+                        new ParallelDeadlineGroup(
+                                new WaitCommand(100),
+                                new RelocalizeCommand(
+                                        drive::setPoseEstimate,
+                                        distanceSensors,
+                                        drive::getExternalHeading,
+                                        true
+                                )
+                        ),
                         new DropFreightInHubCommand(
                                 drive, lift, scoringArm, bucket, intake, true
                         ),
+                        //park
                         new RetractAndGoToWarehouseCommand(
                                 drive, lift, scoringArm, bucket, intake, true
                         ),
                         new InstantCommand(intake::stop)
-
-//                        new CrawlForwardUntilIntakeCommand(
-//                                drive, intake, bucket, telemetry, true
-//                        ),
-//                        new ParallelDeadlineGroup(
-//                                new WaitCommand(100),
-//                                new RelocalizeCommand(
-//                                        drive::setPoseEstimate,
-//                                        distanceSensors,
-//                                        drive::getExternalHeading,
-//                                        true
-//                                )
-//                        ),
-//                        new DropFreightInHubCommand(
-//                                drive, lift, scoringArm, bucket, intake, true
-//                        ),
-//                        new RetractAndGoToWarehouseCommand(
-//                                drive, lift, scoringArm, bucket, true
-//                        )
                 )
         );
 

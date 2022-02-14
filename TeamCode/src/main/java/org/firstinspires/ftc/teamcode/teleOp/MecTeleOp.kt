@@ -91,7 +91,7 @@ class MecTeleOp : CommandOpMode() {
         scoringArm = ScoringArm(hardwareMap, telemetry)
         bucket = Bucket(hardwareMap, telemetry)
 
-        DistanceSensors(hardwareMap).disableAll()
+//        DistanceSensors(hardwareMap).disableAll()
 
         telemetry.sendLine("Setting bulk cache mode....")
 
@@ -133,7 +133,7 @@ class MecTeleOp : CommandOpMode() {
                 })
                 .whileActiveContinuous(Runnable {
                     if(!intakeHasBeenDetected && bucket.freightDetected()){
-                        gamepad1.rumble(0.0, 1.0, 300)
+                        gamepad1.rumble(300)
                         intakeHasBeenDetected = true
                     }
                 })

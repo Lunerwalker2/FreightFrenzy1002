@@ -13,8 +13,8 @@ import org.outoftheboxrobotics.neutrinoi2c.Rev2mDistanceSensor.AsyncRev2MSensor;
 public class DistanceSensors extends SubsystemBase {
 
     //forward sensors
-    private final AsyncMB1242 forwardSensor;
-    private final AsyncMB1242 backwardSensor;
+    private final MB1242 forwardSensor;
+    private final MB1242 backwardSensor;
     //The TOF Distance sensor on the sides.
     private final AsyncRev2MSensor leftSensor;
 
@@ -26,31 +26,34 @@ public class DistanceSensors extends SubsystemBase {
 
         //Get the sensors from the hardware map
         //TODO: YES I KNOW ITS REVERSED BUT I REFUSE TO SWITCH THE WIRING AROUND NOW
-        forwardSensor = hardwareMap.get(AsyncMB1242.class, "backwardSensor");
-        backwardSensor = hardwareMap.get(AsyncMB1242.class, "forwardSensor");
+        forwardSensor = hardwareMap.get(MB1242.class, "backwardSensor");
+        backwardSensor = hardwareMap.get(MB1242.class, "forwardSensor");
         leftSensor =
                 new AsyncRev2MSensor(hardwareMap.get(Rev2mDistanceSensor.class, "leftSensor"));
 
-        forwardSensor.setMinRunDelayMs(80);
-        backwardSensor.setMinRunDelayMs(80);
         leftSensor.setMeasurementIntervalMs(60);
 
-        disableAll();
+//        disableAll();
         cycleTimer.reset();
 
     }
 
-    public void enableAll(){
-        leftSensor.enable();
-        forwardSensor.enable();
-        backwardSensor.enable();
+    public void pingAll(){
+        forwardSensor.ping();
+        backwardSensor.ping();
     }
 
-    public void disableAll(){
-        leftSensor.disable();
-        forwardSensor.disable();
-        backwardSensor.disable();
-    }
+//    public void enableAll(){
+//        leftSensor.enable();
+//        forwardSensor.enable();
+//        backwardSensor.enable();
+//    }
+//
+//    public void disableAll(){
+//        leftSensor.disable();
+//        forwardSensor.disable();
+//        backwardSensor.disable();
+//    }
 
     @Override
     public void periodic() {
