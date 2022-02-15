@@ -20,6 +20,9 @@ public class Bucket extends SubsystemBase {
     private final Telemetry telemetry;
     private boolean isDown = false;
 
+    public final double loadPosition = 0.33;
+    public final double dumbPosition = 0.8;
+
     public Bucket(HardwareMap hardwareMap){
         this(hardwareMap, null);
     }
@@ -49,7 +52,7 @@ public class Bucket extends SubsystemBase {
      * Moves the bucket down to the depositing position.
      */
     public void load(){
-        bucketServo.setPosition(0.35);
+        bucketServo.setPosition(loadPosition);
         isDown = true;
     }
 
@@ -57,9 +60,14 @@ public class Bucket extends SubsystemBase {
      * Moves the bucket up to the holding (flat) position.
      */
     public void dump(){
-        bucketServo.setPosition(1.0);
+        bucketServo.setPosition(dumbPosition);
         isDown = false;
     }
+
+    public void setPosition(double position){
+        bucketServo.setPosition(position);
+    }
+
 
     /**
      * Returns if the bucket is down (in the deposit position) or not.

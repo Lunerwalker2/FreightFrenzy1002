@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.PIDFCoefficients
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
 import com.qualcomm.robotcore.util.ElapsedTime
+import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
@@ -153,11 +154,11 @@ class MecTeleOp : CommandOpMode() {
 
         /* ***********************************************/
 
-        manipulator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .toggleWhenPressed(
-                        bucket::dump    ,
-                        bucket::load
-                )
+//        manipulator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+//                .toggleWhenPressed(
+//                        bucket::dump    ,
+//                        bucket::load
+//                )
 
         manipulator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .toggleWhenPressed(
@@ -231,6 +232,12 @@ class MecTeleOp : CommandOpMode() {
 
     override fun run() {
         super.run()
+
+
+        bucket.setPosition(Range.scale(gamepad2.left_trigger.toDouble(), 0.0, 1.0, bucket.loadPosition, bucket.dumbPosition))
+
+
+
 
         if(isStart){
             matchTimer.reset()
