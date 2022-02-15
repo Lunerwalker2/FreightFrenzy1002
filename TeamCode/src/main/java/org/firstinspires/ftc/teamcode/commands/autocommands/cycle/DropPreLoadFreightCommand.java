@@ -72,7 +72,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                                     scoringArm.scoringPosition();
                                     break;
                                 case MIDDLE:
-                                    scoringArm.setPosition(0.5);
+                                    scoringArm.setPosition(0.45);
                                     break;
                                 case BOTTOM:
                                     scoringArm.setPosition(0.43);

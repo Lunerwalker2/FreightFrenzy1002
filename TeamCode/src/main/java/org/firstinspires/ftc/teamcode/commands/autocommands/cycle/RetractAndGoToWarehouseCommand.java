@@ -28,7 +28,7 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
     private final boolean redSide;
 
     private static final Pose2d blueStartingPosition =
-            new Pose2d(-10, 58, toRadians(0));
+            new Pose2d(-8, 56, toRadians(0));
 
     private static final Pose2d redStartingPosition =
             new Pose2d(-10, -58, toRadians(180));

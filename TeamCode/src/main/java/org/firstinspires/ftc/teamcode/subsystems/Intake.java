@@ -26,7 +26,7 @@ public class Intake extends SubsystemBase {
 
 
     public enum State {
-        INTAKE(0.7, 0.7),//0.57, 0.38
+        INTAKE(0.65, 0.8),//0.57, 0.38
         OUTTAKE(-0.8, -0.8),
         STOP(0.0, 0.0);
 
@@ -98,6 +98,46 @@ public class Intake extends SubsystemBase {
             backFlap.setPosition(0.0);
         }
     }
+
+    public void setFrontFlapDown(){
+        frontFlap.setPosition(1.0);
+    }
+
+    public void setFrontFlapUp(){
+        frontFlap.setPosition(0.0);
+    }
+
+    public void setBackFlapDown(){
+        backFlap.setPosition(0.0);
+    }
+    public void setBackFlapUp(){
+        backFlap.setPosition(1.0);
+    }
+
+    public void intakeFront(){
+        frontIntake.setPower(State.INTAKE.powerFront);
+    }
+
+    public void intakeBack(){
+        backIntake.setPower(State.INTAKE.powerBack);
+    }
+
+    public void outtakeFront(){
+        frontIntake.setPower(State.OUTTAKE.powerFront);
+    }
+
+    public void outtakeBack(){
+        backIntake.setPower(State.OUTTAKE.powerBack);
+    }
+
+    public void stopFront(){
+        frontIntake.setPower(0);
+    }
+
+    public void stopBack(){
+        backIntake.setPower(0);
+    }
+
 
     /**
      * Starts the intake on whatever the current side is.

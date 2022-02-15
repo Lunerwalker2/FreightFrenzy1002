@@ -84,14 +84,6 @@ public class BlueCycleAuto extends AutoBase {
                 drive, lift, scoringArm, bucket, intake, false, () -> hubLevel
         );
 
-        dropFreightInHubCommand1 = new DropFreightInHubCommand(
-                drive, lift, scoringArm, bucket, intake, false
-        );
-
-        goToWarehouseCommand1 = new RetractAndGoToWarehouseCommand(
-                drive, lift, scoringArm, bucket, intake, false
-        );
-
         teamMarkerDetector.startStream();
         while (!isStarted()) {
             hubLevel = HubLevel.valueOf(teamMarkerDetector.getHubLevel().toString());
@@ -125,8 +117,12 @@ public class BlueCycleAuto extends AutoBase {
                                         false
                                 )
                         ),
-                        dropFreightInHubCommand1,
-                        goToWarehouseCommand1,
+                        new DropFreightInHubCommand(
+                                drive, lift, scoringArm, bucket, intake, false
+                        ),
+                        new RetractAndGoToWarehouseCommand(
+                                drive, lift, scoringArm, bucket, intake, false
+                        ),
                         //cycle
                         new CrawlForwardUntilIntakeCommand(
                                 drive, intake, bucket, telemetry, false

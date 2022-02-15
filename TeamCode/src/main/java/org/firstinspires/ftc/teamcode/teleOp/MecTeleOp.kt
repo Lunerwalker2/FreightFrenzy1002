@@ -79,6 +79,8 @@ class MecTeleOp : CommandOpMode() {
     private lateinit var manualLiftCommand: ManualLiftCommand
     private lateinit var manualLiftResetBottomCommand: ManualLiftResetBottomCommand
 
+    private lateinit var manualIntakeCommand: ManualIntakeCommand
+
     override fun initialize() {
 
         offset = Extensions.HEADING_SAVER
@@ -126,30 +128,37 @@ class MecTeleOp : CommandOpMode() {
                         Runnable { carouselWheel.setDirection(true) })
 
 
-        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(Runnable {
-                    if (gamepad1.x) intake.outtakeBoth()
-                    else intake.intake()
-                    intakeHasBeenDetected = false
-                })
-                .whileActiveContinuous(Runnable {
-                    if(!intakeHasBeenDetected && bucket.freightDetected()){
-                        gamepad1.rumble(300)
-                        intakeHasBeenDetected = true
-                    }
-                })
-                .whenInactive(intake::stop)
+
+        manualIntakeCommand = ManualIntakeCommand(
+                intake, driver
+        )
+
+        intake.defaultCommand = PerpetualCommand(manualIntakeCommand)
+
+//        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+//                .whenPressed(Runnable {
+//                    if (gamepad1.x) intake.outtakeBoth()
+//                    else intake.intake()
+//                    intakeHasBeenDetected = false
+//                })
+//                .whileActiveContinuous(Runnable {
+//                    if(!intakeHasBeenDetected && bucket.freightDetected()){
+//                        gamepad1.rumble(300)
+//                        intakeHasBeenDetected = true
+//                    }
+//                })
+//                .whenInactive(intake::stop)
 
 
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(intake::stop)
-                .whenPressed(Runnable { intake.setSide(true) })
-                .whenPressed(SetHubLEDCommand(hardwareMap, Color.GREEN))
-
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(intake::stop)
-                .whenPressed(Runnable { intake.setSide(false) })
-                .whenPressed(SetHubLEDCommand(hardwareMap, Color.RED))
+//        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+//                .whenPressed(intake::stop)
+//                .whenPressed(Runnable { intake.setSide(true) })
+//                .whenPressed(SetHubLEDCommand(hardwareMap, Color.GREEN))
+//
+//        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+//                .whenPressed(intake::stop)
+//                .whenPressed(Runnable { intake.setSide(false) })
+//                .whenPressed(SetHubLEDCommand(hardwareMap, Color.RED))
 
 
         /* ***********************************************/

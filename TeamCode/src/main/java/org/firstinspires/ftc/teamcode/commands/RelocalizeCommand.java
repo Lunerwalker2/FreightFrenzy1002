@@ -33,9 +33,9 @@ public class RelocalizeCommand extends CommandBase {
      *
      *
      */
-    private static final double FORWARD_SENSOR_BASE_DISTANCE_TO_WALL = 63.125;
+    private static final double FORWARD_SENSOR_BASE_DISTANCE_TO_WALL = 66.78125;//63.125;
     private static final double BACKWARD_SENSOR_BASE_DISTANCE_TO_WALL = 64.75;
-    private static final double LEFT_SENSOR_BASE_DISTANCE_TO_WALL = 64.75;
+    private static final double LEFT_SENSOR_BASE_DISTANCE_TO_WALL = 69.425;
     private static final double RIGHT_SENSOR_BASE_DISTANCE_TO_WALL = 66.0625;
 
     /*
