@@ -30,7 +30,7 @@ public class MakeReadyToLoadCommand extends ParallelCommandGroup {
                 new SequentialCommandGroup(
                         new WaitCommand(700),
                         new MoveLiftPositionCommand(lift, Lift.Positions.IN_ROBOT, 4,
-                                (slow) ? 1900 : 2000, (slow) ? 1900 : 2000)
+                                (slow) ? 1900 : 2000, (slow) ? 2000 : 2200)
                 )
         );
     }

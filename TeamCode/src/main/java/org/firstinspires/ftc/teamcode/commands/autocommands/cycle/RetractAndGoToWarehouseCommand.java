@@ -28,10 +28,10 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
     private final boolean redSide;
 
     private static final Pose2d blueStartingPosition =
-            new Pose2d(-8, 56, toRadians(0));
+            new Pose2d(-8, 54, toRadians(0));
 
     private static final Pose2d redStartingPosition =
-            new Pose2d(-10, -58, toRadians(180));
+            new Pose2d(-10, -56, toRadians(180));
 
     public RetractAndGoToWarehouseCommand(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm,

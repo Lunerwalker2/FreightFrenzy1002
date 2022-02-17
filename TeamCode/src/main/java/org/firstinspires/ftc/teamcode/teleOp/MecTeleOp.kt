@@ -262,11 +262,11 @@ class MecTeleOp : CommandOpMode() {
 
         /////////////////////////////////////////////////////////////// Drive Base
         //Set the slow mode one if either bumper is pressed
-        if (gamepad1.right_bumper) {
-            powerMultiplier = 0.3
-        } else {
-            powerMultiplier = 1.0
-        }
+//        if (gamepad1.right_bumper) {
+//            powerMultiplier = 0.3
+//        } else {
+//            powerMultiplier = 1.0
+//        }
 
         //Store the heading of the robot
         val heading = getRobotAngle()

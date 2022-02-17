@@ -119,7 +119,7 @@ public class BlueCycleAuto extends AutoBase {
                         ),
                         new DropFreightInHubCommand(
                                 drive, lift, scoringArm, bucket, intake, false
-                        ),
+                        ).andThen(waitFor(800)),
                         new RetractAndGoToWarehouseCommand(
                                 drive, lift, scoringArm, bucket, intake, false
                         ),

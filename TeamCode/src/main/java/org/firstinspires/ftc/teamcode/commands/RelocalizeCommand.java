@@ -38,6 +38,7 @@ public class RelocalizeCommand extends CommandBase {
     private static final double LEFT_SENSOR_BASE_DISTANCE_TO_WALL = 69.425;
     private static final double RIGHT_SENSOR_BASE_DISTANCE_TO_WALL = 66.0625;
 
+
     /*
      * These are the relative positions of each sensor from the center of the
      * robot. They are relative because the actual coordinates doesn't matter,
@@ -126,7 +127,7 @@ public class RelocalizeCommand extends CommandBase {
                     (rotatedDistances[1] - LEFT_SENSOR_BASE_DISTANCE_TO_WALL);
 
             //Update the user with the new position
-            if(forward < 50 && forward > 10) poseConsumer.accept(new Pose2d(x, y, heading));
+            if(forward < 35 && forward > 10) poseConsumer.accept(new Pose2d(x, y, heading));
             done = true;
         }
     }
@@ -187,7 +188,6 @@ public class RelocalizeCommand extends CommandBase {
                         headingRad + PI)) :
                 forwardSensorPosition.rotated(AngleUnit.RADIANS.normalize(
                         headingRad - toRadians(4))
-
                 );
 
         //Do the same for the side sensor

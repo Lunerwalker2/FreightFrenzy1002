@@ -53,7 +53,7 @@ class Lift(private val hardwareMap: HardwareMap, private val telemetry: Telemetr
     fun setLiftPower(power: Double) = run { liftMotor.power = power }
 
     fun atUpperLimit(): Boolean {
-        return getLiftRawPosition() > 1000
+        return getLiftRawPosition() > 1200
     }
 
     fun atLowerLimit(): Boolean {
