@@ -28,7 +28,7 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
     private final boolean redSide;
 
     private static final Pose2d blueStartingPosition =
-            new Pose2d(-8, 54, toRadians(0));
+            new Pose2d(-10, 53, toRadians(0));
 
     private static final Pose2d redStartingPosition =
             new Pose2d(-10, -56, toRadians(180));
@@ -53,14 +53,21 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 new SequentialCommandGroup(
-                        new WaitCommand(800),
-                        new MakeReadyToLoadCommand(lift, scoringArm, bucket, true)
+                        new InstantCommand(() -> lift.setLiftPower(-1.0)),
+                        new WaitCommand(100),
+                        new InstantCommand(() -> lift.setLiftPower(0.0)),
+                        new WaitCommand(600),
+                        new MakeReadyToLoadCommand(lift, scoringArm, bucket, false)
                 ),
                 new SequentialCommandGroup(
                         new WaitCommand(800),
                         new InstantCommand(() -> {
                             intake.setSide(redSide);
                             intake.intake();
+                            intake.setFrontFlapUp();
+                            intake.setFrontFlapUp();
+                            intake.intakeFront();
+                            intake.intakeBack();
                         })
                 )
         );

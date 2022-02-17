@@ -7,9 +7,11 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand;
@@ -24,9 +26,12 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
 
 
+    ElapsedTime timer;
+
     public CrawlForwardUntilIntakeCommand(
             SampleMecanumDrive drive, Intake intake, Bucket bucket, Telemetry telemetry,
             boolean redSide) {
+
 
         super(
 //                new CommandBase() {
@@ -36,7 +41,10 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
 //                        return bucket.isFreightDetected();
 //                    }
 //                },
-                new WaitUntilCommand(bucket::freightDetected),
+                new ParallelRaceGroup(
+                        new WaitUntilCommand(bucket::freightDetected),
+                        new WaitCommand(4000)
+                ),
 //                new WaitCommand(2500),
                 new FollowTrajectorySequenceCommand(drive,
                         drive.trajectorySequenceBuilder(
@@ -47,10 +55,10 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
                                 //Set it to go slow, even tho its really clunky
                                 .setVelConstraint(
                                         SampleMecanumDrive.getVelocityConstraint(
-                                                5, toRadians(180), DriveConstants.TRACK_WIDTH
+                                                10, toRadians(180), DriveConstants.TRACK_WIDTH
                                         )
                                 )
-                                .forward((!redSide) ? 10 : -10)
+                                .forward((!redSide) ? 15 : -15)
 //                                .back((!redSide) ? 5 : -5)
                                 .build()
                 )
