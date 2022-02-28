@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.commands.MakeReadyToLoadCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveLiftPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.RunIntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.duck.DropPreLoadFreightCommandDuck;
+import org.firstinspires.ftc.teamcode.commands.autocommands.duck.ParkInStorageUnitDuck;
 import org.firstinspires.ftc.teamcode.commands.autocommands.duck.RetractFromPreLoadCommandDuck;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
@@ -120,39 +121,7 @@ public class RedDuckAuto extends AutoBase {
                                         carouselWheel, false
                                 )
                         ),
-                        new ParallelDeadlineGroup(
-                                new FollowTrajectorySequenceCommand(drive, backFromCarousel),
-                                new RunIntakeCommand(intake, false, true)
-                        ),
-                        new ParallelCommandGroup(
-                                new FollowTrajectorySequenceCommand(drive, goToHub),
-                                //Move lift out pretty much instantly
-                                new SequentialCommandGroup(
-                                        new WaitCommand(1300),
-                                        new MoveLiftPositionCommand(lift, Lift.Positions.TOP, 5.0, 1800.0, 1700.0)
-                                ),
-                                //Try to wait for the lift to extend before moving the arm
-                                new SequentialCommandGroup(
-                                        new WaitCommand(2000),
-                                        new InstantCommand(scoringArm::scoringPosition)
-                                ),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(3000),
-                                        new InstantCommand(bucket::dump)
-                                )
-                        ),
-                        new ParallelCommandGroup(
-                                new FollowTrajectorySequenceCommand(drive,
-                                        drive.trajectorySequenceBuilder(goToHub.end())
-                                                .back(20)
-                                                .lineToLinearHeading(new Pose2d(-60, -30, toRadians(180)))
-                                                .build()
-                                ),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(800),
-                                        new MakeReadyToLoadCommand(lift, scoringArm, bucket, true)
-                                )
-                        )
+                        new ParkInStorageUnitDuck(drive, true)
                 )
 
         );

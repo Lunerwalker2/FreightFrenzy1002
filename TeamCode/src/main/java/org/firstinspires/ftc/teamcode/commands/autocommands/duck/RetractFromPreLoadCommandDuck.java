@@ -44,6 +44,13 @@ public class RetractFromPreLoadCommandDuck extends ParallelCommandGroup {
             new Pose2d(-10, -46, toRadians(180));
 
 
+    private static final Vector2d blueDuckPosition =
+            new Vector2d(-57, 55);
+
+    private static final Vector2d redDuckPosition =
+            new Vector2d(-57, -55);
+
+
 
     public RetractFromPreLoadCommandDuck(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm,

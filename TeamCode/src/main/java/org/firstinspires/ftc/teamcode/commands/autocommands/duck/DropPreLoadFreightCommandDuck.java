@@ -62,7 +62,7 @@ public class DropPreLoadFreightCommandDuck extends ParallelCommandGroup {
                         new MoveLiftPositionCommand(lift,
                                 (hubLevel == HubLevel.TOP) ? Lift.Positions.TOP :
                                         (hubLevel == HubLevel.MIDDLE) ? Lift.Positions.MIDDLE :
-                                                Lift.Positions.BOTTOM, 5, 1800, 1700)
+                                                Lift.Positions.BOTTOM, 10, 1800, 1700)
                 ),
                 new SequentialCommandGroup(
                         new WaitCommand(2400),
@@ -72,7 +72,7 @@ public class DropPreLoadFreightCommandDuck extends ParallelCommandGroup {
                                     scoringArm.scoringPosition();
                                     break;
                                 case MIDDLE:
-                                    scoringArm.setPosition(0.5);
+                                    scoringArm.setPosition(0.45);
                                     break;
                                 case BOTTOM:
                                     scoringArm.setPosition(0.43);
@@ -82,7 +82,8 @@ public class DropPreLoadFreightCommandDuck extends ParallelCommandGroup {
                 ),
                 new SequentialCommandGroup(
                         new WaitCommand(3500),
-                        new InstantCommand(bucket::dump)
+                        new InstantCommand(bucket::dump),
+                        new WaitCommand(300)
                 )
         );
 
@@ -98,22 +99,22 @@ public class DropPreLoadFreightCommandDuck extends ParallelCommandGroup {
 
     private void generateTrajectories() {
         blueDriveToTopLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
-                .lineTo(new Vector2d(-10, 58))
+                .lineTo(new Vector2d(-10, 53))
                 .build();
         blueDriveToMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
                 .lineTo(new Vector2d(-10, 50))
                 .build();
         blueDriveToBottomLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
-                .lineTo(new Vector2d(-10, 46))
+                .lineTo(new Vector2d(-10, 49.5))
                 .build();
         redDriveToTopLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-10, -58))
+                .lineTo(new Vector2d(-10, -56))
                 .build();
         redDriveToMiddleLevel = drive.trajectorySequenceBuilder(redStartingPosition)
                 .lineTo(new Vector2d(-10, -50))
                 .build();
         redDriveToBottomLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-10, -46))
+                .lineTo(new Vector2d(-10, -51))
                 .build();
     }
 

@@ -81,9 +81,12 @@ class MecTeleOp : CommandOpMode() {
 
     private lateinit var manualIntakeCommand: ManualIntakeCommand
 
+
+
     override fun initialize() {
 
         offset = Extensions.HEADING_SAVER
+
 
         //Extension functions pog see Extensions.kt in util package
         telemetry.sendLine("Initializing Subsystems...")
@@ -107,7 +110,6 @@ class MecTeleOp : CommandOpMode() {
         //Define our gamepads with ftclib things
         val driver = GamepadEx(gamepad1)
         val manipulator = GamepadEx(gamepad2)
-
 
         //Driver controls
 
