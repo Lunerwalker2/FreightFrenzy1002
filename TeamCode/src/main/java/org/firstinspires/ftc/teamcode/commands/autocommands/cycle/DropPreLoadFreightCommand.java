@@ -55,6 +55,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
     @Override
     public void initialize() {
         hubLevel = getHubLevel.get();
+
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getPreLoadTrajectory()),
                 new SequentialCommandGroup(
@@ -62,7 +63,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                         new MoveLiftPositionCommand(lift,
                                 (hubLevel == HubLevel.TOP) ? Lift.Positions.TOP :
                                         (hubLevel == HubLevel.MIDDLE) ? Lift.Positions.MIDDLE :
-                                                Lift.Positions.BOTTOM, 5, 1800, 1700)
+                                                Lift.Positions.BOTTOM, 10, 1800, 1700)
                 ),
                 new SequentialCommandGroup(
                         new WaitCommand(2400),
@@ -99,7 +100,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
 
     private void generateTrajectories() {
         blueDriveToTopLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
-                .lineTo(new Vector2d(-10, 53))
+                .lineTo(new Vector2d(-10, 55))
                 .build();
         blueDriveToMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
                 .lineTo(new Vector2d(-10, 50))
@@ -108,7 +109,7 @@ public class DropPreLoadFreightCommand extends ParallelCommandGroup {
                 .lineTo(new Vector2d(-10, 49.5))
                 .build();
         redDriveToTopLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-10, -56))
+                .lineTo(new Vector2d(-10, -54))
                 .build();
         redDriveToMiddleLevel = drive.trajectorySequenceBuilder(redStartingPosition)
                 .lineTo(new Vector2d(-10, -50))

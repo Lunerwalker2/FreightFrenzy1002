@@ -58,7 +58,7 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
                                                 10, toRadians(180), DriveConstants.TRACK_WIDTH
                                         )
                                 )
-                                .forward((!redSide) ? 15 : -15)
+                                .forward((!redSide) ? 6 : -6)
 //                                .back((!redSide) ? 5 : -5)
                                 .build()
                 )

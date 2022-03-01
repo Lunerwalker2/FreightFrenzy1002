@@ -45,7 +45,7 @@ public class Bucket extends SubsystemBase {
 
     //TODO: Find correct value
     public boolean freightDetected(){
-        return intakeSensor.getDistance(DistanceUnit.INCH) < 4;
+        return intakeSensor.getDistance(DistanceUnit.INCH) < 3.9;
     }
 
     /**
