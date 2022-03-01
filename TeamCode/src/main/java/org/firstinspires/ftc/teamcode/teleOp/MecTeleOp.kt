@@ -48,14 +48,6 @@ MOST OF THIS IS NOT HOW THE SDK WORKS PLEASE DON'T TAKE THIS AS AN EXAMPLE OF TH
 @TeleOp(name = "Main TeleOp", group = "TeleOp")
 class MecTeleOp : CommandOpMode() {
 
-
-    //Subsystems
-    private lateinit var carouselWheel: CarouselWheel
-    private lateinit var intake: Intake
-    private lateinit var lift: Lift
-    private lateinit var scoringArm: ScoringArm
-    private lateinit var bucket: Bucket
-
     //We could go and use the rr drive class but meh I'd like to show the math anyway
     private lateinit var leftFront: DcMotorEx
     private lateinit var leftBack: DcMotorEx
@@ -72,16 +64,6 @@ class MecTeleOp : CommandOpMode() {
 
     //Drive power multiplier for slow mode
     private var powerMultiplier = 1.0
-    private val makeArmReadyToLoadCommand by lazy { MakeArmReadyToLoadCommand(lift, scoringArm, bucket) }
-
-    //    private val makeReadyToLoadCommand by lazy { MakeReadyToLoadCommand(lift, scoringArm, bucket) }
-    private val makeReadyToScoreCommand by lazy { MakeReadyToScoreCommand(lift, scoringArm) }
-    private lateinit var manualLiftCommand: ManualLiftCommand
-    private lateinit var manualLiftResetBottomCommand: ManualLiftResetBottomCommand
-
-    private lateinit var manualIntakeCommand: ManualIntakeCommand
-
-
 
     override fun initialize() {
 
@@ -90,12 +72,6 @@ class MecTeleOp : CommandOpMode() {
 
         //Extension functions pog see Extensions.kt in util package
         telemetry.sendLine("Initializing Subsystems...")
-
-        carouselWheel = CarouselWheel(hardwareMap, telemetry)
-        intake = Intake(hardwareMap, telemetry)
-        lift = Lift(hardwareMap, telemetry)
-        scoringArm = ScoringArm(hardwareMap, telemetry)
-        bucket = Bucket(hardwareMap, telemetry)
 
 //        DistanceSensors(hardwareMap).disableAll()
 
@@ -118,24 +94,6 @@ class MecTeleOp : CommandOpMode() {
 
 
         //Carousel wheel
-        Trigger { gamepad2.right_trigger > 0.2 }
-                .whileActiveContinuous(Runnable {
-                    if (gamepad2.right_trigger < 0.8) carouselWheel.setWheelPower(0.52)
-                    else carouselWheel.setWheelPower(0.8)
-                })
-                .whenInactive(Runnable { carouselWheel.setWheelPower(0.0) })
-
-        manipulator.getGamepadButton(GamepadKeys.Button.B)
-                .toggleWhenPressed(Runnable { carouselWheel.setDirection(false) },
-                        Runnable { carouselWheel.setDirection(true) })
-
-
-
-        manualIntakeCommand = ManualIntakeCommand(
-                intake, driver
-        )
-
-        intake.defaultCommand = PerpetualCommand(manualIntakeCommand)
 
 //        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
 //                .whenPressed(Runnable {
@@ -170,40 +128,6 @@ class MecTeleOp : CommandOpMode() {
 //                        bucket::dump    ,
 //                        bucket::load
 //                )
-
-        manipulator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .toggleWhenPressed(
-                        Runnable {
-                            if (gamepad2.left_trigger < 0.4) scoringArm.scoringPosition()
-                            else scoringArm.position = 0.4 //shared hub
-                        },
-                        scoringArm::loadingPosition
-                )
-
-        manualLiftResetBottomCommand = ManualLiftResetBottomCommand(
-                lift, manipulator
-        )
-
-        manipulator.getGamepadButton(GamepadKeys.Button.Y)
-                .whenHeld(manualLiftResetBottomCommand)
-
-        //Set up the default command for the lift, for more info see the class file of the command
-        manualLiftCommand = ManualLiftCommand(
-                lift, scoringArm, bucket, manipulator
-        )
-
-        //Make this the default lift command
-        lift.defaultCommand = PerpetualCommand(manualLiftCommand)
-
-        //If these are scheduled, then the lift command will be interrupted momentarily
-        Trigger { -gamepad2.left_stick_y > 0.5 }
-                .whenActive(makeReadyToScoreCommand)
-                .cancelWhenActive(makeArmReadyToLoadCommand)
-
-        Trigger { -gamepad2.left_stick_y < -0.5 }
-                .whenActive(makeArmReadyToLoadCommand)
-                .cancelWhenActive(makeReadyToScoreCommand)
-
 
         //////////////////////////////////////////////// Drive Base
 
@@ -243,12 +167,6 @@ class MecTeleOp : CommandOpMode() {
 
     override fun run() {
         super.run()
-
-
-        bucket.setPosition(Range.scale(gamepad2.left_trigger.toDouble(), 0.0, 1.0, bucket.loadPosition, bucket.dumbPosition))
-
-
-
 
         if(isStart){
             matchTimer.reset()
