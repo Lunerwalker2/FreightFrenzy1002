@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-@TeleOp(name="Aarush's Mess (Version 1.0.1)")
+@TeleOp(name="Aarush's TeleOp")
 public class AarushTeleOp extends LinearOpMode {
-    // Defines public motors
+    // Declaring the motors to use
     public DcMotor leftFront;
     public DcMotor rightFront;
     public DcMotor leftBack;
@@ -32,15 +32,15 @@ public class AarushTeleOp extends LinearOpMode {
         for (DcMotor motor : leftMotors) motor.setDirection(DcMotorSimple.Direction.REVERSE);
         for (DcMotor motor : motors) motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        telemetry.addData("Loaded", "Robot is awaiting run");
+        telemetry.addData("Loaded", "Robot is waiting to start!");
         telemetry.update();
-
         waitForStart();
+
         while (opModeIsActive()) {
             double x = gamepad1.right_stick_x;
             double y = gamepad1.right_stick_y;
-            double power = (y*.75) + (x*.25);
-            setPower(motors,power);
+            double power = (y * 0.75) + (x * 0.25);
+            setPower(motors, power);
         }
     }
     public void setPower(DcMotor[] motors, double power) {
