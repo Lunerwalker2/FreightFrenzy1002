@@ -59,7 +59,7 @@ public class AarushTeleOp extends LinearOpMode {
     }
 
     public void stopMotors(DcMotor[] motors){
-        setPower(motors,0)
+        setPower(motors,0);
     }
 
 }
