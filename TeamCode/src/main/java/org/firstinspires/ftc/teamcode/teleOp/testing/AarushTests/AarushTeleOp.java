@@ -8,10 +8,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp(name="Aarush's TeleOp")
 public class AarushTeleOp extends LinearOpMode {
     // Declaring the motors to use
-    public DcMotor leftFront;
-    public DcMotor rightFront;
-    public DcMotor leftBack;
-    public DcMotor rightBack;
+    private DcMotor leftFront;
+    private DcMotor rightFront;
+    private DcMotor leftBack;
+    private DcMotor rightBack;
 
     @Override
     public void runOpMode() {
@@ -30,10 +30,17 @@ public class AarushTeleOp extends LinearOpMode {
 
         // Defines basic directions and run modes
         for (DcMotor motor : leftMotors) motor.setDirection(DcMotorSimple.Direction.REVERSE);
-        for (DcMotor motor : motors) motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        for (DcMotor motor : motors) {
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            // Sets the motion of the motor to stop after zero power (may need to remove)
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
 
         telemetry.addData("Loaded", "Robot is waiting to start!");
         telemetry.update();
+
         waitForStart();
 
         while (opModeIsActive()) {
@@ -43,11 +50,16 @@ public class AarushTeleOp extends LinearOpMode {
             setPower(motors, power);
         }
     }
+
     public void setPower(DcMotor[] motors, double power) {
         if(!((-1.0 <= power)&&(power <= 1.0))) { // If power is not within safe bounds for java
             power = power/100; // Set power as a percentage of the given power
         }
         for (DcMotor motor : motors) motor.setPower(power); // Set the power of all the motors supplied in the method parameters
+    }
+
+    public void stopMotors(DcMotor[] motors){
+        setPower(motors,0)
     }
 
 }
