@@ -45,11 +45,11 @@ public class ManualLiftCommand extends CommandBase {
 
         //Check if the up button is pressed
         if (manipulator.getButton(GamepadKeys.Button.DPAD_UP) && !lift.atUpperLimit()) {
-            lift.setLiftPower(0.7 * multiplier);
+            lift.setLiftPower(0.8 * multiplier);
         }
         //Then check if the down is pressed
         else if (manipulator.getButton(GamepadKeys.Button.DPAD_DOWN) && !lift.atLowerLimit()) {
-            lift.setLiftPower(-0.4 * multiplier);
+            lift.setLiftPower(-0.5 * multiplier);
         }
         //Otherwise, do nothing
         else {
