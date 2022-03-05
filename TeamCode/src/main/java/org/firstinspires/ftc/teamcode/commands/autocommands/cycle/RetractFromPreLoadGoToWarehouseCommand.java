@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 
 public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup {
 
-
     private final SampleMecanumDrive drive;
     private final Lift lift;
     private final ScoringArm scoringArm;
@@ -50,8 +49,7 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
 
     public RetractFromPreLoadGoToWarehouseCommand(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm,
-            Bucket bucket, Intake intake, boolean redSide, Supplier<HubLevel> getHubLevel
-    ) {
+            Bucket bucket, Intake intake, boolean redSide, Supplier<HubLevel> getHubLevel) {
 
         this.drive = drive;
         this.lift = lift;
@@ -67,6 +65,7 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
 
     @Override
     public void initialize() {
+
         hubLevel = getHubLevel.get();
 
         if(lift.getCurrentCommand() != null) lift.getCurrentCommand().cancel();
@@ -100,6 +99,7 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
     private static TrajectorySequence redFromBottomLevel;
 
     public void generateTrajectories() {
+
         blueFromTopLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
                 .splineToConstantHeading(new Vector2d(13, 64.5), toRadians(0))
                 .splineToConstantHeading(new Vector2d(40, 64), toRadians(0))
@@ -132,6 +132,7 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
 
 
     public TrajectorySequence getTrajectoryCommand() {
+        
         switch (hubLevel) {
             case TOP:
                 return (redSide) ? redFromTopLevel : blueFromTopLevel;

@@ -25,13 +25,11 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
 
-
     ElapsedTime timer;
 
     public CrawlForwardUntilIntakeCommand(
             SampleMecanumDrive drive, Intake intake, Bucket bucket, Telemetry telemetry,
             boolean redSide) {
-
 
         super(
 //                new CommandBase() {

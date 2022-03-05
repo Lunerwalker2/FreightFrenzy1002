@@ -29,14 +29,13 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
 
     private static final Pose2d blueStartingPosition =
             new Pose2d(-10, 53, toRadians(0));
-
     private static final Pose2d redStartingPosition =
             new Pose2d(-10, -54, toRadians(180));
 
     public RetractAndGoToWarehouseCommand(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm,
-            Bucket bucket, Intake intake, boolean redSide
-    ) {
+            Bucket bucket, Intake intake, boolean redSide) {
+
         this.drive = drive;
         this.lift = lift;
         this.scoringArm = scoringArm;
@@ -50,6 +49,7 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
 
     @Override
     public void initialize(){
+
         if(lift.getCurrentCommand() != null) lift.getCurrentCommand().cancel();
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
@@ -78,6 +78,7 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
     private TrajectorySequence redTrajectory;
 
     private void generateTrajectory() {
+
         blueTrajectory = drive.trajectorySequenceBuilder(blueStartingPosition)
                 .splineToConstantHeading(new Vector2d(13, 64.5), toRadians(0))
                 .splineToConstantHeading(new Vector2d(40, 64), toRadians(0))
@@ -91,6 +92,7 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
     }
 
     public TrajectorySequence getTrajectoryCommand() {
+        
         return (redSide) ? redTrajectory : blueTrajectory;
     }
 }

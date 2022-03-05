@@ -21,7 +21,6 @@ import java.util.function.Supplier;
 
 public class RetractFromPreLoadCommandDuck extends ParallelCommandGroup {
 
-
     private final SampleMecanumDrive drive;
     private final Lift lift;
     private final ScoringArm scoringArm;
@@ -43,19 +42,14 @@ public class RetractFromPreLoadCommandDuck extends ParallelCommandGroup {
     private static final Pose2d redStartingPositionBottom =
             new Pose2d(-10, -51, toRadians(180));
 
-
     private static final Vector2d blueDuckPosition =
             new Vector2d(-57, 55);
-
     private static final Vector2d redDuckPosition =
             new Vector2d(-57, -55);
 
-
-
     public RetractFromPreLoadCommandDuck(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm,
-            Bucket bucket, boolean redSide, Supplier<HubLevel> getHubLevel
-    ) {
+            Bucket bucket, boolean redSide, Supplier<HubLevel> getHubLevel) {
 
         this.drive = drive;
         this.lift = lift;
@@ -70,6 +64,7 @@ public class RetractFromPreLoadCommandDuck extends ParallelCommandGroup {
 
     @Override
     public void initialize() {
+
         hubLevel = getHubLevel.get();
 
         if(lift.getCurrentCommand() != null) lift.getCurrentCommand().cancel();
@@ -92,6 +87,7 @@ public class RetractFromPreLoadCommandDuck extends ParallelCommandGroup {
     private static TrajectorySequence redFromBottomLevel;
 
     public void generateTrajectories() {
+
         blueFromTopLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
                 .lineToConstantHeading(new Vector2d(-35, 50))
                 .lineToConstantHeading(new Vector2d(-50, 40))
@@ -133,6 +129,7 @@ public class RetractFromPreLoadCommandDuck extends ParallelCommandGroup {
 
 
     public TrajectorySequence getTrajectoryCommand() {
+
         switch (hubLevel) {
             case TOP:
                 return (redSide) ? redFromTopLevel : blueFromTopLevel;

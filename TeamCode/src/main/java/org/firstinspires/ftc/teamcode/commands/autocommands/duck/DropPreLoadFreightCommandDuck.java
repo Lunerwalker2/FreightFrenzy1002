@@ -32,14 +32,13 @@ public class DropPreLoadFreightCommandDuck extends ParallelCommandGroup {
 
     private static final Pose2d blueStartingPosition =
             new Pose2d(-31.96875, 65.375, toRadians(0.0));
-
     private static final Pose2d redStartingPosition =
             new Pose2d(-31.96875, -65.375, toRadians(180.0));
-
 
     public DropPreLoadFreightCommandDuck(
             SampleMecanumDrive drive, Lift lift, ScoringArm scoringArm, Bucket bucket,
             Supplier<HubLevel> getHubLevel, boolean redSide) {
+
         this.drive = drive;
         this.lift = lift;
         this.scoringArm = scoringArm;
@@ -54,6 +53,7 @@ public class DropPreLoadFreightCommandDuck extends ParallelCommandGroup {
 
     @Override
     public void initialize() {
+
         hubLevel = getHubLevel.get();
 
         addCommands(
@@ -99,6 +99,7 @@ public class DropPreLoadFreightCommandDuck extends ParallelCommandGroup {
     private static TrajectorySequence redDriveToBottomLevel;
 
     private void generateTrajectories() {
+        
         blueDriveToTopLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
                 .lineTo(new Vector2d(-10, 55))
                 .build();
@@ -119,8 +120,8 @@ public class DropPreLoadFreightCommandDuck extends ParallelCommandGroup {
                 .build();
     }
 
-
     public TrajectorySequence getPreLoadTrajectory() {
+
         switch (hubLevel) {
             case TOP:
                 return (redSide) ? redDriveToTopLevel : blueDriveToTopLevel;
