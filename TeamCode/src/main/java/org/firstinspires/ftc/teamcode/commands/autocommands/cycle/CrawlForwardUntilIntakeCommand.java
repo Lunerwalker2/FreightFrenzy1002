@@ -43,7 +43,7 @@ public class CrawlForwardUntilIntakeCommand extends ParallelDeadlineGroup {
 //                },
                 new ParallelRaceGroup(
                         new WaitUntilCommand(bucket::freightDetected),
-                        new WaitCommand(4000)
+                        new WaitCommand(3000)
                 ),
 //                new WaitCommand(2500),
                 new FollowTrajectorySequenceCommand(drive,

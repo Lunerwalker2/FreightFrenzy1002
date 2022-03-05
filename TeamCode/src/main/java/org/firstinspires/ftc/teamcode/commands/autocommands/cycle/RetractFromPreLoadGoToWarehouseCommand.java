@@ -68,6 +68,9 @@ public class RetractFromPreLoadGoToWarehouseCommand extends ParallelCommandGroup
     @Override
     public void initialize() {
         hubLevel = getHubLevel.get();
+
+        if(lift.getCurrentCommand() != null) lift.getCurrentCommand().cancel();
+
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 new SequentialCommandGroup(

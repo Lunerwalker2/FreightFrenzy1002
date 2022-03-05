@@ -55,6 +55,7 @@ public class DropPreLoadFreightCommandDuck extends ParallelCommandGroup {
     @Override
     public void initialize() {
         hubLevel = getHubLevel.get();
+
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getPreLoadTrajectory()),
                 new SequentialCommandGroup(
@@ -99,7 +100,7 @@ public class DropPreLoadFreightCommandDuck extends ParallelCommandGroup {
 
     private void generateTrajectories() {
         blueDriveToTopLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
-                .lineTo(new Vector2d(-10, 53))
+                .lineTo(new Vector2d(-10, 55))
                 .build();
         blueDriveToMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPosition)
                 .lineTo(new Vector2d(-10, 50))
@@ -108,7 +109,7 @@ public class DropPreLoadFreightCommandDuck extends ParallelCommandGroup {
                 .lineTo(new Vector2d(-10, 49.5))
                 .build();
         redDriveToTopLevel = drive.trajectorySequenceBuilder(redStartingPosition)
-                .lineTo(new Vector2d(-10, -56))
+                .lineTo(new Vector2d(-10, -54))
                 .build();
         redDriveToMiddleLevel = drive.trajectorySequenceBuilder(redStartingPosition)
                 .lineTo(new Vector2d(-10, -50))

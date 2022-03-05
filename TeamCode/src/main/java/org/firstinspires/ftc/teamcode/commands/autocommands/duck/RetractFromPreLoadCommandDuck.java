@@ -31,17 +31,17 @@ public class RetractFromPreLoadCommandDuck extends ParallelCommandGroup {
     private HubLevel hubLevel;
 
     private static final Pose2d blueStartingPositionTop =
-            new Pose2d(-10, 58, toRadians(0));
+            new Pose2d(-10, 55, toRadians(0));
     private static final Pose2d blueStartingPositionMiddle =
             new Pose2d(-10, 50, toRadians(0));
     private static final Pose2d blueStartingPositionBottom =
-            new Pose2d(-10, 46, toRadians(0));
+            new Pose2d(-10, 49.5, toRadians(0));
     private static final Pose2d redStartingPositionTop =
-            new Pose2d(-10, -58, toRadians(180));
+            new Pose2d(-10, -54, toRadians(180));
     private static final Pose2d redStartingPositionMiddle =
             new Pose2d(-10, -50, toRadians(180));
     private static final Pose2d redStartingPositionBottom =
-            new Pose2d(-10, -46, toRadians(180));
+            new Pose2d(-10, -51, toRadians(180));
 
 
     private static final Vector2d blueDuckPosition =
@@ -71,6 +71,9 @@ public class RetractFromPreLoadCommandDuck extends ParallelCommandGroup {
     @Override
     public void initialize() {
         hubLevel = getHubLevel.get();
+
+        if(lift.getCurrentCommand() != null) lift.getCurrentCommand().cancel();
+
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 new SequentialCommandGroup(

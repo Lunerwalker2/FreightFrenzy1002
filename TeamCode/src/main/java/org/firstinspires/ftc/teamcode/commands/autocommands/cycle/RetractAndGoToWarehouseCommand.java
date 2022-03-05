@@ -50,13 +50,11 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
 
     @Override
     public void initialize(){
+        if(lift.getCurrentCommand() != null) lift.getCurrentCommand().cancel();
         addCommands(
                 new FollowTrajectorySequenceCommand(drive, getTrajectoryCommand()),
                 new SequentialCommandGroup(
-                        new InstantCommand(() -> lift.setLiftPower(-0.9)),
-                        new WaitCommand(90),
-                        new InstantCommand(() -> lift.setLiftPower(0.0)),
-                        new WaitCommand(600),
+                        new WaitCommand(800),
                         new MakeReadyToLoadCommand(lift, scoringArm, bucket, false)
                 ),
                 new SequentialCommandGroup(
@@ -71,6 +69,7 @@ public class RetractAndGoToWarehouseCommand extends ParallelCommandGroup {
                         })
                 )
         );
+
 
         super.initialize();
     }
