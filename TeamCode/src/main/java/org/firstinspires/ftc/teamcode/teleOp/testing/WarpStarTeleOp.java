@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-@TeleOp(name="Aarush's TeleOp")
-public class AarushTeleOp extends LinearOpMode {
+@TeleOp(name="WSTO (test)")
+public class WarpStarTeleOp extends LinearOpMode {
     // Declaring the motors to use
     private DcMotor leftFront;
     private DcMotor rightFront;
