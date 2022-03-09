@@ -13,7 +13,7 @@ import java.util.List;
 @TeleOp(name="Main Test TeleOp")
 public class TestTeleOp extends LinearOpMode {
     // Declaring the motors
-    private DcMotor leftFront, rightFront, leftBack, rightBack;
+    DcMotor leftFront, rightFront, leftBack, rightBack;
     // Setting power for multiple motors at once
     public void setMassPower(DcMotor[] motors, double power) {
         // Set the power of all the motors to the power assigned
@@ -49,9 +49,10 @@ public class TestTeleOp extends LinearOpMode {
 
         waitForStart();
         telemetry.addData("Info", "wait for start passed");
+        double power = 1;
         while (opModeIsActive()) {
             // Sets the default power to 1
-            double power = 1;
+            power = 1;
             // Checks for when the bumper is pressed...
             if (gamepad1.left_bumper){
                 // ...to activate slow mode with the power
@@ -68,10 +69,10 @@ public class TestTeleOp extends LinearOpMode {
             rightBack.setPower(power*(y-x));
         }
         // Zeroes the power at the end in order to set the robot into after TeleOp mode.
-        leftFront.setPower(0);
-        leftBack.setPower(0);
-        rightFront.setPower(0);
-        rightBack.setPower(0);
+        //leftFront.setPower(0);
+        //leftBack.setPower(0);
+        //rightFront.setPower(0);
+        //rightBack.setPower(0);
     }
 
 
