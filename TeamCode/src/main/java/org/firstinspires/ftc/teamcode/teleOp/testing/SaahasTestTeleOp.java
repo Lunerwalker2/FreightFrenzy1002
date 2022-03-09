@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp(name = "TestTeleOp")
 public class SaahasTestTeleOp extends LinearOpMode {
     DcMotor rightFront = hardwareMap.get(DcMotor.class, "rf");
-    DcMotor leftFront = hardwareMap.get(DcMotor.class, "rb");
-    DcMotor rightBack = hardwareMap.get(DcMotor.class, "lb");
+    DcMotor leftFront = hardwareMap.get(DcMotor.class, "lf");
+    DcMotor rightBack = hardwareMap.get(DcMotor.class, "rb");
     DcMotor leftBack = hardwareMap.get(DcMotor.class, "lb");
 
 
