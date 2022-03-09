@@ -10,69 +10,50 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import java.util.Arrays;
 import java.util.List;
 
-@TeleOp(name="Main Test TeleOp")
+@TeleOp(name="Balanced TeleOp")
 public class TestTeleOp extends LinearOpMode {
-    // Declaring the motors
+
     DcMotor leftFront, rightFront, leftBack, rightBack;
-    // Setting power for multiple motors at once
-    public void setMassPower(DcMotor[] motors, double power) {
-        // Set the power of all the motors to the power assigned
-        for (DcMotor motor : motors) motor.setPower(power);
-    }
+
     @Override
     public void runOpMode() {
-        // Creates and defines the motors using the hardwareMap
-        DcMotor leftFront = hardwareMap.get(DcMotor.class,"lf");
-        DcMotor rightFront = hardwareMap.get(DcMotor.class,"rf");
-        DcMotor leftBack = hardwareMap.get(DcMotor.class,"lb");
-        DcMotor rightBack = hardwareMap.get(DcMotor.class,"rb");
+        waitForStart();
 
-        List<DcMotor> motors = Arrays.asList(leftFront,rightFront,leftBack,rightBack);
-        List<DcMotor> leftMotors = Arrays.asList(leftFront,leftBack);
-        List<DcMotor> rightMotors = Arrays.asList(rightFront,rightBack);
+        leftFront = hardwareMap.get(DcMotor.class,"lf");
+        rightFront = hardwareMap.get(DcMotor.class,"rf");
+        leftBack = hardwareMap.get(DcMotor.class,"lb");
+        rightBack = hardwareMap.get(DcMotor.class,"rb");
 
-        // Defines basic directions and run modes
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        for (DcMotor motor : motors) {
-            //motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            telemetry.addData("Init:", "A motor "+motor.getDeviceName()+" has been initiated!");
-
-            // Sets the motion of the motor to stop after zero power (may need to remove)
-            //motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }
-
-        telemetry.addData("Loaded", "Robot is waiting to start!");
-        telemetry.update();
-
-        waitForStart();
-        telemetry.addData("Info", "wait for start passed");
-        double power = 1;
+        double power = 1, leftX = 0, leftY = 0, rightX = 0;
         while (opModeIsActive()) {
-            // Sets the default power to 1
             power = 1;
-            // Checks for when the bumper is pressed...
+            leftY = -gamepad1.left_stick_y;
+            rightX = gamepad1.right_stick_x;
+            leftX = gamepad1.left_stick_x;
+
             if (gamepad1.left_bumper){
-                // ...to activate slow mode with the power
                 power = .5;
                 telemetry.addData("Activated", "Slow mode");
             }
-            // Gets the values from the controllers
-            double y = -gamepad1.left_stick_y;
-            double x = gamepad1.right_stick_x;
-            // Sets the power based on the values given by the controller and math
-            leftFront.setPower(power*(y+x));
-            leftBack.setPower(power*(y+x));
-            rightFront.setPower(power*(y-x));
-            rightBack.setPower(power*(y-x));
+            if (!((leftX >= -0.1)&&(leftX <= 0.1))) {
+                leftFront.setPower(1*power*leftX);
+                leftBack.setPower(-1*power*leftX);
+                rightFront.setPower(-1*power*leftX);
+                rightBack.setPower(1*power*leftX);
+            }
+            else {
+                double rightPower = power*(leftY-rightX);
+                double leftPower = power*(leftY+rightX);
+                leftFront.setPower(leftPower);
+                leftBack.setPower(leftPower);
+                rightFront.setPower(rightPower);
+                rightBack.setPower(rightPower);
+            }
+
         }
-        // Zeroes the power at the end in order to set the robot into after TeleOp mode.
-        //leftFront.setPower(0);
-        //leftBack.setPower(0);
-        //rightFront.setPower(0);
-        //rightBack.setPower(0);
     }
 
 
