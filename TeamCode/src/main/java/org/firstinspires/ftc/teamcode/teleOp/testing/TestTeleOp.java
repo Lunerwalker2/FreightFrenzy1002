@@ -22,10 +22,10 @@ public class TestTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Creates and defines the motors using the hardwareMap
-        leftFront = hardwareMap.get(DcMotor.class,"lf");
-        rightFront = hardwareMap.get(DcMotor.class,"rf");
-        leftBack = hardwareMap.get(DcMotor.class,"lb");
-        rightBack = hardwareMap.get(DcMotor.class,"rb");
+        DcMotor leftFront = hardwareMap.get(DcMotor.class,"lf");
+        DcMotor rightFront = hardwareMap.get(DcMotor.class,"rf");
+        DcMotor leftBack = hardwareMap.get(DcMotor.class,"lb");
+        DcMotor rightBack = hardwareMap.get(DcMotor.class,"rb");
 
         List<DcMotor> motors = Arrays.asList(leftFront,rightFront,leftBack,rightBack);
         List<DcMotor> leftMotors = Arrays.asList(leftFront,leftBack);
@@ -36,17 +36,19 @@ public class TestTeleOp extends LinearOpMode {
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         for (DcMotor motor : motors) {
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            //motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            telemetry.addData("Init:", "A motor "+motor.getDeviceName()+" has been initiated!");
 
             // Sets the motion of the motor to stop after zero power (may need to remove)
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            //motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
         telemetry.addData("Loaded", "Robot is waiting to start!");
         telemetry.update();
 
         waitForStart();
+        telemetry.addData("Info", "wait for start passed");
         while (opModeIsActive()) {
             // Sets the default power to 1
             double power = 1;
@@ -54,6 +56,7 @@ public class TestTeleOp extends LinearOpMode {
             if (gamepad1.left_bumper){
                 // ...to activate slow mode with the power
                 power = .5;
+                telemetry.addData("Activated", "Slow mode");
             }
             // Gets the values from the controllers
             double y = -gamepad1.left_stick_y;
