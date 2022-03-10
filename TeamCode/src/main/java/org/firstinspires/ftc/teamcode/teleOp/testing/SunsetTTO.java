@@ -4,10 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import org.firstinspires.ftc.teamcode.teleOp.testing.BVState;
 
 @TeleOp(name = "Balanced Variable Co-TeleOp")
-public class BVTeleOp extends LinearOpMode {
+public class SunsetTTO extends LinearOpMode {
     // EFFICIENCY INITIALIZATION
     DcMotor
             rightFront, leftFront, rightBack, leftBack, // All of the main motors
@@ -77,7 +76,7 @@ public class BVTeleOp extends LinearOpMode {
             else if (carouselMotor.getPower() != 0) {
                 carouselMotor.setPower(0);
             }
-            
+
             if (rightTrigger > 0) {
                 frontIntake.setPower(1);
             }
