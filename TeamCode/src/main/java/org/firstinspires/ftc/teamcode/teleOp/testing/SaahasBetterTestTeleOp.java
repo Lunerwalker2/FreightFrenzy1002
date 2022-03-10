@@ -15,6 +15,7 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
     DcMotor frontIntake;
     DcMotor backIntake;
 
+    //initialize
     public static boolean SLOWMODE;
     public static double rx;
     public static double ry;
@@ -27,6 +28,7 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        //drivers pick up your controllers
         waitForStart();
 
         rightFront = hardwareMap.get(DcMotor.class, "rf");
@@ -49,7 +51,8 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
                 SLOWMODE = true;
                 COUNT ++;
             };
-
+            // slow mode but bad
+            //TODO make good
             if (SLOWMODE) {
                 rx = gamepad1.right_stick_x * .5;
                 ry = -gamepad1.right_stick_y * .5;
@@ -71,6 +74,7 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
                 rightBack.setPower(ly + lx - rx);
             }
 
+            //Ducks go brrr
             while (opModeIsActive()) {
                 if (dPadLeft) {
                     carouselMotor.setPower(-1);
