@@ -4,9 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import org.firstinspires.ftc.teamcode.teleOp.testing.BVState;
 
 @TeleOp(name = "Balanced Variable Co-TeleOp")
-public class BalancedVariableTeleOp extends LinearOpMode {
+public class BVTeleOp extends LinearOpMode {
     // EFFICIENCY INITIALIZATION
     DcMotor
             rightFront, leftFront, rightBack, leftBack, // All of the main motors
@@ -20,7 +21,7 @@ public class BalancedVariableTeleOp extends LinearOpMode {
             dPadRight, dPadLeft, dPadUp, dPadDown, // dPad Values
             A, B, X, Y, // Button Presses
             rightBumper, leftBumper, // Bumpers
-            slowMode = false, isRunning = false; // Conditionals
+            slowMode = false, locked = false; // Conditionals
     private final double
             DUCK_MULTIPLIER = 0.7;
     @Override
@@ -41,7 +42,7 @@ public class BalancedVariableTeleOp extends LinearOpMode {
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // Begin the --misery-- code
+
         while (opModeIsActive()) {
             A = gamepad1.a;
             dPadRight = gamepad1.dpad_right;
@@ -51,37 +52,12 @@ public class BalancedVariableTeleOp extends LinearOpMode {
             rightTrigger = gamepad1.right_trigger;
             leftTrigger = gamepad1.left_trigger;
 
-            // If slow mode button pressed and not slowMode,
-            if (A && !isRunning) {
-                if (!slowMode) {
-                    slowMode = true;
-                }
-                else {
-                    slowMode = false;
-                }
-                isRunning = true;
-            }
-            if (!A && isRunning){
-                isRunning = false;
-            }
-            if (slowMode) {
+            if (toggleRun(A)) {
                 power = 0.5;
             }
             else {
                 power = 1;
             }
-//            if (A && !slowMode) {
-//                power = 0.5;
-//                slowMode = true;
-//                //TODO maybe make modes a
-//                // separate class with mode.unSet()
-//                // and mode.set() values?
-//            }
-//            else if (!A && slowMode) {
-//                power = 1;
-//                slowMode = false;
-//            }
-
 
             rx = (gamepad1.right_stick_x);
             ry = -(gamepad1.right_stick_y);
@@ -92,7 +68,7 @@ public class BalancedVariableTeleOp extends LinearOpMode {
             leftBack.setPower(power * (ly - lx + rx));
             rightFront.setPower(power * (ly - lx - rx));
             rightBack.setPower(power * (ly + lx - rx));
-            // Merged into main
+
             if (dPadLeft || dPadRight) {
                 int multiplier = 1;
                 if (dPadLeft) multiplier = -1;
@@ -101,7 +77,7 @@ public class BalancedVariableTeleOp extends LinearOpMode {
             else if (carouselMotor.getPower() != 0) {
                 carouselMotor.setPower(0);
             }
-            // Merged into main
+            
             if (rightTrigger > 0) {
                 frontIntake.setPower(1);
             }
@@ -124,7 +100,14 @@ public class BalancedVariableTeleOp extends LinearOpMode {
             }
         }
     }
+    public boolean toggleRun (boolean condition) {
+        if (condition && !locked) {
+            locked = true;
+            return true;
+        }
+        if (!condition && locked) {
+            locked = false;
+        }
+        return false;
+    }
 }
-
-//TODO  what- this logic bends my mind ill figure this out later.
-// where da swerve / where da turn?
