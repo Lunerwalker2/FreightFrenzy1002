@@ -70,7 +70,7 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
                 COUNT ++;
             }
             // slow mode but bad
-            //TODO make good
+            //TODO make good-er
             if (SLOWMODE) {
                 rx = gamepad1.right_stick_x * .5;
                 ry = -gamepad1.right_stick_y * .5;
