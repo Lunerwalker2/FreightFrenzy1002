@@ -11,17 +11,17 @@ public class BalancedVariableTeleOp extends LinearOpMode {
     DcMotor
             rightFront, leftFront, rightBack, leftBack, // All of the main motors
             carouselMotor, frontIntake, backIntake;  // The misc motors
-    public static double
+    private double
             rx, ry, lx, ly, // The controller specific x and y values
             power = 1; // Setting default power to full power
-    public static float
+    private float
             rightTrigger, leftTrigger; // Triggers
-    public static boolean
+    private boolean
             dPadRight, dPadLeft, dPadUp, dPadDown, // dPad Values
             A, B, X, Y, // Button Presses
             rightBumper, leftBumper, // Bumpers
             slowMode = false; // Conditionals
-    public static final double
+    private final double
             DUCK_MULTIPLIER = 0.7;
     @Override
     public void runOpMode() {
@@ -52,18 +52,32 @@ public class BalancedVariableTeleOp extends LinearOpMode {
             leftTrigger = gamepad1.left_trigger;
 
             // If slow mode button pressed and not slowMode,
-            if (A && !slowMode) {
+            if (A) {
+                if (!slowMode) {
+                    slowMode = true;
+                }
+                else {
+                    slowMode = false;
+                }
+            }
+            if (slowMode) {
                 power = 0.5;
-                slowMode = true;
-                //TODO maybe make modes a
-                // separate class with mode.unSet()
-                // and mode.set() values?
             }
-
-            else if (!A && slowMode) {
+            else {
                 power = 1;
-                slowMode = false;
             }
+//            if (A && !slowMode) {
+//                power = 0.5;
+//                slowMode = true;
+//                //TODO maybe make modes a
+//                // separate class with mode.unSet()
+//                // and mode.set() values?
+//            }
+//            else if (!A && slowMode) {
+//                power = 1;
+//                slowMode = false;
+//            }
+
 
             rx = (gamepad1.right_stick_x);
             ry = -(gamepad1.right_stick_y);
