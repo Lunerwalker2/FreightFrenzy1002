@@ -12,6 +12,8 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
     DcMotor rightBack;
     DcMotor leftBack;
     DcMotor carouselMotor;
+    DcMotor frontIntake;
+    DcMotor backIntake;
 
     public static boolean SLOWMODE;
     public static double rx;
