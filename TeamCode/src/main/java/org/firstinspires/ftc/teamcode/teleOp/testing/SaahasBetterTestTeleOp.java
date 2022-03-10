@@ -27,7 +27,7 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
     public static float leftTrigger;
     public static boolean dPadRight;
     public static boolean dPadLeft;
-    public static double COUNT = 0;
+    public static int COUNT = 0;
     public static boolean DPADUP;
     public static boolean DPADDOWN;
     public static boolean A;
@@ -65,10 +65,10 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
             leftTrigger = gamepad1.left_trigger;
 
 
-            if (A && (COUNT % 2) == 0) {
+            if (A && (COUNT % 2) == 1) {
                 SLOWMODE = true;
                 COUNT ++;
-            };
+            }
             // slow mode but bad
             //TODO make good
             if (SLOWMODE) {
@@ -85,7 +85,7 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
                 ly = -gamepad1.left_stick_y;
             }
 
-            while (opModeIsActive()) {
+            if (opModeIsActive()) {
                 leftFront.setPower(ly + lx + rx);
                 leftBack.setPower(ly - lx + rx);
                 rightFront.setPower(ly - lx - rx);
@@ -93,19 +93,19 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
             }
 
             //Ducks go brrr
-            while (opModeIsActive()) {
+            if (opModeIsActive()) {
                 if (dPadLeft) {
-                    carouselMotor.setPower(-1);
+                    carouselMotor.setPower(-.7);
                 }
                 else if (dPadRight) {
-                    carouselMotor.setPower(1);
+                    carouselMotor.setPower(.7);
                 }
                 else {
                     carouselMotor.setPower(0);
                 }
             }
 
-            while (opModeIsActive()) {
+            if (opModeIsActive()) {
                 if (rightTrigger > 0) {
                     frontIntake.setPower(1);
                 }
