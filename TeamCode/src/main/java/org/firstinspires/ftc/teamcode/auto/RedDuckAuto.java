@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous
+@Autonomous(name = "redDuckAuto")
 public class RedDuckAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
