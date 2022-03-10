@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "Balanced Variable Co-TeleOp")
+@TeleOp(name = "Balanced Variable TeleOp")
 public class BalancedVariableTO extends LinearOpMode {
     // EFFICIENCY INITIALIZATION
     DcMotor
