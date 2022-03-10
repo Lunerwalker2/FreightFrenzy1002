@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "SkillIssueTeleOp")
 public class SaahasBetterTestTeleOp extends LinearOpMode {
@@ -14,26 +15,28 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
     DcMotor carouselMotor;
     DcMotor frontIntake;
     DcMotor backIntake;
+    Servo backFlap;
+    Servo frontFlap;
 
     //initialize
-    public static boolean SLOWMODE;
-    public static double rx;
-    public static double ry;
-    public static double lx;
-    public static double ly;
-    public static boolean rightBumper;
-    public static boolean leftBumper;
-    public static float rightTrigger;
-    public static float leftTrigger;
-    public static boolean dPadRight;
-    public static boolean dPadLeft;
-    public static int COUNT = 0;
-    public static boolean DPADUP;
-    public static boolean DPADDOWN;
-    public static boolean A;
-    public static boolean B;
-    public static boolean X;
-    public static boolean Y;
+    private boolean SLOWMODE;
+    private double rx;
+    private double ry;
+    private double lx;
+    private double ly;
+    private boolean rightBumper;
+    private boolean leftBumper;
+    private float rightTrigger;
+    private float leftTrigger;
+    private boolean dPadRight;
+    private boolean dPadLeft;
+    private int COUNT = 0;
+    private boolean DPADUP;
+    private boolean DPADDOWN;
+    private boolean A;
+    private boolean B;
+    private boolean X;
+    private boolean Y;
 
     @Override
     public void runOpMode() {
@@ -47,6 +50,8 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
         carouselMotor = hardwareMap.get(DcMotor.class,"carouselMotor");
         frontIntake = hardwareMap.get(DcMotor.class, "frontIntake");
         backIntake = hardwareMap.get(DcMotor.class, "backIntake");
+        frontFlap = hardwareMap.get(Servo.class, "frontFlap");
+        backFlap = hardwareMap.get(Servo.class, "backFlap");
 
 
 
@@ -108,28 +113,37 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
             if (opModeIsActive()) {
                 if (rightTrigger > 0) {
                     frontIntake.setPower(1);
+                    setServoPosition(frontFlap, 1);
                 }
                 else if (rightBumper) {
                     frontIntake.setPower(-1);
+                    setServoPosition(frontFlap, 1);
                 }
                 else {
                     frontIntake.setPower(0);
                     backIntake.setPower(0);
+                    setServoPosition(frontFlap, 0);
                 }
                 if (leftTrigger > 0) {
                     backIntake.setPower(1);
+                    setServoPosition(backFlap, 1);
                 }
                 else if (leftBumper) {
                     backIntake.setPower(-1);
+                    setServoPosition(backFlap, 1);
                 }
                 else {
                     frontIntake.setPower(0);
                     backIntake.setPower(0);
+                    setServoPosition(backFlap, 0);
                 }
             }
 
 
 
         }
+    }
+    public void setServoPosition(Servo servo, double position) {
+        servo.setPosition(position);
     }
 }
