@@ -52,20 +52,17 @@ public class BalancedVariableTeleOp extends LinearOpMode {
             leftTrigger = gamepad1.left_trigger;
 
             // If slow mode button pressed and not slowMode,
-            boolean isRunning = false;
             if (A && !isRunning) {
-                isRunning = true;
-                telemetry.addData("isNowRunning", "Slow mode");
                 if (!slowMode) {
                     slowMode = true;
                 }
                 else {
                     slowMode = false;
                 }
+                isRunning = true;
             }
             if (!A && isRunning){
                 isRunning = false;
-                telemetry.addData("runningReset", "Slow mode");
             }
             if (slowMode) {
                 power = 0.5;
