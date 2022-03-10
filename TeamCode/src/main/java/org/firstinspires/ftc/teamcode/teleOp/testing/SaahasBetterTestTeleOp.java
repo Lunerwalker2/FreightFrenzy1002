@@ -22,9 +22,18 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
     public static double lx;
     public static double ly;
     public static boolean rightBumper;
+    public static boolean leftBumper;
+    public static float rightTrigger;
+    public static float leftTrigger;
     public static boolean dPadRight;
     public static boolean dPadLeft;
     public static double COUNT = 0;
+    public static boolean DPADUP;
+    public static boolean DPADDOWN;
+    public static boolean A;
+    public static boolean B;
+    public static boolean X;
+    public static boolean Y;
 
     @Override
     public void runOpMode() {
@@ -36,6 +45,8 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
         rightBack = hardwareMap.get(DcMotor.class, "rb");
         leftBack = hardwareMap.get(DcMotor.class, "lb");
         carouselMotor = hardwareMap.get(DcMotor.class,"carouselMotor");
+        frontIntake = hardwareMap.get(DcMotor.class, "frontIntake");
+        backIntake = hardwareMap.get(DcMotor.class, "backIntake");
 
 
 
@@ -45,9 +56,16 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
 
+            A = gamepad1.a;
+            dPadRight = gamepad1.dpad_right;
+            dPadLeft = gamepad1.dpad_left;
             rightBumper = gamepad1.right_bumper;
+            leftBumper = gamepad1.left_bumper;
+            rightTrigger = gamepad1.right_trigger;
+            leftTrigger = gamepad1.left_trigger;
 
-            if (rightBumper && (COUNT % 2) == 0) {
+
+            if (A && (COUNT % 2) == 0) {
                 SLOWMODE = true;
                 COUNT ++;
             };
@@ -84,6 +102,29 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
                 }
                 else {
                     carouselMotor.setPower(0);
+                }
+            }
+
+            while (opModeIsActive()) {
+                if (rightTrigger > 0) {
+                    frontIntake.setPower(1);
+                }
+                else if (rightBumper) {
+                    frontIntake.setPower(-1);
+                }
+                else {
+                    frontIntake.setPower(0);
+                    backIntake.setPower(0);
+                }
+                if (leftTrigger > 0) {
+                    backIntake.setPower(1);
+                }
+                else if (leftBumper) {
+                    backIntake.setPower(-1);
+                }
+                else {
+                    frontIntake.setPower(0);
+                    backIntake.setPower(0);
                 }
             }
 
