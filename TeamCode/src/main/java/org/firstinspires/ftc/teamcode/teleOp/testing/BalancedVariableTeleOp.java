@@ -20,7 +20,7 @@ public class BalancedVariableTeleOp extends LinearOpMode {
             dPadRight, dPadLeft, dPadUp, dPadDown, // dPad Values
             A, B, X, Y, // Button Presses
             rightBumper, leftBumper, // Bumpers
-            slowMode = false; // Conditionals
+            slowMode = false, isRunning = false; // Conditionals
     private final double
             DUCK_MULTIPLIER = 0.7;
     @Override
@@ -52,13 +52,20 @@ public class BalancedVariableTeleOp extends LinearOpMode {
             leftTrigger = gamepad1.left_trigger;
 
             // If slow mode button pressed and not slowMode,
-            if (A) {
+            boolean isRunning = false;
+            if (A && !isRunning) {
+                isRunning = true;
+                telemetry.addData("isNowRunning", "Slow mode");
                 if (!slowMode) {
                     slowMode = true;
                 }
                 else {
                     slowMode = false;
                 }
+            }
+            if (!A && isRunning){
+                isRunning = false;
+                telemetry.addData("runningReset", "Slow mode");
             }
             if (slowMode) {
                 power = 0.5;
