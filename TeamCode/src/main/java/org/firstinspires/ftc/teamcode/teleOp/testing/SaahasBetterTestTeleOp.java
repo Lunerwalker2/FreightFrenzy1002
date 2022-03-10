@@ -26,30 +26,17 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            if (gamepad1.right_stick_y > 0 || gamepad1.right_stick_x > 0) {
-                rightFront.setPower(-gamepad1.right_stick_x);
-                leftFront.setPower(-gamepad1.right_stick_x);
-                rightBack.setPower(gamepad1.right_stick_x);
-                leftBack.setPower(gamepad1.right_stick_x);
-            }
-            else if (gamepad1.left_stick_y > 0 || gamepad1.left_stick_x > 0) {
-                rightFront.setPower(-gamepad1.left_stick_y);
-                leftFront.setPower(-gamepad1.left_stick_y);
-                rightBack.setPower(-gamepad1.left_stick_y);
-                leftBack.setPower(-gamepad1.left_stick_y);
-            }
-            else if ((gamepad1.left_stick_y > 0 || gamepad1.left_stick_x > 0) && (gamepad1.right_stick_y > 0 || gamepad1.right_stick_x > 0)) {
-                rightFront.setPower(-gamepad1.left_stick_y);
-                leftFront.setPower(-gamepad1.left_stick_y);
-                rightBack.setPower(-gamepad1.left_stick_y);
-                leftBack.setPower(-gamepad1.left_stick_y);
-            }
-            else {
-                rightFront.setPower(0);
-                leftFront.setPower(0);
-                rightBack.setPower(0);
-                leftBack.setPower(0);
-            }
+            double rx = gamepad1.right_stick_x;
+            double ry = -gamepad1.right_stick_y;
+            double lx = gamepad1.left_stick_x * 1.1;
+            double ly = -gamepad1.left_stick_y;
+
+            leftFront.setPower(ly + lx + rx);
+            leftBack.setPower(ly - lx + rx);
+            rightFront.setPower(ly - lx - rx);
+            rightBack.setPower(ly + lx - rx);
+
+
 
 
 
