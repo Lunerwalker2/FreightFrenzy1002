@@ -9,7 +9,9 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 /*
 Takes an RR trajectory and runs it asynchronously.
  */
-class FollowTrajectoryCommand(private val drive: SampleMecanumDrive,
+class
+\
+FollowTrajectoryCommand(private val drive: SampleMecanumDrive,
                               private val trajectory: Trajectory,
 ) : CommandBase() {
 
