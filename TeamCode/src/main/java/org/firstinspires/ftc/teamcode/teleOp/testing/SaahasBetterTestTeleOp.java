@@ -4,39 +4,20 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "SkillIssueTeleOp")
 public class SaahasBetterTestTeleOp extends LinearOpMode {
-    DcMotor rightFront;
-    DcMotor leftFront;
-    DcMotor rightBack;
-    DcMotor leftBack;
-    DcMotor carouselMotor;
-    DcMotor frontIntake;
-    DcMotor backIntake;
-    Servo backFlap;
-    Servo frontFlap;
+    DcMotor rightFront,leftFront,rightBack,leftBack,carouselMotor,frontIntake,backIntake, liftMotor;
+    Servo backFlap,frontFlap,bucketServo;
 
     //initialize
     private boolean SLOWMODE;
-    private double rx;
-    private double ry;
-    private double lx;
-    private double ly;
-    private boolean rightBumper;
-    private boolean leftBumper;
-    private float rightTrigger;
-    private float leftTrigger;
-    private boolean dPadRight;
-    private boolean dPadLeft;
+    private double rx,ry,lx,ly;
+    private boolean rightBumper, leftBumper,dPadRight,dPadLeft,DPADUP,DPADDOWN,A,B,X,Y;
+    private double rightTrigger, leftTrigger;
     private int COUNT = 0;
-    private boolean DPADUP;
-    private boolean DPADDOWN;
-    private boolean A;
-    private boolean B;
-    private boolean X;
-    private boolean Y;
 
     @Override
     public void runOpMode() {
@@ -50,24 +31,30 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
         carouselMotor = hardwareMap.get(DcMotor.class,"carouselMotor");
         frontIntake = hardwareMap.get(DcMotor.class, "frontIntake");
         backIntake = hardwareMap.get(DcMotor.class, "backIntake");
+        liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
         frontFlap = hardwareMap.get(Servo.class, "frontFlap");
         backFlap = hardwareMap.get(Servo.class, "backFlap");
-
-
-
+        bucketServo = hardwareMap.get(Servo.class,"bucketServo");
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        bucketServo.setPosition(0);
+
         while (opModeIsActive()) {
 
             A = gamepad1.a;
+            B = gamepad1.b;
+            X = gamepad1.x;
+            Y = gamepad1.y;
             dPadRight = gamepad1.dpad_right;
             dPadLeft = gamepad1.dpad_left;
             rightBumper = gamepad1.right_bumper;
             leftBumper = gamepad1.left_bumper;
             rightTrigger = gamepad1.right_trigger;
             leftTrigger = gamepad1.left_trigger;
+            DPADUP = gamepad1.dpad_up;
+            DPADDOWN = gamepad1.dpad_down;
 
 
             if (A && (COUNT % 2) == 1) {
@@ -136,6 +123,27 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
                     frontIntake.setPower(0);
                     backIntake.setPower(0);
                     setServoPosition(backFlap, 0);
+                }
+            }
+
+            if (opModeIsActive()) {
+                if (DPADUP) {
+                    liftMotor.setPower(.5);
+                }
+                else if (DPADDOWN) {
+                    liftMotor.setPower(-.5);
+                }
+                else {
+                    liftMotor.setPower(0);
+                }
+            }
+
+            if (opModeIsActive()) {
+                if (X) {
+                    bucketServo.setPosition(1);
+                }
+                else if (B) {
+                    bucketServo.setPosition(0);
                 }
             }
 
