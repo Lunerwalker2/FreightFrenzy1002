@@ -40,6 +40,18 @@ public class BluePreloadWarehouseParkAuto extends LinearOpMode {
         bucketServo.setPosition(0);
 
         sleep(1000);
+        //TODO: tune values
+        driveForward(500);
+        liftMotor.setPower(.5);
+        sleep(600);
+        bucketServo.setPosition(1);
+        sleep(1000);
+        bucketServo.setPosition(0);
+        sleep(1000);
+        liftMotor.setPower(-.5);
+        sleep(600);
+        driveBackward(2000);
+
 
 
     }
