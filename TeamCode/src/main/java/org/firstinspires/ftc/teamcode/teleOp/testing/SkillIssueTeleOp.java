@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "SkillIssueTeleOp")
-public class SaahasBetterTestTeleOp extends LinearOpMode {
+public class SkillIssueTeleOp extends LinearOpMode {
     DcMotor rightFront,leftFront,rightBack,leftBack,carouselMotor,frontIntake,backIntake, liftMotor;
     Servo backFlap,frontFlap,bucketServo;
 
