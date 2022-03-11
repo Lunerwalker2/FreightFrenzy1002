@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Balanced Variable TeleOp")
 public class BalancedVariableTO extends LinearOpMode {
@@ -11,6 +12,8 @@ public class BalancedVariableTO extends LinearOpMode {
     DcMotor
             rightFront, leftFront, rightBack, leftBack, // All of the main motors
             carouselMotor, frontIntake, backIntake;  // The misc motors
+    Servo
+            frontFlap,backFlap;
     private double
             rx, ry, lx, ly, // The controller specific x and y values
             power = 1; // Setting default power to full power
@@ -23,6 +26,7 @@ public class BalancedVariableTO extends LinearOpMode {
             slowMode = false, locked = false; // Conditionals
     private final double
             DUCK_MULTIPLIER = 0.7;
+
     @Override
     public void runOpMode() {
         // "Drivers, pick up your controllers!" \\
@@ -36,6 +40,9 @@ public class BalancedVariableTO extends LinearOpMode {
         carouselMotor = hardwareMap.get(DcMotor.class,"carouselMotor");
         frontIntake = hardwareMap.get(DcMotor.class, "frontIntake");
         backIntake = hardwareMap.get(DcMotor.class, "backIntake");
+
+        frontFlap = hardwareMap.get(Servo.class, "frontFlap");
+        backFlap = hardwareMap.get(Servo.class, "backFlap");
 
         // Reverse the left motors so that positive values move the robot forwards, etc.
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -79,23 +86,30 @@ public class BalancedVariableTO extends LinearOpMode {
 
             if (rightTrigger > 0) {
                 frontIntake.setPower(1);
+                frontFlap.setPosition(1);
             }
             else if (rightBumper) {
                 frontIntake.setPower(-1);
+                frontFlap.setPosition(1);
             }
             else {
                 frontIntake.setPower(0);
                 backIntake.setPower(0);
+                frontFlap.setPosition(0);
             }
             if (leftTrigger > 0) {
                 backIntake.setPower(1);
+                backFlap.setPosition(1);
             }
             else if (leftBumper) {
                 backIntake.setPower(-1);
+                backFlap.setPosition(1);
             }
             else {
                 frontIntake.setPower(0);
                 backIntake.setPower(0);
+                backFlap.setPosition(0);
+
             }
         }
     }
@@ -109,4 +123,8 @@ public class BalancedVariableTO extends LinearOpMode {
         }
         return false;
     }
+    public void run( ) {
+        // empty code here
+    }
+
 }
