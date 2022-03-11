@@ -8,15 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "SkillIssueTeleOp")
 public class SaahasBetterTestTeleOp extends LinearOpMode {
-    DcMotor rightFront;
-    DcMotor leftFront;
-    DcMotor rightBack;
-    DcMotor leftBack;
-    DcMotor carouselMotor;
-    DcMotor frontIntake;
-    DcMotor backIntake;
-    Servo backFlap;
-    Servo frontFlap;
+    DcMotor rightFront,leftFront,rightBack,leftBack,carouselMotor,frontIntake,backIntake;
+    Servo backFlap,frontFlap,bucketServo;
 
     //initialize
     private boolean SLOWMODE;
@@ -39,12 +32,12 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
         backIntake = hardwareMap.get(DcMotor.class, "backIntake");
         frontFlap = hardwareMap.get(Servo.class, "frontFlap");
         backFlap = hardwareMap.get(Servo.class, "backFlap");
-
-
-
+        bucketServo = hardwareMap.get(Servo.class,"bucketServo");
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        bucketServo.setPosition(0);
 
         while (opModeIsActive()) {
 
