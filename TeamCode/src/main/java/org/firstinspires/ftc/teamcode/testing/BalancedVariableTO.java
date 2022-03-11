@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleOp.testing;
+package org.firstinspires.ftc.teamcode.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,9 +11,11 @@ public class BalancedVariableTO extends LinearOpMode {
     // EFFICIENCY INITIALIZATION
     DcMotor
             rightFront, leftFront, rightBack, leftBack, // All of the main motors
-            carouselMotor, frontIntake, backIntake;  // The misc motors
+            carouselMotor, frontIntake, backIntake,  // The misc motors
+            liftMotor;
     Servo
-            frontFlap,backFlap;
+            frontFlap,backFlap,
+            bucketServo;
     private double
             rx, ry, lx, ly, // The controller specific x and y values
             power = 1; // Setting default power to full power
@@ -51,12 +53,17 @@ public class BalancedVariableTO extends LinearOpMode {
 
         while (opModeIsActive()) {
             A = gamepad1.a;
+            B = gamepad1.b;
+            X = gamepad1.x;
+            Y = gamepad1.y;
             dPadRight = gamepad1.dpad_right;
             dPadLeft = gamepad1.dpad_left;
             rightBumper = gamepad1.right_bumper;
             leftBumper = gamepad1.left_bumper;
             rightTrigger = gamepad1.right_trigger;
             leftTrigger = gamepad1.left_trigger;
+            dPadUp = gamepad1.dpad_up;
+            dPadDown = gamepad1.dpad_down;
 
             if (toggleRun(A)) {
                 power = 0.5;
@@ -83,7 +90,6 @@ public class BalancedVariableTO extends LinearOpMode {
             else if (carouselMotor.getPower() != 0) {
                 carouselMotor.setPower(0);
             }
-
             if (rightTrigger > 0) {
                 frontIntake.setPower(1);
                 frontFlap.setPosition(1);
@@ -111,6 +117,23 @@ public class BalancedVariableTO extends LinearOpMode {
                 backFlap.setPosition(0);
 
             }
+
+            if (dPadUp) {
+                liftMotor.setPower(.5);
+            }
+            else if (dPadDown) {
+                liftMotor.setPower(-.5);
+            }
+            else {
+                liftMotor.setPower(0);
+            }
+
+            if (X) {
+                bucketServo.setPosition(1);
+            }
+            else if (B) {
+                bucketServo.setPosition(0);
+            }
         }
     }
     public boolean toggleRun (boolean condition) {
@@ -123,8 +146,16 @@ public class BalancedVariableTO extends LinearOpMode {
         }
         return false;
     }
-    public void run( ) {
-        // empty code here
+    public void massIfLoop() {
+        if (dPadUp) {
+            liftMotor.setPower(.5);
+        }
+        else if (dPadDown) {
+            liftMotor.setPower(-.5);
+        }
+        else {
+            liftMotor.setPower(0);
+        }
     }
 
 }
