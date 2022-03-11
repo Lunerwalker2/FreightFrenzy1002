@@ -20,23 +20,10 @@ public class SaahasBetterTestTeleOp extends LinearOpMode {
 
     //initialize
     private boolean SLOWMODE;
-    private double rx;
-    private double ry;
-    private double lx;
-    private double ly;
-    private boolean rightBumper;
-    private boolean leftBumper;
-    private float rightTrigger;
-    private float leftTrigger;
-    private boolean dPadRight;
-    private boolean dPadLeft;
+    private double rx,ry,lx,ly;
+    private boolean rightBumper, leftBumper,dPadRight,dPadLeft,DPADUP,DPADDOWN,A,B,X,Y;
+    private double rightTrigger, leftTrigger;
     private int COUNT = 0;
-    private boolean DPADUP;
-    private boolean DPADDOWN;
-    private boolean A;
-    private boolean B;
-    private boolean X;
-    private boolean Y;
 
     @Override
     public void runOpMode() {
