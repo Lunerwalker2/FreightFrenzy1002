@@ -99,11 +99,11 @@ public class SkillIssueTeleOp extends LinearOpMode {
 
             if (opModeIsActive()) {
                 if (rightTrigger > 0) {
-                    frontIntake.setPower(1);
+                    frontIntake.setPower(-1);
                     setServoPosition(frontFlap, 1);
                 }
                 else if (rightBumper) {
-                    frontIntake.setPower(-1);
+                    frontIntake.setPower(1);
                     setServoPosition(frontFlap, 1);
                 }
                 else {
@@ -112,11 +112,11 @@ public class SkillIssueTeleOp extends LinearOpMode {
                     setServoPosition(frontFlap, 0);
                 }
                 if (leftTrigger > 0) {
-                    backIntake.setPower(1);
+                    backIntake.setPower(-1);
                     setServoPosition(backFlap, 1);
                 }
                 else if (leftBumper) {
-                    backIntake.setPower(-1);
+                    backIntake.setPower(1);
                     setServoPosition(backFlap, 1);
                 }
                 else {
