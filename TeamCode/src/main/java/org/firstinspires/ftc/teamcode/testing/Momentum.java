@@ -12,26 +12,28 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@TeleOp(name = "Balanced Variable TeleOp")
-public class BalancedVariableTO extends LinearOpMode {
-    // EFFICIENCY INITIALIZATION
+@TeleOp(name = "<-$ Momentum $->")
+public class Momentum extends LinearOpMode {
+    // Momentous Line-Based Optimized Initialization aka M.L.B.O.I.
     DcMotor
-            rightFront, leftFront, rightBack, leftBack, // All of the main motors
-            carouselMotor, frontIntake, backIntake,  // The misc motors
+            rightFront, leftFront, rightBack, leftBack,
+            carouselMotor, frontIntake, backIntake,
             liftMotor;
     Servo
             frontFlap,backFlap,
             bucketServo;
     private double
-            rx, ry, lx, ly, // The controller specific x and y values
-            power = 1; // Setting default power to full power
+            rx, ry, lx, ly,
+            power = 1,
+            angle;
     private float
-            rightTrigger, leftTrigger; // Triggers
+            rightTrigger, leftTrigger;
     private boolean
-            dPadRight, dPadLeft, dPadUp, dPadDown, // dPad Values
-            A, B, X, Y, // Button Presses
-            rightBumper, leftBumper, // Bumpers
-            slowMode = false, locked = false; // Conditionals
+            dPadRight, dPadLeft, dPadUp, dPadDown,
+            A, B, X, Y,
+            rightBumper, leftBumper,
+            slowMode = false,
+            locked = false;
     private final double
             DUCK_MULTIPLIER = 0.7;
 
@@ -40,8 +42,13 @@ public class BalancedVariableTO extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        // "Drivers, pick up your controllers!" \\
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+        Orientation orientation =
+                imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS);
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
+
         rightFront = hardwareMap.get(DcMotor.class, "rf");
         leftFront = hardwareMap.get(DcMotor.class, "lf");
         rightBack = hardwareMap.get(DcMotor.class, "rb");
@@ -49,34 +56,31 @@ public class BalancedVariableTO extends LinearOpMode {
         carouselMotor = hardwareMap.get(DcMotor.class,"carouselMotor");
         frontIntake = hardwareMap.get(DcMotor.class, "frontIntake");
         backIntake = hardwareMap.get(DcMotor.class, "backIntake");
+        liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+
         frontFlap = hardwareMap.get(Servo.class, "frontFlap");
         backFlap = hardwareMap.get(Servo.class, "backFlap");
         bucketServo = hardwareMap.get(Servo.class,"bucketServo");
-        liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
 
-        // Reverse the left motors so that positive values move the robot forwards, etc.
+
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
 
         waitForStart();
 
         while (opModeIsActive()) {
-
-            Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS);
-            double angle  = orientation.firstAngle;
-
-            telemetry.addData("angle", angle);
-            telemetry.update();
-            
+            // Initialization of Variables
+            angle  = orientation.firstAngle;
             A = gamepad1.a;
             B = gamepad1.b;
             X = gamepad1.x;
             Y = gamepad1.y;
+
+            rx = (gamepad1.right_stick_x);
+            ry = -(gamepad1.right_stick_y);
+            lx = 1.1 * (gamepad1.left_stick_x);
+            ly = -(gamepad1.left_stick_y);
+
             dPadRight = gamepad1.dpad_right;
             dPadLeft = gamepad1.dpad_left;
             rightBumper = gamepad1.right_bumper;
@@ -86,7 +90,14 @@ public class BalancedVariableTO extends LinearOpMode {
             dPadUp = gamepad1.dpad_up;
             dPadDown = gamepad1.dpad_down;
 
+            // Run
 
+            telemetry.addData("Angle Value", angle);
+            telemetry.update();
+            //@TODO remove this once works ^^ angle lowest is -1.5, to 1.7 ish
+
+
+            // Initial Variable sets for run
 
             if (toggleRun(A)) {
                 power = 0.5;
@@ -95,16 +106,12 @@ public class BalancedVariableTO extends LinearOpMode {
                 power = 1;
             }
 
-            rx = (gamepad1.right_stick_x);
-            ry = -(gamepad1.right_stick_y);
-            lx = 1.1 * (gamepad1.left_stick_x);
-            ly = -(gamepad1.left_stick_y);
-
             Vector2d g = new Vector2d(lx, ly);
 
-            g.rotated(-angle);
-            lx = g.getX();
-            ly = g.getY();
+            lx = g.rotated(-angle).getX();
+            ly = g.rotated(-angle).getY();
+
+            // Runtime
 
             leftFront.setPower(power * (ly + lx + rx));
             leftBack.setPower(power * (ly - lx + rx));
