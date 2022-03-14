@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous
-public class BlueDuckParkAuto extends LinearOpMode {
+@Autonomous(name = "BluePreloadOneCycleWareshouseParkAuto")
+public class BluePreloadOneCycleWarehouseParkAuto extends LinearOpMode {
 
     private boolean SLOWMODE;
     private double rx,ry,lx,ly;
@@ -40,6 +40,34 @@ public class BlueDuckParkAuto extends LinearOpMode {
         bucketServo.setPosition(0.33);
 
         sleep(1000);
+        //TODO: tune values
+        driveForward(500);
+        liftMotor.setPower(.5);
+        sleep(600);
+        bucketServo.setPosition(.8);
+        sleep(1000);
+        bucketServo.setPosition(0.33);
+        sleep(1000);
+        liftMotor.setPower(-.5);
+        sleep(600);
+        driveBackward(2000);
+        backIntake.setPower(-1);
+        sleep(1000);
+        backIntake.setPower(1);
+        frontIntake.setPower(1);
+        sleep(1000);
+        driveForward(1000);
+        liftMotor.setPower(.5);
+        sleep(600);
+        bucketServo.setPosition(.8);
+        sleep(1000);
+        bucketServo.setPosition(0.33);
+        sleep(1000);
+        liftMotor.setPower(-.5);
+        sleep(600);
+        driveBackward(1000);
+
+
 
 
     }

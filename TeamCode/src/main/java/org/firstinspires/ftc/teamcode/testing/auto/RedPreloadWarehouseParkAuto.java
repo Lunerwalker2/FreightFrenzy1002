@@ -37,7 +37,7 @@ public class RedPreloadWarehouseParkAuto extends LinearOpMode {
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        bucketServo.setPosition(0);
+        bucketServo.setPosition(0.33);
 
         sleep(1000);
 

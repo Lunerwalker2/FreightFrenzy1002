@@ -6,7 +6,7 @@ package org.firstinspires.ftc.teamcode.testing.auto;
         import com.qualcomm.robotcore.hardware.DcMotorSimple;
         import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous
+@Autonomous(name = "BluePreloadWarehouseParkAuto")
 public class BluePreloadWarehouseParkAuto extends LinearOpMode {
 
     private boolean SLOWMODE;
@@ -37,16 +37,16 @@ public class BluePreloadWarehouseParkAuto extends LinearOpMode {
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        bucketServo.setPosition(0);
+        bucketServo.setPosition(0.33);
 
         sleep(1000);
         //TODO: tune values
         driveForward(500);
         liftMotor.setPower(.5);
         sleep(600);
-        bucketServo.setPosition(1);
+        bucketServo.setPosition(0.8);
         sleep(1000);
-        bucketServo.setPosition(0);
+        bucketServo.setPosition(0.33);
         sleep(1000);
         liftMotor.setPower(-.5);
         sleep(600);
