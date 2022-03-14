@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.teamcode.testing;
 
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp(name = "Balanced Variable TeleOp")
 public class BalancedVariableTO extends LinearOpMode {
@@ -29,29 +35,44 @@ public class BalancedVariableTO extends LinearOpMode {
     private final double
             DUCK_MULTIPLIER = 0.7;
 
+    BNO055IMU imu;
+
+
     @Override
     public void runOpMode() {
         // "Drivers, pick up your controllers!" \\
-        waitForStart();
-
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
         rightFront = hardwareMap.get(DcMotor.class, "rf");
         leftFront = hardwareMap.get(DcMotor.class, "lf");
         rightBack = hardwareMap.get(DcMotor.class, "rb");
         leftBack = hardwareMap.get(DcMotor.class, "lb");
-
         carouselMotor = hardwareMap.get(DcMotor.class,"carouselMotor");
         frontIntake = hardwareMap.get(DcMotor.class, "frontIntake");
         backIntake = hardwareMap.get(DcMotor.class, "backIntake");
-
         frontFlap = hardwareMap.get(Servo.class, "frontFlap");
         backFlap = hardwareMap.get(Servo.class, "backFlap");
+        bucketServo = hardwareMap.get(Servo.class,"bucketServo");
+        liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
 
         // Reverse the left motors so that positive values move the robot forwards, etc.
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
+
+        waitForStart();
 
         while (opModeIsActive()) {
+
+            Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS);
+            double angle  = orientation.firstAngle;
+
+            telemetry.addData("angle", angle);
+            telemetry.update();
+            
             A = gamepad1.a;
             B = gamepad1.b;
             X = gamepad1.x;
@@ -65,6 +86,8 @@ public class BalancedVariableTO extends LinearOpMode {
             dPadUp = gamepad1.dpad_up;
             dPadDown = gamepad1.dpad_down;
 
+
+
             if (toggleRun(A)) {
                 power = 0.5;
             }
@@ -76,6 +99,12 @@ public class BalancedVariableTO extends LinearOpMode {
             ry = -(gamepad1.right_stick_y);
             lx = 1.1 * (gamepad1.left_stick_x);
             ly = -(gamepad1.left_stick_y);
+
+            Vector2d g = new Vector2d(lx, ly);
+
+            g.rotated(-angle);
+            lx = g.getX();
+            ly = g.getY();
 
             leftFront.setPower(power * (ly + lx + rx));
             leftBack.setPower(power * (ly - lx + rx));
@@ -146,16 +175,4 @@ public class BalancedVariableTO extends LinearOpMode {
         }
         return false;
     }
-    public void massIfLoop() {
-        if (dPadUp) {
-            liftMotor.setPower(.5);
-        }
-        else if (dPadDown) {
-            liftMotor.setPower(-.5);
-        }
-        else {
-            liftMotor.setPower(0);
-        }
-    }
-
 }

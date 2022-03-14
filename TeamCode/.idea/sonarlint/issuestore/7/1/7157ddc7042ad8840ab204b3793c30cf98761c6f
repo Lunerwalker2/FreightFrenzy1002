@@ -1,0 +1,56 @@
+
+f	java:S116"LRename this field "A" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¢øÄÈüÿÿÿÿ
+f	java:S116"LRename this field "B" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¢øÄÈüÿÿÿÿ
+f	java:S116"LRename this field "X" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¢øÄÈüÿÿÿÿ
+f	java:S116"LRename this field "Y" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¢øÄÈüÿÿÿÿ
+t	java:S116"ZRename this field "DUCK_MULTIPLIER" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(òÑÖßøÿÿÿÿ
+<
+java:S1170"!Make this final field static too.(òÑÖßøÿÿÿÿ
+\
+java:S1659"FDeclare "leftFront" and all following declarations on a separate line.(¡Ô§…
+`
+java:S1659"EDeclare "backFlap" and all following declarations on a separate line.(‚Ç—øÿÿÿÿ
+Z
+java:S1659"?Declare "ry" and all following declarations on a separate line.(”»Ê‚üÿÿÿÿ
+?
+java:S1659")Declare "leftTrigger" on a separate line.(”ğÈŠ
+Z
+java:S1659"EDeclare "dPadLeft" and all following declarations on a separate line.(ˆçŸ`
+k
+java:S1450"PRemove the "A" field and declare it as a local variable in the relevant methods.(¢øÄÈüÿÿÿÿ
+k
+java:S1450"PRemove the "B" field and declare it as a local variable in the relevant methods.(¢øÄÈüÿÿÿÿ
+k
+java:S1450"PRemove the "X" field and declare it as a local variable in the relevant methods.(¢øÄÈüÿÿÿÿ
+k
+java:S1450"PRemove the "Y" field and declare it as a local variable in the relevant methods.(¢øÄÈüÿÿÿÿ
+l
+java:S1450"WRemove the "dPadLeft" field and declare it as a local variable in the relevant methods.(ˆçŸ`
+m
+java:S1450"XRemove the "dPadRight" field and declare it as a local variable in the relevant methods.(ˆçŸ`
+t
+java:S1450"YRemove the "leftBumper" field and declare it as a local variable in the relevant methods.(’÷Ó¯ıÿÿÿÿ
+p
+java:S1450"ZRemove the "leftTrigger" field and declare it as a local variable in the relevant methods.(”ğÈŠ
+l
+java:S1450"QRemove the "lx" field and declare it as a local variable in the relevant methods.(”»Ê‚üÿÿÿÿ
+l
+java:S1450"QRemove the "ly" field and declare it as a local variable in the relevant methods.(”»Ê‚üÿÿÿÿ
+j
+java:S1450"TRemove the "power" field and declare it as a local variable in the relevant methods.(®è¢«
+u
+java:S1450"ZRemove the "rightBumper" field and declare it as a local variable in the relevant methods.(’÷Ó¯ıÿÿÿÿ
+q
+java:S1450"[Remove the "rightTrigger" field and declare it as a local variable in the relevant methods.(”ğÈŠ
+l
+java:S1450"QRemove the "rx" field and declare it as a local variable in the relevant methods.(”»Ê‚üÿÿÿÿ
+l
+java:S1450"QRemove the "ry" field and declare it as a local variable in the relevant methods.(”»Ê‚üÿÿÿÿ
+m
+java:S3776!"RRefactor this method to reduce its Cognitive Complexity from 26 to the 15 allowed.(ÛØÇˆûÿÿÿÿ
+A
+java:S1068"&Remove this unused "ry" private field.(”»Ê‚üÿÿÿÿ
+@
+java:S1068"%Remove this unused "Y" private field.(¢øÄÈüÿÿÿÿ
+G
+java:S1068",Remove this unused "slowMode" private field.(¹¼¥Ëüÿÿÿÿ

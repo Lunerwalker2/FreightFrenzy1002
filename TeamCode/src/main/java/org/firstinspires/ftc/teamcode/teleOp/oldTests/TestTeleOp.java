@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import java.util.Arrays;
 import java.util.List;
 
-@TeleOp(name="Balanced TeleOp")
+@TeleOp(name="eeeeeBalanced TeleOp")
 public class TestTeleOp extends LinearOpMode {
 
     DcMotor leftFront, rightFront, leftBack, rightBack;
