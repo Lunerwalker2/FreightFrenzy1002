@@ -38,6 +38,11 @@ public class SkillIssueTeleOp extends LinearOpMode {
         backFlap = hardwareMap.get(Servo.class, "backFlap");
         bucketServo = hardwareMap.get(Servo.class,"bucketServo");
 
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 

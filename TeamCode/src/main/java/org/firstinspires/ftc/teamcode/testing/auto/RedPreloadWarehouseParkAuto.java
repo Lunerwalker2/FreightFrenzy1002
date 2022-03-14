@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode.testing;
+package org.firstinspires.ftc.teamcode.testing.auto;
 
-        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-        import com.qualcomm.robotcore.hardware.DcMotor;
-        import com.qualcomm.robotcore.hardware.DcMotorSimple;
-        import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous
-public class BluePreloadWarehouseParkAuto extends LinearOpMode {
+public class RedPreloadWarehouseParkAuto extends LinearOpMode {
 
     private boolean SLOWMODE;
     private double rx,ry,lx,ly;
@@ -40,18 +40,6 @@ public class BluePreloadWarehouseParkAuto extends LinearOpMode {
         bucketServo.setPosition(0);
 
         sleep(1000);
-        //TODO: tune values
-        driveForward(500);
-        liftMotor.setPower(.5);
-        sleep(600);
-        bucketServo.setPosition(1);
-        sleep(1000);
-        bucketServo.setPosition(0);
-        sleep(1000);
-        liftMotor.setPower(-.5);
-        sleep(600);
-        driveBackward(2000);
-
 
 
     }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.testing;
+package org.firstinspires.ftc.teamcode.testing.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous
-public class RedPreloadWarehouseParkAuto extends LinearOpMode {
+public class RedDuckParkAuto extends LinearOpMode {
 
     private boolean SLOWMODE;
     private double rx,ry,lx,ly;
@@ -68,4 +68,3 @@ public class RedPreloadWarehouseParkAuto extends LinearOpMode {
         leftBack.setPower(.5);
     }
 }
-
