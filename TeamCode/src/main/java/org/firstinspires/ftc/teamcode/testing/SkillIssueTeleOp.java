@@ -39,7 +39,7 @@ public class SkillIssueTeleOp extends LinearOpMode {
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        bucketServo.setPosition(0);
+        bucketServo.setPosition(0.33);
 
         while (opModeIsActive()) {
 
@@ -140,10 +140,10 @@ public class SkillIssueTeleOp extends LinearOpMode {
 
             if (opModeIsActive()) {
                 if (X) {
-                    bucketServo.setPosition(1);
+                    bucketServo.setPosition(0.8);
                 }
                 else if (B) {
-                    bucketServo.setPosition(0);
+                    bucketServo.setPosition(0.33);
                 }
             }
 
