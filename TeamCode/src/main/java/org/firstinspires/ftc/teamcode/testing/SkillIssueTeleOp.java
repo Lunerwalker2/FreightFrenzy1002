@@ -157,6 +157,15 @@ public class SkillIssueTeleOp extends LinearOpMode {
                 }
             }
 
+            if (opModeIsActive()) {
+                if (X) {
+                    bucketServo.setPosition(STARTVALUE);
+                }
+                else if (B) {
+                    bucketServo.setPosition(SCOREVALUE);
+                }
+            }
+
 
 
         }
@@ -166,12 +175,9 @@ public class SkillIssueTeleOp extends LinearOpMode {
     }
 
     public void score() {
-
-        bucketServo.setPosition(SCOREVALUE);
-        scoringArmServo.setPosition(0.7);
+        scoringArmServo.setPosition(0.7 );
     }
     public void reset() {
-        bucketServo.setPosition(STARTVALUE);
         scoringArmServo.setPosition(0.0);
     }
 }
