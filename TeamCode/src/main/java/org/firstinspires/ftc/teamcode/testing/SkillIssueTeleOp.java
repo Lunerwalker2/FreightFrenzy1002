@@ -18,6 +18,8 @@ public class SkillIssueTeleOp extends LinearOpMode {
     private boolean rightBumper, leftBumper,dPadRight,dPadLeft,DPADUP,DPADDOWN,A,B,X,Y;
     private double rightTrigger, leftTrigger;
     private int COUNT = 0;
+    private double SCOREVALUE = 0.8;
+    private double STARTVALUE = 0.33;
 
     @Override
     public void runOpMode() {
@@ -39,7 +41,7 @@ public class SkillIssueTeleOp extends LinearOpMode {
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        bucketServo.setPosition(0.33);
+        reset();
 
         while (opModeIsActive()) {
 
@@ -140,12 +142,12 @@ public class SkillIssueTeleOp extends LinearOpMode {
 
             if (opModeIsActive()) {
                 if (X) {
-                    bucketServo.setPosition(0.8);
+                    score();
                 }
                 else if (B) {
-                    bucketServo.setPosition(0.33);
+                    reset();
                 }
-            };
+            }
 
 
 
@@ -153,5 +155,12 @@ public class SkillIssueTeleOp extends LinearOpMode {
     }
     public void setServoPosition(Servo servo, double position) {
         servo.setPosition(position);
+    }
+
+    public void score() {
+        bucketServo.setPosition(SCOREVALUE);
+    }
+    public void reset() {
+        bucketServo.setPosition(STARTVALUE);
     }
 }
