@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Lift extends SubsystemBase {
+public class  Lift extends SubsystemBase {
 
     private DcMotorEx liftMotor;
 

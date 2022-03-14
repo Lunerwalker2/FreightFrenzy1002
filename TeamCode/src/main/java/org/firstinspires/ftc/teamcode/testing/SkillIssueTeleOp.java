@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "SkillIssueTeleOp")
 public class SkillIssueTeleOp extends LinearOpMode {
     DcMotor rightFront,leftFront,rightBack,leftBack,carouselMotor,frontIntake,backIntake, liftMotor;
-    Servo backFlap,frontFlap,bucketServo;
+    Servo backFlap,frontFlap,bucketServo, scoringArmServo;
 
     //initialize
     private boolean SLOWMODE;
@@ -37,6 +37,7 @@ public class SkillIssueTeleOp extends LinearOpMode {
         frontFlap = hardwareMap.get(Servo.class, "frontFlap");
         backFlap = hardwareMap.get(Servo.class, "backFlap");
         bucketServo = hardwareMap.get(Servo.class,"bucketServo");
+        scoringArmServo = hardwareMap.get(Servo.class, "scoringArmServo");
 
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -45,6 +46,8 @@ public class SkillIssueTeleOp extends LinearOpMode {
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         reset();
 
@@ -146,10 +149,10 @@ public class SkillIssueTeleOp extends LinearOpMode {
             }
 
             if (opModeIsActive()) {
-                if (X) {
+                if (Y) {
                     score();
                 }
-                else if (B) {
+                else if (A) {
                     reset();
                 }
             }
@@ -163,9 +166,12 @@ public class SkillIssueTeleOp extends LinearOpMode {
     }
 
     public void score() {
+
         bucketServo.setPosition(SCOREVALUE);
+        scoringArmServo.setPosition(0.7);
     }
     public void reset() {
         bucketServo.setPosition(STARTVALUE);
+        scoringArmServo.setPosition(0.0);
     }
 }
