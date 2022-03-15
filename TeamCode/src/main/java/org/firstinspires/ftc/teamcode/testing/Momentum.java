@@ -56,8 +56,6 @@ public class Momentum extends LinearOpMode {
     @Override
     public void runOpMode() {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        Orientation orientation =
-                imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS);
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
@@ -83,20 +81,26 @@ public class Momentum extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Initialization of Variables
+            Orientation orientation =
+                    imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
             angle  = orientation.firstAngle;
+
             A = gamepad1.a;
             B = gamepad1.b;
             X = gamepad1.x;
             Y = gamepad1.y;
 
-            Vector2d vector = new Vector2d(
-                    1.1 * (gamepad1.left_stick_x), -(gamepad1.left_stick_y)
-            );
+//            Vector2d vector = new Vector2d(
+//                    1.1 * (gamepad1.left_stick_x), -(gamepad1.left_stick_y)
+//            );
 
             rx = (gamepad1.right_stick_x);
             ry = -(gamepad1.right_stick_y);
-            lx = vector.rotated(-angle).getX();
-            ly = vector.rotated(-angle).getY();
+//            lx = vector.rotated(angle).getX();
+//            ly = vector.rotated(angle).getY();
+
+            lx = gamepad1.left_stick_x * Math.sin(-angle);
+            ly = gamepad1.left_stick_y * Math.cos(-angle);
 
             dPadRight = gamepad1.dpad_right;
             dPadLeft = gamepad1.dpad_left;
@@ -109,26 +113,29 @@ public class Momentum extends LinearOpMode {
 
             // Run
 
-            telemetry.addData("Angle Value", angle);
-            telemetry.update();
+
             //@TODO remove this once works ^^ angle lowest is -1.5, to 1.7 ish
 
 
             // Initial Variable sets for run
 
-            if (toggleRun(A)) {
-                power = 0.5;
-            }
-            else {
-                power = 1;
-            }
+//            if (toggleRun(A)) {
+//                power = 0.5;
+//            }
+//            else {
+//                power = 1;
+//            }
 
             // Runtime
+            double leftFrontPower = power * (ly + lx + rx);
+            double rightFrontPower = power * (ly - lx + rx);
+            double leftBackPower = power * (ly - lx + rx);
+            double rightBackPower = power * (ly + lx - rx);
 
-            leftFront.setPower(power * (ly + lx + rx));
-            leftBack.setPower(power * (ly - lx + rx));
-            rightFront.setPower(power * (ly - lx - rx));
-            rightBack.setPower(power * (ly + lx - rx));
+            leftFront.setPower(leftFrontPower);
+            leftBack.setPower(leftBackPower);
+            rightFront.setPower(rightFrontPower);
+            rightBack.setPower(rightBackPower);
 
             if (dPadLeft || dPadRight) {
                 int multiplier = 1;
