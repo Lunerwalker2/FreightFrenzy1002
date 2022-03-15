@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "SkillIssueTeleOp")
 public class SkillIssueTeleOp extends LinearOpMode {
-    DcMotor rightFront,leftFront,rightBack,leftBack,carouselMotor,frontIntake,backIntake, liftMotor;
-    Servo backFlap,frontFlap,bucketServo, scoringArmServo;
+    DcMotor rightFront,leftFront,rightBack,leftBack,carouselMotor,frontIntake,backIntake,liftMotor;
+    Servo backFlap,frontFlap,bucketServo,scoringArmServo;
 
     //initialize
     private boolean SLOWMODE;
