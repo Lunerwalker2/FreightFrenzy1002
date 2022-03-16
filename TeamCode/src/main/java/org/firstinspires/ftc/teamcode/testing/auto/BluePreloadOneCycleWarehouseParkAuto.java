@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Autonomous(name = "BluePreloadOneCycleWarehouseParkAuto")
 public class BluePreloadOneCycleWarehouseParkAuto extends LinearOpMode {
 
-//    private boolean SLOWMODE;
+    //    private boolean SLOWMODE;
 //    private double rx, ry, lx, ly;
 //    private boolean rightBumper, leftBumper, dPadRight, dPadLeft, DPADUP, DPADDOWN, A, B, X, Y;
 //    private double rightTrigger, leftTrigger;
@@ -19,6 +19,7 @@ public class BluePreloadOneCycleWarehouseParkAuto extends LinearOpMode {
 //    Servo backFlap, frontFlap, bucketServo;
 //
     private autonomous auto = new autonomous("blue");
+
     @Override
     public void runOpMode() throws InterruptedException {
         waitForStart();

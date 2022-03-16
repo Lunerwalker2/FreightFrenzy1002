@@ -11,16 +11,21 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class autonomous {
-
-    private boolean slowMode;
-    private double rx, ry, lx, ly;
-    private boolean rightBumper, leftBumper, dPadRight, dPadLeft, DPADUP, DPADDOWN, A, B, X, Y;
-    private double rightTrigger, leftTrigger;
+    private boolean
+            slowMode,
+            rightBumper, leftBumper,
+            dPadRight, dPadLeft, dPadUp, dPadDown,
+            A, B, X, Y,
+            isRed;
+    private double
+            rx, ry, lx, ly,
+            rightTrigger, leftTrigger;
     private int COUNT = 0;
-    private boolean isRed;
 
-    DcMotor rightFront, leftFront, rightBack, leftBack, carouselMotor, frontIntake, backIntake, liftMotor;
-    Servo backFlap, frontFlap, bucketServo;
+    DcMotor
+            rightFront, leftFront, rightBack, leftBack, carouselMotor, frontIntake, backIntake, liftMotor;
+    Servo
+            backFlap, frontFlap, bucketServo;
 
     public autonomous(String allianceIn) {
         if (allianceIn.equals("red")) {
@@ -45,7 +50,6 @@ public class autonomous {
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-
         bucketServo.setPosition(0.33);
 
     }
@@ -81,6 +85,7 @@ public class autonomous {
         leftBack.setPower(.5);
         sleep(time);
     }
+
     public void reset() {
         rightFront.setPower(0);
         leftFront.setPower(0);
