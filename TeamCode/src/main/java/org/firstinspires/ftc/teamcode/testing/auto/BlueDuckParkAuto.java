@@ -8,8 +8,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name = "BlueDuckParkAuto")
 public class BlueDuckParkAuto extends LinearOpMode {
-    DcMotor rightFront,leftFront,rightBack,leftBack,carouselMotor,frontIntake,backIntake,liftMotor;
-    Servo backFlap,frontFlap,bucketServo,scoringArmServo;
+    DcMotor rightFront, leftFront, rightBack, leftBack, carouselMotor, frontIntake, backIntake, liftMotor;
+    Servo backFlap, frontFlap, bucketServo, scoringArmServo;
+
     @Override
     public void runOpMode() {
         waitForStart();
@@ -18,7 +19,7 @@ public class BlueDuckParkAuto extends LinearOpMode {
         leftFront = hardwareMap.get(DcMotor.class, "lf");
         rightBack = hardwareMap.get(DcMotor.class, "rb");
         leftBack = hardwareMap.get(DcMotor.class, "lb");
-        carouselMotor = hardwareMap.get(DcMotor.class,"carouselMotor");
+        carouselMotor = hardwareMap.get(DcMotor.class, "carouselMotor");
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
