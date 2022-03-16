@@ -23,20 +23,17 @@ public class SaahasTestTeleOp extends LinearOpMode {
                 rightBack.setPower(1);
                 leftFront.setPower(1);
                 leftBack.setPower(1);
-            }
-            else if (gamepad1.b) {
+            } else if (gamepad1.b) {
                 rightFront.setPower(-1);
                 rightBack.setPower(1);
                 leftFront.setPower(1);
                 leftBack.setPower(-1);
-            }
-            else if (gamepad1.x) {
+            } else if (gamepad1.x) {
                 rightFront.setPower(-1);
                 rightBack.setPower(-1);
                 leftFront.setPower(-1);
                 leftBack.setPower(-1);
-            }
-            else if (gamepad1.y) {
+            } else if (gamepad1.y) {
                 rightFront.setPower(1);
                 rightBack.setPower(-1);
                 leftFront.setPower(-1);

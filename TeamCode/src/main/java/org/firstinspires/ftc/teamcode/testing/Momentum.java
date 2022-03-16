@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -53,14 +54,14 @@ public class Momentum extends LinearOpMode {
         leftFront = hardwareMap.get(DcMotor.class, "lf");
         rightBack = hardwareMap.get(DcMotor.class, "rb");
         leftBack = hardwareMap.get(DcMotor.class, "lb");
-        carouselMotor = hardwareMap.get(DcMotor.class,"carouselMotor");
+        carouselMotor = hardwareMap.get(DcMotor.class, "carouselMotor");
         frontIntake = hardwareMap.get(DcMotor.class, "frontIntake");
         backIntake = hardwareMap.get(DcMotor.class, "backIntake");
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
 
         frontFlap = hardwareMap.get(Servo.class, "frontFlap");
         backFlap = hardwareMap.get(Servo.class, "backFlap");
-        bucketServo = hardwareMap.get(Servo.class,"bucketServo");
+        bucketServo = hardwareMap.get(Servo.class, "bucketServo");
         scoringArmServo = hardwareMap.get(Servo.class, "scoringArmServo");
 
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -92,8 +93,7 @@ public class Momentum extends LinearOpMode {
 
             if (gamepad1.a && !slowLock) {
                 power = 0.5;
-            }
-            else {
+            } else {
                 power = 1;
             }
             slowLock = gamepad1.a;
@@ -115,7 +115,7 @@ public class Momentum extends LinearOpMode {
 
             if (dPadLeft || dPadRight) {
                 int multiplier = 1;
-                if (dPadLeft)   multiplier = -1;
+                if (dPadLeft) multiplier = -1;
                 carouselMotor.setPower(multiplier * DUCK_MULTIPLIER);
             } else if (carouselMotor.getPower() != 0) {
                 carouselMotor.setPower(0);
@@ -166,7 +166,8 @@ public class Momentum extends LinearOpMode {
             }
         }
     }
-    public boolean toggleRun (boolean condition, boolean locked) {
+
+    public boolean toggleRun(boolean condition, boolean locked) {
         if (condition && !locked) {
             locked = true;
             return true;
@@ -177,7 +178,7 @@ public class Momentum extends LinearOpMode {
         return false;
     }
 
-    public void setServoPosition (Servo servo, double position) {
+    public void setServoPosition(Servo servo, double position) {
         servo.setPosition(position);
     }
 }

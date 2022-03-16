@@ -83,7 +83,7 @@ public class DistanceSensorTesting extends CommandOpMode {
 
         super.run();
 
-        if(!relocalizeCommand.isScheduled()) schedule(relocalizeCommand);
+        if (!relocalizeCommand.isScheduled()) schedule(relocalizeCommand);
 
         //Send our joystick values to the rr drive class.
         drive.setWeightedDrivePower(
@@ -101,7 +101,7 @@ public class DistanceSensorTesting extends CommandOpMode {
 
         Pose2d poseEstimate = drive.getPoseEstimate();
         telemetry.addData("Is scheduled", relocalizeCommand.isScheduled());
-        telemetry.addLine("Red side "+redSide);
+        telemetry.addLine("Red side " + redSide);
         telemetry.addData("Robot X (in)", "%.3f", poseEstimate.getX());
         telemetry.addData("Robot Y (in)", "%.3f", poseEstimate.getY());
         telemetry.addData("Robot Heading (rad)/(deg)", "%.3f / %.3f",
@@ -109,10 +109,10 @@ public class DistanceSensorTesting extends CommandOpMode {
         telemetry.addData("Reported X (in)", "%.3f", distanceSensorPose.getX());
         telemetry.addData("Reported Y (in)", "%.3f", distanceSensorPose.getY());
         telemetry.addData("Reported R (deg)", "%.3f", toDegrees(distanceSensorPose.getHeading()));
-        telemetry.addData("Distance Sensor Cycle Time (ms)", "%.3f",distanceSensors.getCycleTime());
-        telemetry.addData("Forward Sensor MB1242 Range (in)", "%.3f",distanceSensors.getForwardRange(DistanceUnit.INCH));
-        telemetry.addData("Backward Sensor MB1242 Range (in)","%.3f", distanceSensors.getBackwardRange(DistanceUnit.INCH));
-        telemetry.addData("Left Sensor Rev TOF Range (in)", "%.3f",distanceSensors.getLeftRange(DistanceUnit.INCH));
+        telemetry.addData("Distance Sensor Cycle Time (ms)", "%.3f", distanceSensors.getCycleTime());
+        telemetry.addData("Forward Sensor MB1242 Range (in)", "%.3f", distanceSensors.getForwardRange(DistanceUnit.INCH));
+        telemetry.addData("Backward Sensor MB1242 Range (in)", "%.3f", distanceSensors.getBackwardRange(DistanceUnit.INCH));
+        telemetry.addData("Left Sensor Rev TOF Range (in)", "%.3f", distanceSensors.getLeftRange(DistanceUnit.INCH));
 
         telemetry.update();
 

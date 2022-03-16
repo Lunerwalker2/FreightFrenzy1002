@@ -9,13 +9,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "SkillIssueTeleOp")
 public class SkillIssueTeleOp extends LinearOpMode {
-    DcMotor rightFront,leftFront,rightBack,leftBack,carouselMotor,frontIntake,backIntake,liftMotor;
-    Servo backFlap,frontFlap,bucketServo,scoringArmServo;
+    DcMotor rightFront, leftFront, rightBack, leftBack, carouselMotor, frontIntake, backIntake, liftMotor;
+    Servo backFlap, frontFlap, bucketServo, scoringArmServo;
 
     //initialize
     private boolean SLOWMODE;
-    private double rx,ry,lx,ly;
-    private boolean rightBumper, leftBumper,dPadRight,dPadLeft,DPADUP,DPADDOWN,A,B,X,Y;
+    private double rx, ry, lx, ly;
+    private boolean rightBumper, leftBumper, dPadRight, dPadLeft, DPADUP, DPADDOWN, A, B, X, Y;
     private double rightTrigger, leftTrigger;
     private int COUNT = 0;
     private double SCOREVALUE = 0.8;
@@ -30,13 +30,13 @@ public class SkillIssueTeleOp extends LinearOpMode {
         leftFront = hardwareMap.get(DcMotor.class, "lf");
         rightBack = hardwareMap.get(DcMotor.class, "rb");
         leftBack = hardwareMap.get(DcMotor.class, "lb");
-        carouselMotor = hardwareMap.get(DcMotor.class,"carouselMotor");
+        carouselMotor = hardwareMap.get(DcMotor.class, "carouselMotor");
         frontIntake = hardwareMap.get(DcMotor.class, "frontIntake");
         backIntake = hardwareMap.get(DcMotor.class, "backIntake");
         liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
         frontFlap = hardwareMap.get(Servo.class, "frontFlap");
         backFlap = hardwareMap.get(Servo.class, "backFlap");
-        bucketServo = hardwareMap.get(Servo.class,"bucketServo");
+        bucketServo = hardwareMap.get(Servo.class, "bucketServo");
         scoringArmServo = hardwareMap.get(Servo.class, "scoringArmServo");
 
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -69,7 +69,7 @@ public class SkillIssueTeleOp extends LinearOpMode {
 
             if (A && (COUNT % 2) == 1) {
                 SLOWMODE = true;
-                COUNT ++;
+                COUNT++;
             }
             // slow mode but bad
             //TODO make good-er
@@ -78,9 +78,7 @@ public class SkillIssueTeleOp extends LinearOpMode {
                 ry = -gamepad1.right_stick_y * .5;
                 lx = gamepad1.left_stick_x * 1.1 * .5;
                 ly = -gamepad1.left_stick_y * .5;
-            }
-
-            else {
+            } else {
                 rx = gamepad1.right_stick_x;
                 ry = -gamepad1.right_stick_y;
                 lx = gamepad1.left_stick_x * 1.1;
@@ -98,11 +96,9 @@ public class SkillIssueTeleOp extends LinearOpMode {
             if (opModeIsActive()) {
                 if (dPadLeft) {
                     carouselMotor.setPower(-.7);
-                }
-                else if (dPadRight) {
+                } else if (dPadRight) {
                     carouselMotor.setPower(.7);
-                }
-                else {
+                } else {
                     carouselMotor.setPower(0);
                 }
             }
@@ -111,12 +107,10 @@ public class SkillIssueTeleOp extends LinearOpMode {
                 if (rightTrigger > 0) {
                     frontIntake.setPower(-1);
                     setServoPosition(backFlap, 1);
-                }
-                else if (rightBumper) {
+                } else if (rightBumper) {
                     frontIntake.setPower(1);
                     setServoPosition(frontFlap, 1);
-                }
-                else {
+                } else {
                     frontIntake.setPower(0);
                     backIntake.setPower(0);
                     setServoPosition(frontFlap, 0);
@@ -124,12 +118,10 @@ public class SkillIssueTeleOp extends LinearOpMode {
                 if (leftTrigger > 0) {
                     backIntake.setPower(-1);
                     setServoPosition(backFlap, 1);
-                }
-                else if (leftBumper) {
+                } else if (leftBumper) {
                     backIntake.setPower(1);
                     setServoPosition(backFlap, 1);
-                }
-                else {
+                } else {
                     frontIntake.setPower(0);
                     backIntake.setPower(0);
                     setServoPosition(backFlap, 0);
@@ -139,11 +131,9 @@ public class SkillIssueTeleOp extends LinearOpMode {
             if (opModeIsActive()) {
                 if (DPADUP) {
                     liftMotor.setPower(.5);
-                }
-                else if (DPADDOWN) {
+                } else if (DPADDOWN) {
                     liftMotor.setPower(-.5);
-                }
-                else {
+                } else {
                     liftMotor.setPower(0);
                 }
             }
@@ -151,8 +141,7 @@ public class SkillIssueTeleOp extends LinearOpMode {
             if (opModeIsActive()) {
                 if (Y) {
                     score();
-                }
-                else if (A) {
+                } else if (A) {
                     reset();
                 }
             }
@@ -160,23 +149,23 @@ public class SkillIssueTeleOp extends LinearOpMode {
             if (opModeIsActive()) {
                 if (X) {
                     bucketServo.setPosition(STARTVALUE);
-                }
-                else if (B) {
+                } else if (B) {
                     bucketServo.setPosition(SCOREVALUE);
                 }
             }
 
 
-
         }
     }
+
     public void setServoPosition(Servo servo, double position) {
         servo.setPosition(position);
     }
 
     public void score() {
-        scoringArmServo.setPosition(0.7 );
+        scoringArmServo.setPosition(0.7);
     }
+
     public void reset() {
         scoringArmServo.setPosition(0.0);
     }

@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.util.Extensions;
 import java.util.ArrayList;
 
 
-
 @Disabled
 @TeleOp
 public class DemoFieldRelativeTeleOp extends LinearOpMode {
@@ -95,10 +94,10 @@ public class DemoFieldRelativeTeleOp extends LinearOpMode {
             double x = 0;
             double rx = gamepad1.right_stick_x;
 
-            if(gamepad1.dpad_up) y = 1.0;
-            else if(gamepad1.dpad_down) y = -1.0;
-            if(gamepad1.dpad_left) x = -1.0;
-            else if(gamepad1.dpad_right) x = 1.0;
+            if (gamepad1.dpad_up) y = 1.0;
+            else if (gamepad1.dpad_down) y = -1.0;
+            if (gamepad1.dpad_left) x = -1.0;
+            else if (gamepad1.dpad_right) x = 1.0;
 
             //Get the field centric inputs
 

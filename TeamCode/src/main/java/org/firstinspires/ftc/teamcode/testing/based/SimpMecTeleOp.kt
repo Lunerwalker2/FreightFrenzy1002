@@ -34,6 +34,7 @@ import kotlin.math.max
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.sendLine
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.toFieldRelative
 import kotlin.math.sign
+
 @TeleOp(name = "SimpMecTeleOp", group = "TeleOp")
 class SimpMecTeleOp : CommandOpMode() {
 
@@ -92,12 +93,12 @@ class SimpMecTeleOp : CommandOpMode() {
     override fun run() {
         super.run()
 
-        if(isStart){
+        if (isStart) {
             matchTimer.reset()
             isStart = false
         }
 
-        if(!endgameRumblePassed && matchTimer.seconds() > 85){
+        if (!endgameRumblePassed && matchTimer.seconds() > 85) {
             gamepad1.rumble(400)
             gamepad2.rumble(400)
             endgameRumblePassed = true
@@ -106,7 +107,7 @@ class SimpMecTeleOp : CommandOpMode() {
         val heading = getRobotAngle()
 
         //If we need to reset our zero angle, increment the offset with the current heading to do so
-        if (gamepad1.a && !prevSlowState){
+        if (gamepad1.a && !prevSlowState) {
             offset += heading
             gamepad1.rumble(0.0, 1.0, 300)
         }
