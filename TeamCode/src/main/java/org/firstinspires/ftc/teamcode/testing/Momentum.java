@@ -1,16 +1,5 @@
 package org.firstinspires.ftc.teamcode.testing;
 
-/*
-███╗░░░███╗░█████╗░███╗░░░███╗███████╗███╗░░██╗████████╗██╗░░░██╗███╗░░░███╗
-████╗░████║██╔══██╗████╗░████║██╔════╝████╗░██║╚══██╔══╝██║░░░██║████╗░████║
-██╔████╔██║██║░░██║██╔████╔██║█████╗░░██╔██╗██║░░░██║░░░██║░░░██║██╔████╔██║
-██║╚██╔╝██║██║░░██║██║╚██╔╝██║██╔══╝░░██║╚████║░░░██║░░░██║░░░██║██║╚██╔╝██║
-██║░╚═╝░██║╚█████╔╝██║░╚═╝░██║███████╗██║░╚███║░░░██║░░░╚██████╔╝██║░╚═╝░██║
-╚═╝░░░░░╚═╝░╚════╝░╚═╝░░░░░╚═╝╚══════╝╚═╝░░╚══╝░░░╚═╝░░░░╚═════╝░╚═╝░░░░░╚═╝
-Authorized for use by FTC 1002 and its members only.
-*/
-
-
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -23,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@TeleOp(name = "<-$ Momentum $->")
+@TeleOp(name = "Momentum J-1.0")
 public class Momentum extends LinearOpMode {
     // Momentous Line-Based Optimized Initialization aka M.L.B.O.I.
     DcMotor
@@ -36,15 +25,15 @@ public class Momentum extends LinearOpMode {
     private double
             rx, ry, lx, ly,
             power = 1,
+            leftFrontPower, rightFrontPower, leftBackPower, rightBackPower,
             angle;
     private float
             rightTrigger, leftTrigger;
     private boolean
             dPadRight, dPadLeft, dPadUp, dPadDown,
-            A, B, X, Y,
             rightBumper, leftBumper,
             slowMode = false,
-            locked = false;
+            slowLock = false;
     private final double
             DUCK_MULTIPLIER = 0.7,
             SCOREVALUE = 0.8,
@@ -72,35 +61,24 @@ public class Momentum extends LinearOpMode {
         frontFlap = hardwareMap.get(Servo.class, "frontFlap");
         backFlap = hardwareMap.get(Servo.class, "backFlap");
         bucketServo = hardwareMap.get(Servo.class,"bucketServo");
+        scoringArmServo = hardwareMap.get(Servo.class, "scoringArmServo");
 
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
         waitForStart();
 
         while (opModeIsActive()) {
-            // Initialization of Variables
-            Orientation orientation =
-                    imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-            angle  = orientation.firstAngle;
-
-            A = gamepad1.a;
-            B = gamepad1.b;
-            X = gamepad1.x;
-            Y = gamepad1.y;
-
-//            Vector2d vector = new Vector2d(
-//                    1.1 * (gamepad1.left_stick_x), -(gamepad1.left_stick_y)
-//            );
-
-            rx = (gamepad1.right_stick_x);
-            ry = -(gamepad1.right_stick_y);
-//            lx = vector.rotated(angle).getX();
-//            ly = vector.rotated(angle).getY();
-
-            lx = gamepad1.left_stick_x * Math.sin(-angle);
-            ly = gamepad1.left_stick_y * Math.cos(-angle);
+            angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+            Vector2d vector = new Vector2d(gamepad1.left_stick_x, gamepad1.left_stick_y).rotated(angle);
+            Vector2d absAngle = vector.rotated(angle);
 
             dPadRight = gamepad1.dpad_right;
             dPadLeft = gamepad1.dpad_left;
@@ -111,31 +89,29 @@ public class Momentum extends LinearOpMode {
             dPadUp = gamepad1.dpad_up;
             dPadDown = gamepad1.dpad_down;
 
-            // Run
 
+            if (gamepad1.a && !slowLock) {
+                power = 0.5;
+            }
+            else {
+                power = 1;
+            }
+            slowLock = gamepad1.a;
 
-            //@TODO remove this once works ^^ angle lowest is -1.5, to 1.7 ish
-
-
-            // Initial Variable sets for run
-
-//            if (toggleRun(A)) {
-//                power = 0.5;
-//            }
-//            else {
-//                power = 1;
-//            }
-
-            // Runtime
-            double leftFrontPower = power * (ly + lx + rx);
-            double rightFrontPower = power * (ly - lx + rx);
-            double leftBackPower = power * (ly - lx + rx);
-            double rightBackPower = power * (ly + lx - rx);
+            leftFrontPower =
+                    (power * (absAngle.getY() + absAngle.getX() + gamepad1.right_stick_x));
+            leftBackPower =
+                    (power * (absAngle.getY() - absAngle.getX() + gamepad1.right_stick_x));
+            rightFrontPower =
+                    (power * (absAngle.getY() - absAngle.getX() - gamepad1.right_stick_x));
+            rightBackPower =
+                    (power * (absAngle.getY() + absAngle.getX() - gamepad1.right_stick_x));
 
             leftFront.setPower(leftFrontPower);
-            leftBack.setPower(leftBackPower);
             rightFront.setPower(rightFrontPower);
+            leftBack.setPower(leftBackPower);
             rightBack.setPower(rightBackPower);
+
 
             if (dPadLeft || dPadRight) {
                 int multiplier = 1;
@@ -177,20 +153,20 @@ public class Momentum extends LinearOpMode {
                 liftMotor.setPower(0);
             }
 
-            if (Y) {
+            if (gamepad1.y) {
                 scoringArmServo.setPosition(0.7);
-            } else if (A) {
+            } else if (gamepad1.a) {
                 scoringArmServo.setPosition(0);
             }
 
-            if (X) {
+            if (gamepad1.x) {
                 bucketServo.setPosition(STARTVALUE);
-            } else if (B) {
+            } else if (gamepad1.b) {
                 bucketServo.setPosition(SCOREVALUE);
             }
         }
     }
-    public boolean toggleRun (boolean condition) {
+    public boolean toggleRun (boolean condition, boolean locked) {
         if (condition && !locked) {
             locked = true;
             return true;
@@ -200,8 +176,7 @@ public class Momentum extends LinearOpMode {
         }
         return false;
     }
-    // Compat functions
-        // Functions that make forking from SkillIssue Easier!
+
     public void setServoPosition (Servo servo, double position) {
         servo.setPosition(position);
     }

@@ -34,21 +34,9 @@ import kotlin.math.max
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.sendLine
 import org.firstinspires.ftc.teamcode.util.Extensions.Companion.toFieldRelative
 import kotlin.math.sign
+@TeleOp(name = "SimpMecTeleOp", group = "TeleOp")
+class SimpMecTeleOp : CommandOpMode() {
 
-/*
-I'm using a lot of FTCLib classes in this because the framework exists for auto, so might as well.
-
-This is to prevent the TeleOp file from being huge with all sorts of logic and things. As mentioned
-above, the same command and subsystem based framework is already used and exists for autonomous, and
-there's no reason to not use it in teleop as well.
-
-MOST OF THIS IS NOT HOW THE SDK WORKS PLEASE DON'T TAKE THIS AS AN EXAMPLE OF THAT.
- */
-
-@TeleOp(name = "Main TeleOp", group = "TeleOp")
-class MecTeleOp : CommandOpMode() {
-
-    //We could go and use the rr drive class but meh I'd like to show the math anyway
     private lateinit var leftFront: DcMotorEx
     private lateinit var leftBack: DcMotorEx
     private lateinit var rightFront: DcMotorEx
@@ -56,81 +44,19 @@ class MecTeleOp : CommandOpMode() {
     private lateinit var imu: BNO055IMU
     var offset = 0.0
     var prevSlowState = false
-
     private val matchTimer = ElapsedTime()
     private var isStart = true
     private var endgameRumblePassed = false
     private var intakeHasBeenDetected = false
-
-    //Drive power multiplier for slow mode
     private var powerMultiplier = 1.0
-
     override fun initialize() {
-
         offset = Extensions.HEADING_SAVER
-
-
-        //Extension functions pog see Extensions.kt in util package
         telemetry.sendLine("Initializing Subsystems...")
-
-//        DistanceSensors(hardwareMap).disableAll()
-
         telemetry.sendLine("Setting bulk cache mode....")
-
-        //Schedule a clear of the bulk cache each loop
-        //This command will remain scheduled the entire loop
         schedule(BulkCacheCommand(hardwareMap))
-
-
         telemetry.sendLine("Setting up gamepads...")
-        //Define our gamepads with ftclib things
         val driver = GamepadEx(gamepad1)
         val manipulator = GamepadEx(gamepad2)
-
-        //Driver controls
-
-
-        //Manipulator Controls
-
-
-        //Carousel wheel
-
-//        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-//                .whenPressed(Runnable {
-//                    if (gamepad1.x) intake.outtakeBoth()
-//                    else intake.intake()
-//                    intakeHasBeenDetected = false
-//                })
-//                .whileActiveContinuous(Runnable {
-//                    if(!intakeHasBeenDetected && bucket.freightDetected()){
-//                        gamepad1.rumble(300)
-//                        intakeHasBeenDetected = true
-//                    }
-//                })
-//                .whenInactive(intake::stop)
-
-
-//        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-//                .whenPressed(intake::stop)
-//                .whenPressed(Runnable { intake.setSide(true) })
-//                .whenPressed(SetHubLEDCommand(hardwareMap, Color.GREEN))
-//
-//        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-//                .whenPressed(intake::stop)
-//                .whenPressed(Runnable { intake.setSide(false) })
-//                .whenPressed(SetHubLEDCommand(hardwareMap, Color.RED))
-
-
-        /* ***********************************************/
-
-//        manipulator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-//                .toggleWhenPressed(
-//                        bucket::dump    ,
-//                        bucket::load
-//                )
-
-        //////////////////////////////////////////////// Drive Base
-
         telemetry.sendLine("Setting up drive hardware...")
         //Get our motors from the hardware map
         leftFront = hardwareMap.get(DcMotorEx::class.java, "lf")
@@ -140,6 +66,7 @@ class MecTeleOp : CommandOpMode() {
 
         //Create a list for easy iterations that don't take up much room
         val motors = listOf(leftFront, leftBack, rightFront, rightBack)
+
 
         motors.forEach {
             //Set all motors to run using encoder, i.e internal velocity control with a 0.85 power cap
@@ -176,16 +103,6 @@ class MecTeleOp : CommandOpMode() {
             endgameRumblePassed = true
         }
 
-
-        /////////////////////////////////////////////////////////////// Drive Base
-        //Set the slow mode one if either bumper is pressed
-//        if (gamepad1.right_bumper) {
-//            powerMultiplier = 0.3
-//        } else {
-//            powerMultiplier = 1.0
-//        }
-
-        //Store the heading of the robot
         val heading = getRobotAngle()
 
         //If we need to reset our zero angle, increment the offset with the current heading to do so
@@ -199,11 +116,6 @@ class MecTeleOp : CommandOpMode() {
         //Telemetry for most things are handled in the subsystems
         telemetry.addData("Slow Mode Enabled", (powerMultiplier != 0.9))
 
-        /* Thanks to FTCLib handling all the things we just did above automatically,
-        we barely need to do anything here, except the drive base.
-         */
-
-        //Check the deadband of the controller
         var y = if (abs(gamepad1.left_stick_y) > 0.02) (-gamepad1.left_stick_y).toDouble() else 0.0 // Remember, this is reversed!
         var x = if (abs(gamepad1.left_stick_x) > 0.02) gamepad1.left_stick_x * 1.1 else 0.0 // Counteract imperfect strafing
         var rx = if (abs(gamepad1.right_stick_x) > 0.02) gamepad1.right_stick_x.toDouble() else 0.0
