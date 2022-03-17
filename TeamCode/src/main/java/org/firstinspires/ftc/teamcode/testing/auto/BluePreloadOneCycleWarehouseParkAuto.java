@@ -1,12 +1,8 @@
 package org.firstinspires.ftc.teamcode.testing.auto;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name = "BluePreloadOneCycleWarehouseParkAuto")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "BluePreloadOneCycleWarehouseParkAuto")
 public class BluePreloadOneCycleWarehouseParkAuto extends LinearOpMode {
 
     //    private boolean SLOWMODE;
@@ -18,7 +14,7 @@ public class BluePreloadOneCycleWarehouseParkAuto extends LinearOpMode {
 //    DcMotor rightFront, leftFront, rightBack, leftBack, carouselMotor, frontIntake, backIntake, liftMotor;
 //    Servo backFlap, frontFlap, bucketServo;
 //
-    private autonomous auto = new autonomous("blue");
+    private Autonomous auto = new Autonomous("blue");
 
     @Override
     public void runOpMode() throws InterruptedException {
