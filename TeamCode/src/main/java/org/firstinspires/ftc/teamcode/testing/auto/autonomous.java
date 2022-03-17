@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class Autonomous {
+public class autonomous {
     private boolean
             slowMode,
             rightBumper, leftBumper,
@@ -27,7 +27,7 @@ public class Autonomous {
     Servo
             backFlap, frontFlap, bucketServo;
 
-    public Autonomous(String allianceIn) {
+    public autonomous(String allianceIn) {
         if (allianceIn.equals("red")) {
             isRed = true;
         } else if (allianceIn.equals("blue")) {

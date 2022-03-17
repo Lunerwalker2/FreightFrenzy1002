@@ -14,7 +14,7 @@ public class BluePreloadOneCycleWarehouseParkAuto extends LinearOpMode {
 //    DcMotor rightFront, leftFront, rightBack, leftBack, carouselMotor, frontIntake, backIntake, liftMotor;
 //    Servo backFlap, frontFlap, bucketServo;
 //
-    private Autonomous auto = new Autonomous("blue");
+    private autonomous auto = new autonomous("blue");
 
     @Override
     public void runOpMode() throws InterruptedException {
