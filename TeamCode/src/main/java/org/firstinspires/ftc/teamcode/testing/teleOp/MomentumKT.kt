@@ -10,24 +10,20 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.pow
 import kotlin.properties.Delegates
 
 @TeleOp(name = "Momentum K-1.0")
 class MomentumKT : LinearOpMode() {
     private var power = 1.0
-    private var rightTrigger = 0f
-    private var leftTrigger = 0f
-    private var dPadRight = false
-    private var dPadLeft = false
-    private var dPadUp = false
-    private var dPadDown = false
-    private var rightBumper = false
-    private var leftBumper = false
-
     private var slowLock = false
+
     private val duckMultiplier = 0.7
     private val scoreValue = 0.8
     private val startValue = 0.33
+    
     override fun runOpMode() {
         val imu = hardwareMap.get(BNO055IMU::class.java, "imu")
         val parameters = BNO055IMU.Parameters()
@@ -65,44 +61,50 @@ class MomentumKT : LinearOpMode() {
         waitForStart()
 
         while (opModeIsActive()) {
+            var correctedY = if (abs(gamepad1.left_stick_y) > 0.02) (-gamepad1.left_stick_y).toDouble() else 0.0
+            var correctedX = if (abs(gamepad1.left_stick_x) > 0.02) gamepad1.left_stick_x * 1.1 else 0.0
+            var correctedR = if (abs(gamepad1.right_stick_x) > 0.02) gamepad1.right_stick_x.toDouble() else 0.0
+
+            correctedY = cubeInput(correctedY)
+            correctedX = cubeInput(correctedX)
+            correctedR = cubeInput(correctedR)
+
             angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle.toDouble()
-            val vector = Vector2d(gamepad1.left_stick_x.toDouble(), gamepad1.left_stick_y.toDouble()).rotated(angle)
-            val (x, y) = vector.rotated(angle)
-            dPadRight = gamepad1.dpad_right
-            dPadLeft = gamepad1.dpad_left
-            rightBumper = gamepad1.right_bumper
-            leftBumper = gamepad1.left_bumper
-            rightTrigger = gamepad1.right_trigger
-            leftTrigger = gamepad1.left_trigger
-            dPadUp = gamepad1.dpad_up
-            dPadDown = gamepad1.dpad_down
+            val vector = Vector2d(correctedX, correctedY).rotated(-angle)
+
+            val (x, y) = vector
+            val r = correctedR
+
             power = if (gamepad1.a && !slowLock) {
                 0.5
             } else {
                 1.0
             }
             slowLock = gamepad1.a
-            leftFrontPower = power * (y + x + gamepad1.right_stick_x)
-            leftBackPower = power * (y - x + gamepad1.right_stick_x)
-            rightFrontPower = power * (y - x - gamepad1.right_stick_x)
-            rightBackPower = power * (y + x - gamepad1.right_stick_x)
+            val denominator: Double = max(abs(y) + abs(x) + abs(r), 1.0)
+
+            leftFrontPower = (power / denominator) * (y + x + r)
+            leftBackPower = (power / denominator) * (y - x + r)
+            rightFrontPower = (power / denominator) * (y - x - r)
+            rightBackPower = (power / denominator) * (y + x - r)
+
             leftFront.power = leftFrontPower
             rightFront.power = (rightFrontPower)
             leftBack.power = (leftBackPower)
             rightBack.power = (rightBackPower)
-            if (dPadLeft || dPadRight) {
+            if (gamepad1.dpad_left || gamepad1.dpad_right) {
                 var multiplier = 1
-                if (dPadLeft) multiplier = -1
+                if (gamepad1.dpad_right) multiplier = -1
                 carouselMotor.power = (multiplier * duckMultiplier)
             } else if (carouselMotor.power != 0.0) {
                 carouselMotor.power = (0.0)
             }
             when {
-                rightTrigger > 0 -> {
+                gamepad1.right_trigger > 0 -> {
                     frontIntake.power = (-1.0)
                     setServoPosition(frontFlap, 1.0)
                 }
-                rightBumper -> {
+                gamepad1.right_bumper -> {
                     frontIntake.power = (1.0)
                     setServoPosition(frontFlap, 1.0)
                 }
@@ -113,11 +115,11 @@ class MomentumKT : LinearOpMode() {
                 }
             }
             when {
-                leftTrigger > 0 -> {
+                gamepad1.left_trigger > 0 -> {
                     backIntake.power = (-1.0)
                     setServoPosition(backFlap, 1.0)
                 }
-                leftBumper -> {
+                gamepad1.left_bumper -> {
                     backIntake.power = (1.0)
                     setServoPosition(backFlap, 1.0)
                 }
@@ -128,10 +130,10 @@ class MomentumKT : LinearOpMode() {
                 }
             }
             when {
-                dPadUp -> {
+                gamepad1.dpad_up -> {
                     liftMotor.power = (.5)
                 }
-                dPadDown -> {
+                gamepad1.dpad_down -> {
                     liftMotor.power = (-.5)
                 }
                 else -> {
@@ -153,5 +155,11 @@ class MomentumKT : LinearOpMode() {
 
     private fun setServoPosition(servo: Servo?, position: Double) {
         servo!!.position = position
+    }
+
+    private fun cubeInput(input: Double): Double {
+        val t = 0.2 * input.pow(3.0)
+        val r = input * (1 - 0.2)
+        return t + r
     }
 }

@@ -14,7 +14,7 @@ public class BluePreloadOneCycleWarehouseParkAuto extends LinearOpMode {
 //    DcMotor rightFront, leftFront, rightBack, leftBack, carouselMotor, frontIntake, backIntake, liftMotor;
 //    Servo backFlap, frontFlap, bucketServo;
 //
-    private autonomous auto = new autonomous("blue");
+    private autonomous auto = new autonomous();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -40,31 +40,31 @@ public class BluePreloadOneCycleWarehouseParkAuto extends LinearOpMode {
 //
         sleep(1000);
         //TODO: tune values
-        auto.driveForward(500);
-        auto.liftMotor.setPower(.5);
-        sleep(600);
-        auto.bucketServo.setPosition(.8);
-        sleep(1000);
-        auto.bucketServo.setPosition(0.33);
-        sleep(1000);
-        auto.liftMotor.setPower(-.5);
-        sleep(600);
-        auto.driveBackward(2000);
-        auto.backIntake.setPower(-1);
-        sleep(1000);
-        auto.backIntake.setPower(1);
-        auto.frontIntake.setPower(1);
-        sleep(1000);
-        auto.driveForward(1000);
-        auto.liftMotor.setPower(.5);
-        sleep(600);
-        auto.bucketServo.setPosition(.8);
-        sleep(1000);
-        auto.bucketServo.setPosition(0.33);
-        sleep(1000);
-        auto.liftMotor.setPower(-.5);
-        sleep(600);
-        auto.driveBackward(1000);
+//        auto.driveForward(500);
+//        auto.liftMotor.setPower(.5);
+//        sleep(600);
+//        auto.bucketServo.setPosition(.8);
+//        sleep(1000);
+//        auto.bucketServo.setPosition(0.33);
+//        sleep(1000);
+//        auto.liftMotor.setPower(-.5);
+//        sleep(600);
+//        auto.driveBackward(2000);
+//        auto.backIntake.setPower(-1);
+//        sleep(1000);
+//        auto.backIntake.setPower(1);
+//        auto.frontIntake.setPower(1);
+//        sleep(1000);
+//        auto.driveForward(1000);
+//        auto.liftMotor.setPower(.5);
+//        sleep(600);
+//        auto.bucketServo.setPosition(.8);
+//        sleep(1000);
+//        auto.bucketServo.setPosition(0.33);
+//        sleep(1000);
+//        auto.liftMotor.setPower(-.5);
+//        sleep(600);
+//        auto.driveBackward(1000);
 //
 //
     }
