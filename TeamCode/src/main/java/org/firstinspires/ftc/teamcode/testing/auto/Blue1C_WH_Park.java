@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.testing.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Disabled
 
 @Autonomous(name = "Blue Warehouse 1-Cycle")
 public class Blue1C_WH_Park extends LinearOpMode {

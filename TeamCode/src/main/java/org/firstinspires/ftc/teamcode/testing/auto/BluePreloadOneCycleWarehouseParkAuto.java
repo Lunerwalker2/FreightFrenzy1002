@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.testing.auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+@Disabled
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "BluePreloadOneCycleWarehouseParkAuto")
 public class BluePreloadOneCycleWarehouseParkAuto extends LinearOpMode {

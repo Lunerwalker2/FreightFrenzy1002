@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.testing.auto
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import kotlin.Throws
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import kotlin.math.PI
 import kotlin.math.abs
+@Disabled
 
 @Autonomous(name = "Blue Warehouse 1-Cycle KOTLIN")
 class Blue1C_WH_ParkKT : LinearOpMode() {

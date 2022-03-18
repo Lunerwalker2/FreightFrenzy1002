@@ -45,7 +45,7 @@ there's no reason to not use it in teleop as well.
 MOST OF THIS IS NOT HOW THE SDK WORKS PLEASE DON'T TAKE THIS AS AN EXAMPLE OF THAT.
  */
 
-@TeleOp(name = "Main TeleOp", group = "TeleOp")
+@TeleOp(name = "Old - Main TeleOp", group = "TeleOp")
 class MecTeleOp : CommandOpMode() {
 
     //We could go and use the rr drive class but meh I'd like to show the math anyway
