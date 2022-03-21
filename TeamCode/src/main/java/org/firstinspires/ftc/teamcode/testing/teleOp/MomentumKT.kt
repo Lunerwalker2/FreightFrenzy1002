@@ -63,43 +63,44 @@ class MomentumKT : LinearOpMode() {
         waitForStart()
 
         while (opModeIsActive()) {
-            var correctedY = if (abs(gamepad1.left_stick_y) > 0.02) (-gamepad1.left_stick_y).toDouble() else 0.0
-            var correctedX = if (abs(gamepad1.left_stick_x) > 0.02) gamepad1.left_stick_x * 1.1 else 0.0
-            var correctedR = if (abs(gamepad1.right_stick_x) > 0.02) gamepad1.right_stick_x.toDouble() else 0.0
-
-            correctedY = cubeInput(correctedY)
-            correctedX = cubeInput(correctedX)
-            correctedR = cubeInput(correctedR)
+            val correctedY = cubeInput(-gamepad1.left_stick_y.toDouble()) //if (abs(gamepad1.left_stick_y) > 0.02) (-gamepad1.left_stick_y).toDouble() else 0.0
+            val correctedX = cubeInput(gamepad1.left_stick_x.toDouble()) //if (abs(gamepad1.left_stick_x) > 0.02) gamepad1.left_stick_x * 1.1 else 0.0
+            val correctedR = cubeInput(gamepad1.right_stick_x.toDouble()) //if (abs(gamepad1.right_stick_x) > 0.02) gamepad1.right_stick_x.toDouble() else 0.0
 
             angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle.toDouble()
             val vector = Vector2d(correctedX, correctedY).rotated(-angle)
 
             val (x, y) = vector
-            val r = correctedR
-
-            power = if (gamepad1.a && !slowLock) {
-                0.5
-            } else {
-                1.0
+            if (gamepad1.a) {
+                power = 0.5
             }
+//            power = if (gamepad1.a && !slowLock) {
+//                0.5
+//            } else {
+//                1.0
+//            }
             slowLock = gamepad1.a
-            val denominator: Double = max(abs(y) + abs(x) + abs(r), 1.0)
+            val denominator: Double = max(abs(y) + abs(x) + abs(correctedR), 1.0)
 
-            leftFrontPower = (power / denominator) * (y + x + r)
-            leftBackPower = (power / denominator) * (y - x + r)
-            rightFrontPower = (power / denominator) * (y - x - r)
-            rightBackPower = (power / denominator) * (y + x - r)
+            leftFrontPower = (power / denominator) * (y + x + correctedR)
+            leftBackPower = (power / denominator) * (y - x + correctedR)
+            rightFrontPower = (power / denominator) * (y - x - correctedR)
+            rightBackPower = (power / denominator) * (y + x - correctedR)
 
             leftFront.power = leftFrontPower
             rightFront.power = (rightFrontPower)
             leftBack.power = (leftBackPower)
             rightBack.power = (rightBackPower)
-            if (gamepad1.dpad_left || gamepad1.dpad_right) {
-                var multiplier = 1
-                if (gamepad1.dpad_right) multiplier = -1
-                carouselMotor.power = (multiplier * duckMultiplier)
-            } else if (carouselMotor.power != 0.0) {
-                carouselMotor.power = (0.0)
+            when {
+                gamepad1.dpad_left -> {
+                    carouselMotor.power = duckMultiplier
+                }
+                gamepad1.dpad_right -> {
+                    carouselMotor.power = -duckMultiplier
+                }
+                carouselMotor.power != 0.0 -> {
+                    carouselMotor.power = (0.0)
+                }
             }
             when {
                 gamepad1.right_trigger > 0 -> {
