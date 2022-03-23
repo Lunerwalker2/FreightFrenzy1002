@@ -1,0 +1,8 @@
+
+‚
+java:S1128"gRemove this unused import 'org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap'.(ŸÜèÄùÿÿÿÿ
+4
+java:S1128"Remove this duplicated import.(»Ž¼Ê
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ƒ°À—úÿÿÿÿ
+=
+java:S2189""Add an end condition to this loop.(˜ïˆžÿÿÿÿÿ

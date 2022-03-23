@@ -1,0 +1,8 @@
+
+7
+java:S1170"!Make this final field static too.(¾ÿ—Å
+6
+java:S1170"!Make this final field static too.(ÑàÆW
+s
+java:S1450"XRemove the "liftMotor" field and declare it as a local variable in the relevant methods.(¿í …þÿÿÿÿ
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ƒ°À—úÿÿÿÿ

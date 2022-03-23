@@ -15,7 +15,6 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.properties.Delegates
-@Disabled
 
 @TeleOp(name = "Momentum K-1.0")
 class MomentumKT : LinearOpMode() {

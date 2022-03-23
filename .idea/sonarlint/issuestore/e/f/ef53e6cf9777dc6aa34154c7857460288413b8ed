@@ -1,0 +1,60 @@
+
+m	java:S116"SRename this field "SLOWMODE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(«ú¤ãıÿÿÿÿ
+k	java:S116"QRename this field "DPADUP" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(½¡´şÿÿÿÿ
+m	java:S116"SRename this field "DPADDOWN" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(½¡´şÿÿÿÿ
+f	java:S116"LRename this field "A" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(½¡´şÿÿÿÿ
+f	java:S116"LRename this field "B" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(½¡´şÿÿÿÿ
+f	java:S116"LRename this field "X" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(½¡´şÿÿÿÿ
+f	java:S116"LRename this field "Y" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(½¡´şÿÿÿÿ
+e	java:S116"PRename this field "COUNT" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(·²Äµ
+j	java:S116"URename this field "SCOREVALUE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ïá¡Ç
+j	java:S116"URename this field "STARTVALUE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ºœÖ¬
+\
+java:S1659"FDeclare "leftFront" and all following declarations on a separate line.(óûãŞ
+\
+java:S1659"FDeclare "frontFlap" and all following declarations on a separate line.(‘ÒÖ²
+U
+java:S1659"?Declare "ry" and all following declarations on a separate line.(˜¨ìà
+b
+java:S1659"GDeclare "leftBumper" and all following declarations on a separate line.(½¡´şÿÿÿÿ
+D
+java:S1659")Declare "leftTrigger" on a separate line.(¿­´§üÿÿÿÿ
+k
+java:S1450"PRemove the "A" field and declare it as a local variable in the relevant methods.(½¡´şÿÿÿÿ
+k
+java:S1450"PRemove the "B" field and declare it as a local variable in the relevant methods.(½¡´şÿÿÿÿ
+r
+java:S1450"WRemove the "DPADDOWN" field and declare it as a local variable in the relevant methods.(½¡´şÿÿÿÿ
+p
+java:S1450"URemove the "DPADUP" field and declare it as a local variable in the relevant methods.(½¡´şÿÿÿÿ
+k
+java:S1450"PRemove the "X" field and declare it as a local variable in the relevant methods.(½¡´şÿÿÿÿ
+k
+java:S1450"PRemove the "Y" field and declare it as a local variable in the relevant methods.(½¡´şÿÿÿÿ
+r
+java:S1450"WRemove the "dPadLeft" field and declare it as a local variable in the relevant methods.(½¡´şÿÿÿÿ
+s
+java:S1450"XRemove the "dPadRight" field and declare it as a local variable in the relevant methods.(½¡´şÿÿÿÿ
+t
+java:S1450"YRemove the "leftBumper" field and declare it as a local variable in the relevant methods.(½¡´şÿÿÿÿ
+u
+java:S1450"ZRemove the "leftTrigger" field and declare it as a local variable in the relevant methods.(¿­´§üÿÿÿÿ
+g
+java:S1450"QRemove the "lx" field and declare it as a local variable in the relevant methods.(˜¨ìà
+g
+java:S1450"QRemove the "ly" field and declare it as a local variable in the relevant methods.(˜¨ìà
+u
+java:S1450"ZRemove the "rightBumper" field and declare it as a local variable in the relevant methods.(½¡´şÿÿÿÿ
+v
+java:S1450"[Remove the "rightTrigger" field and declare it as a local variable in the relevant methods.(¿­´§üÿÿÿÿ
+g
+java:S1450"QRemove the "rx" field and declare it as a local variable in the relevant methods.(˜¨ìà
+g
+java:S1450"QRemove the "ry" field and declare it as a local variable in the relevant methods.(˜¨ìà
+m
+java:S3776"RRefactor this method to reduce its Cognitive Complexity from 47 to the 15 allowed.(ÛØÇˆûÿÿÿÿ
+H
+java:S1135L"2Complete the task associated to this TODO comment.(ÎĞ›™
+<
+java:S1068"&Remove this unused "ry" private field.(˜¨ìà
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(„˜ªÚ

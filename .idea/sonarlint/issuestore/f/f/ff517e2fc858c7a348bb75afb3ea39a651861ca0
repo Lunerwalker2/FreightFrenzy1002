@@ -1,0 +1,6 @@
+
+a
+java:S1659"FDeclare "leftFront" and all following declarations on a separate line.(‚Ñé„úÿÿÿÿ
+m
+java:S1450"RRemove the "imu" field and declare it as a local variable in the relevant methods.(×–éúÿÿÿÿ
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ĞÍÒ¥şÿÿÿÿ

@@ -1,0 +1,66 @@
+
+o	java:S116'"ZRename this field "DUCK_MULTIPLIER" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(êøú¯
+o	java:S116("URename this field "SCOREVALUE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ëƒª¿şÿÿÿÿ
+o	java:S116)"URename this field "STARTVALUE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Í©ºÿÿÿÿÿ
+7
+java:S1170'"!Make this final field static too.(êøú¯
+<
+java:S1170("!Make this final field static too.(ëƒª¿şÿÿÿÿ
+<
+java:S1170)"!Make this final field static too.(Í©ºÿÿÿÿÿ
+\
+java:S1659"FDeclare "leftFront" and all following declarations on a separate line.(¼»‰°
+`
+java:S1659"EDeclare "backFlap" and all following declarations on a separate line.(‚Ç—øÿÿÿÿ
+Z
+java:S1659"?Declare "ry" and all following declarations on a separate line.(îšÖßøÿÿÿÿ
+>
+java:S1659 ")Declare "leftTrigger" on a separate line.(Š†ñ
+[
+java:S1659""EDeclare "dPadLeft" and all following declarations on a separate line.(óÏ˜ 
+b
+java:S1659("GDeclare "SCOREVALUE" and all following declarations on a separate line.(ëƒª¿şÿÿÿÿ
+j
+java:S1450"TRemove the "angle" field and declare it as a local variable in the relevant methods.(ûÎì–
+m
+java:S1450""WRemove the "dPadDown" field and declare it as a local variable in the relevant methods.(óÏ˜ 
+m
+java:S1450""WRemove the "dPadLeft" field and declare it as a local variable in the relevant methods.(óÏ˜ 
+n
+java:S1450""XRemove the "dPadRight" field and declare it as a local variable in the relevant methods.(óÏ˜ 
+k
+java:S1450""URemove the "dPadUp" field and declare it as a local variable in the relevant methods.(óÏ˜ 
+w
+java:S1450"\Remove the "leftBackPower" field and declare it as a local variable in the relevant methods.(Ïâë£ÿÿÿÿÿ
+t
+java:S1450#"YRemove the "leftBumper" field and declare it as a local variable in the relevant methods.(—Óî ÿÿÿÿÿ
+x
+java:S1450"]Remove the "leftFrontPower" field and declare it as a local variable in the relevant methods.(Ïâë£ÿÿÿÿÿ
+o
+java:S1450 "ZRemove the "leftTrigger" field and declare it as a local variable in the relevant methods.(Š†ñ
+o
+java:S1450"TRemove the "power" field and declare it as a local variable in the relevant methods.(½Áß°ùÿÿÿÿ
+x
+java:S1450"]Remove the "rightBackPower" field and declare it as a local variable in the relevant methods.(Ïâë£ÿÿÿÿÿ
+u
+java:S1450#"ZRemove the "rightBumper" field and declare it as a local variable in the relevant methods.(—Óî ÿÿÿÿÿ
+y
+java:S1450"^Remove the "rightFrontPower" field and declare it as a local variable in the relevant methods.(Ïâë£ÿÿÿÿÿ
+p
+java:S1450 "[Remove the "rightTrigger" field and declare it as a local variable in the relevant methods.(Š†ñ
+m
+java:S3776/"RRefactor this method to reduce its Cognitive Complexity from 30 to the 15 allowed.(ÛØÇˆûÿÿÿÿ
+V
+java:S1854¬":Remove this useless assignment to local variable "locked".(ô‹Ğÿÿÿÿÿ
+V
+java:S1854°":Remove this useless assignment to local variable "locked".(ÔÜ·Áûÿÿÿÿ
+A
+java:S1068"&Remove this unused "rx" private field.(îšÖßøÿÿÿÿ
+A
+java:S1068"&Remove this unused "ry" private field.(îšÖßøÿÿÿÿ
+A
+java:S1068"&Remove this unused "lx" private field.(îšÖßøÿÿÿÿ
+A
+java:S1068"&Remove this unused "ly" private field.(îšÖßøÿÿÿÿ
+G
+java:S1068$",Remove this unused "slowMode" private field.(ğ¯™ ùÿÿÿÿ

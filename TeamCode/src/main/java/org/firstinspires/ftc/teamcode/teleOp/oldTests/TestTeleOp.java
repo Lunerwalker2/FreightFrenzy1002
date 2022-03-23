@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleOp.oldTests;
 
 // Imports the default libraries for the robot
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import java.util.Arrays;
 import java.util.List;
 
+@Disabled
 @TeleOp(name = "Z-OLD @Balanced TeleOp")
 public class TestTeleOp extends LinearOpMode {
 

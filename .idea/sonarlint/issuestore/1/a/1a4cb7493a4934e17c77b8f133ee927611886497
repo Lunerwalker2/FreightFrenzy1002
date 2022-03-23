@@ -1,0 +1,10 @@
+
+]
+java:S1659"GDeclare "rightFront" and all following declarations on a separate line.(Ì­‰ú
+]
+java:S1659!"BDeclare "leftX" and all following declarations on a separate line.(‚šÑÛùÿÿÿÿ
+O
+java:S1128"-Remove this unused import 'java.util.Arrays'.(î–˜Éüÿÿÿÿ8ŞÊóú/
+M
+java:S1128"+Remove this unused import 'java.util.List'.(Õë±Äøÿÿÿÿ8ŞÊóú/
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ƒ°À—úÿÿÿÿ
