@@ -25,43 +25,28 @@ public class DuckPipeline extends OpenCvPipeline {
 
         public Point center;
         public float radii;
-        public Pose2d relativePose;
 
-        public DuckDetection(Point center, float radii, Pose2d relativePose){
+        public DuckDetection(Point center, float radii){
 
             this.center = center;
             this.radii = radii;
-            this.relativePose = relativePose;
         }
     }
 
 
-    Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
-    Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6));
-
-
-    Mat blurredMat = new Mat();
-    Mat extractedMat = new Mat();
-    Mat thresholdMat = new Mat();
-    Mat morphedThreshold = new Mat();
-    Mat contoursOnPlainMat = new Mat();
-
-    private DuckDetection duckDetection;
-    private Object duckDetectionLock;
-
-    public DuckDetection getDuckDetection(){
-        synchronized (duckDetectionLock){
-            return duckDetection;
-        }
-    }
-
-
-    ArrayList<MatOfPoint> contoursList = new ArrayList<>();
-
+    private final Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
+    private final Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6));
+    private final Mat blurredMat = new Mat();
+    private final Mat extractedMat = new Mat();
+    private final Mat thresholdMat = new Mat();
+    private final Mat morphedThreshold = new Mat();
+    private final Mat contoursOnPlainMat = new Mat();
+    private final ArrayList<MatOfPoint> contoursList = new ArrayList<>();
     public static int CB_THRESHOLD = 80;
-
-    public static int minimumRadius = 50;
-    public static int maximumRadius = 150;
+    public static int minimumRadius = 25;
+    public static int maximumRadius = 75;
+    private float[][] circleRadii;
+    private Point[] circleCenters;
 
     static final Scalar TEAL = new Scalar(3, 148, 252);
     static final Scalar PURPLE = new Scalar(158, 52, 235);
@@ -69,10 +54,19 @@ public class DuckPipeline extends OpenCvPipeline {
     static final Scalar GREEN = new Scalar(0, 255, 0);
     static final Scalar BLUE = new Scalar(0, 0, 255);
 
-    float[][] circleRadii;
-    Point[] circleCenters;
+    private Stage stageToRenderToViewport = Stage.FINAL;
+    private final Stage[] stages = Stage.values();
 
-    enum Stage {
+    private DuckDetection duckDetection;
+    private final Object duckDetectionLock = new Object();
+
+    public DuckDetection getDuckDetection(){
+        synchronized (duckDetectionLock){
+            return duckDetection;
+        }
+    }
+
+    private enum Stage {
         FINAL("Final"),
         BLURRED_INPUT("Noise Reduction"),
         EXTRACTED_CHANNEL("Extracted Channel"),
@@ -81,7 +75,6 @@ public class DuckPipeline extends OpenCvPipeline {
         CONTOURS_ON_INPUT("Contours Drawn");
 
         private final String text;
-
 
         public void putText(Mat input) {
             Imgproc.putText(
@@ -100,10 +93,7 @@ public class DuckPipeline extends OpenCvPipeline {
         }
     }
 
-    private Stage stageToRenderToViewport = Stage.FINAL;
-    Stage[] stages = Stage.values();
 
-    int stageNum = 0;
 
     @Override
     public void onViewportTapped() {
@@ -119,15 +109,6 @@ public class DuckPipeline extends OpenCvPipeline {
         stageToRenderToViewport = stages[nextStageNum];
     }
 
-    private void drawCircle(Mat input, int i) {
-        Imgproc.circle(input, circleCenters[i], (int) circleRadii[i][0], TEAL, 3);
-        drawTagText(input, "Sphere", circleCenters[i]);
-    }
-
-    private boolean isCircleLargeEnough(double radius) {
-        double diameter = 2 * radius;
-        return (diameter > minimumRadius);
-    }
 
 
     @Override
@@ -140,7 +121,6 @@ public class DuckPipeline extends OpenCvPipeline {
 
         //extract the blue channel to search for yellow
         extractCb(blurredMat, extractedMat);
-
 
         //Use a threshold for
         Imgproc.threshold(extractedMat, thresholdMat, CB_THRESHOLD, 255, Imgproc.THRESH_BINARY_INV);
@@ -184,6 +164,15 @@ public class DuckPipeline extends OpenCvPipeline {
             Imgproc.drawContours(input, contoursPolyList, i, new Scalar(255, 186, 3), 2);
             //Check if the circle is big enough
             if (isCircleLargeEnough(circleRadii[i][0])) {
+                //Set the current duck detection to this one
+                synchronized (duckDetectionLock){
+                    duckDetection = new DuckDetection(
+                            //create a new point so the object reference doesn't carry
+                            new Point(circleCenters[i].x, circleCenters[i].y),
+                            circleRadii[i][0]
+                    );
+                }
+                //Draw the circle on the viewport
                 drawCircle(input, i);
             }
         }
@@ -192,7 +181,7 @@ public class DuckPipeline extends OpenCvPipeline {
         Arrays.stream(contoursPoly).forEach(Mat::release);
         contoursPolyList.forEach(Mat::release);
         contoursList.forEach(Mat::release);
-        if (stages[stageNum] != Stage.FINAL) input.release();
+        if (stageToRenderToViewport != Stage.FINAL) input.release();
 
         //Write on each mat and then return it
         switch (stageToRenderToViewport) {
@@ -251,6 +240,14 @@ public class DuckPipeline extends OpenCvPipeline {
         Core.extractChannel(dst, dst, 2);
     }
 
+    private void drawCircle(Mat input, int i) {
+        Imgproc.circle(input, circleCenters[i], (int) circleRadii[i][0], TEAL, 3);
+        drawTagText(input, "Sphere", circleCenters[i]);
+    }
+
+    private static boolean isCircleLargeEnough(double radius) {
+        return (radius > minimumRadius) && (radius < maximumRadius);
+    }
 
     void drawTagText(Mat input, String text, Point point) {
         Imgproc.putText(
