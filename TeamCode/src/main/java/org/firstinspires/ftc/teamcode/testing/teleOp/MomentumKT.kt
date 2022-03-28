@@ -73,11 +73,6 @@ class MomentumKT : LinearOpMode() {
             if (gamepad1.a) {
                 power = 0.5
             }
-//            power = if (gamepad1.a && !slowLock) {
-//                0.5
-//            } else {
-//                1.0
-//            }
             slowLock = gamepad1.a
             val denominator: Double = max(abs(y) + abs(x) + abs(correctedR), 1.0)
 

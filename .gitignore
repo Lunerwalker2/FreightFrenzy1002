@@ -89,3 +89,6 @@ lint/tmp/
 #EOCV Sim things
 TeamCode/src/main/java/org/firstinspires/ftc/teamcode/vision/eocvsim/
 MeepMeepTesting/src/main/java/com/example/meepmeeptesting/SebasMeep.kt
+.idea/sonarlint/issuestore/a/4/a44bec88ad0169199d40db2f005d714c03681f10
+*.pb
+.idea/sonarlint/issuestore/index.pb
