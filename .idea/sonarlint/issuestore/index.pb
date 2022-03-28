@@ -5,8 +5,6 @@ VTeamCode/src/main/java/org/firstinspires/ftc/teamcode/testing/auto/Blue1C_WH_Pa
 VTeamCode/src/main/java/org/firstinspires/ftc/teamcode/testing/auto/Blue1C_WH_ParkKT.kt,e\7\e76a68ffb52117b0ed4a2041341edef09b7eeef7
 ƒ
 STeamCode/src/main/java/org/firstinspires/ftc/teamcode/drive/SampleMecanumDrive.java,c\b\cbff1ad1444cc08fed6db4043af7322d0a1d98cf
-
-OTeamCode/src/main/java/org/firstinspires/ftc/teamcode/drive/DriveConstants.java,c\e\cef4363b23c2323ebc2461b9cb7c48bd2ef41b0a
 ‡
 WTeamCode/src/main/java/org/firstinspires/ftc/teamcode/testing/experiments/Momentum.java,c\a\ca5422e4383106623e3c7d0dbbbcf7e9380d2cd3
 z
@@ -25,11 +23,3 @@ ZTeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/oldTests/Reflectio
 ZTeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/oldTests/PControllerTest.java,5\5\55adf109dcf641d8eaef0997f94be34cf2dcdcca
 ~
 NTeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/CheeseTeleOp.java,f\f\ff517e2fc858c7a348bb75afb3ea39a651861ca0
-y
-ITeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleOp/MecTeleOp.kt,a\4\a44bec88ad0169199d40db2f005d714c03681f10
-Š
-ZTeamCode/src/main/java/org/firstinspires/ftc/teamcode/testing/teleOp/SkillIssueTeleOp.java,e\f\ef53e6cf9777dc6aa34154c7857460288413b8ed
-v
-FTeamCode/src/main/java/org/firstinspires/ftc/teamcode/auto/AutoBase.kt,7\b\7b094435a7d37455f13e99ba79a39630520e3960
-‚
-RTeamCode/src/main/java/org/firstinspires/ftc/teamcode/testing/teleOp/MomentumKT.kt,4\0\4050a36b18a8d02ebbeddfbba8f98df898850ff0
