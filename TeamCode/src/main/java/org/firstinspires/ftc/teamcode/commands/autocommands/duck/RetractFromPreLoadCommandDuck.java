@@ -91,37 +91,37 @@ public class RetractFromPreLoadCommandDuck extends ParallelCommandGroup {
         blueFromTopLevel = drive.trajectorySequenceBuilder(blueStartingPositionTop)
                 .lineToConstantHeading(new Vector2d(-35, 50))
                 .lineToConstantHeading(new Vector2d(-50, 40))
-                .turn(toRadians(-35))
+                .turn(toRadians(-40))
                 .lineToConstantHeading(new Vector2d(-57, 55))
                 .build();
         blueFromMiddleLevel = drive.trajectorySequenceBuilder(blueStartingPositionMiddle)
                 .lineToConstantHeading(new Vector2d(-35, 50))
                 .lineToConstantHeading(new Vector2d(-50, 40))
-                .turn(toRadians(-35))
+                .turn(toRadians(-40))
                 .lineToConstantHeading(new Vector2d(-57, 55))
                 .build();
         blueFromBottomLevel = drive.trajectorySequenceBuilder(blueStartingPositionBottom)
                 .lineToConstantHeading(new Vector2d(-35, 50))
                 .lineToConstantHeading(new Vector2d(-50, 40))
-                .turn(toRadians(-35))
+                .turn(toRadians(-40))
                 .lineToConstantHeading(new Vector2d(-57, 55))
                 .build();
         redFromTopLevel = drive.trajectorySequenceBuilder(redStartingPositionTop)
                 .lineToConstantHeading(new Vector2d(-35, -50))
                 .lineToConstantHeading(new Vector2d(-50, -40))
-                .turn(toRadians(-155))
+                .turn(toRadians(-130))
                 .lineToConstantHeading(new Vector2d(-57, -55))
                 .build();
         redFromMiddleLevel = drive.trajectorySequenceBuilder(redStartingPositionMiddle)
                 .lineToConstantHeading(new Vector2d(-35, -50))
                 .lineToConstantHeading(new Vector2d(-50, -40))
-                .turn(toRadians(-155))
+                .turn(toRadians(-130))
                 .lineToConstantHeading(new Vector2d(-57, -55))
                 .build();
         redFromBottomLevel = drive.trajectorySequenceBuilder(redStartingPositionBottom)
                 .lineToConstantHeading(new Vector2d(-35, -50))
                 .lineToConstantHeading(new Vector2d(-50, -40))
-                .turn(toRadians(-155))
+                    .turn(toRadians(-130))
                 .lineToConstantHeading(new Vector2d(-57, -55))
                 .build();
     }

@@ -37,9 +37,9 @@ class ManualIntakeCommand(private val intake: Intake, private val driver: Gamepa
 
         if (intakeBack) {
             intake.setBackFlapUp()
-            intake.intakeFront()
-        } else if (outtakeBack) {
             intake.outtakeFront()
+        } else if (outtakeBack) {
+            intake.intakeFront()
             intake.setBackFlapUp()
         } else {
             intake.stopFront()

@@ -25,6 +25,7 @@ class ParkInStorageUnitDuck(val drive: SampleMecanumDrive, val redSide: Boolean)
                         if(redSide) redParkTrajectory else blueParkTrajectory
                 )
         )
+        super.initialize()
     }
 
 

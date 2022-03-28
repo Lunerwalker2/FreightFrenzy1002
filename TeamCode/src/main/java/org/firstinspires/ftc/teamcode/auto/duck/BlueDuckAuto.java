@@ -109,6 +109,7 @@ public class BlueDuckAuto extends AutoBase {
                             telemetry.addLine("The program started!");
                             telemetry.update();
                         }),
+                        new WaitCommand(3000),
                         new DropPreLoadFreightCommandDuck(
                                 drive, lift, scoringArm, bucket, () -> hubLevel, false
                         ).andThen(waitFor(700)),

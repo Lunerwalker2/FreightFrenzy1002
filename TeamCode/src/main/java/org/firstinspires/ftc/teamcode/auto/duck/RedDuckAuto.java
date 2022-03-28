@@ -109,6 +109,7 @@ public class RedDuckAuto extends AutoBase {
                             telemetry.addLine("The program started!");
                             telemetry.update();
                         }),
+                        new WaitCommand(3000),
                         new DropPreLoadFreightCommandDuck(
                                 drive, lift, scoringArm, bucket, () -> hubLevel, true
                         ).andThen(waitFor(700)),
@@ -118,7 +119,7 @@ public class RedDuckAuto extends AutoBase {
                         new ParallelDeadlineGroup(
                                 new WaitCommand(3000),
                                 new CarouselWheelCommand(
-                                        carouselWheel, false
+                                        carouselWheel, true
                                 )
                         ),
                         new ParkInStorageUnitDuck(drive, true)
