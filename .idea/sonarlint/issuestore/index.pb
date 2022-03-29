@@ -3,8 +3,6 @@
 VTeamCode/src/main/java/org/firstinspires/ftc/teamcode/testing/auto/Blue1C_WH_Park.java,c\d\cdf5c3daf80a251c7e251ca3726dfec88c577947
 †
 VTeamCode/src/main/java/org/firstinspires/ftc/teamcode/testing/auto/Blue1C_WH_ParkKT.kt,e\7\e76a68ffb52117b0ed4a2041341edef09b7eeef7
-ƒ
-STeamCode/src/main/java/org/firstinspires/ftc/teamcode/drive/SampleMecanumDrive.java,c\b\cbff1ad1444cc08fed6db4043af7322d0a1d98cf
 ‡
 WTeamCode/src/main/java/org/firstinspires/ftc/teamcode/testing/experiments/Momentum.java,c\a\ca5422e4383106623e3c7d0dbbbcf7e9380d2cd3
 z

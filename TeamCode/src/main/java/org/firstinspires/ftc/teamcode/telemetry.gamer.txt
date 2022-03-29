@@ -1,0 +1,21 @@
+Telemetry
+
+Max Velocity: 75.10031937571856
+Voltage Compensated kF: 12.923305827732202
+
+Max Velocity: 74.68174849059237
+Voltage Compensated kF: 12.884697273790238
+
+Max Velocity: 73.85452004512888
+Voltage Compensated kF: 12.84629943525885
+
+Max Velocity: 73.3013142775705
+Voltage Compensated kF: 12.884627999232919
+
+d: 7
+i: 0 
+p: 16
+
+kA: 0.004
+kStatic: 0
+kV: 0.015
