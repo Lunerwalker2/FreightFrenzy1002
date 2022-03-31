@@ -131,6 +131,10 @@ class MecTeleOp : CommandOpMode() {
 //                        bucket::load
 //                )
 
+            manipulator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                    .toggleWhenPressed()
+
+
         //////////////////////////////////////////////// Drive Base
 
         telemetry.sendLine("Setting up drive hardware...")

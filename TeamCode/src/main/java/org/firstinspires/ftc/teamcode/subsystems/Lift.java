@@ -54,6 +54,8 @@ public class Lift extends SubsystemBase {
     public void resetLiftPosition(){
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //SDK will automatically switch back to regular mode
     }
+    public boolean start() {
 
+    }
 
 }
