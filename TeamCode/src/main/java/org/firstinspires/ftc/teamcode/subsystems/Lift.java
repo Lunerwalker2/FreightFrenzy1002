@@ -1,13 +1,24 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.acmerobotics.roadrunner.control.PIDFController;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class  Lift extends SubsystemBase {
+public class Lift extends SubsystemBase {
+
+    public enum LiftPosition {
+        BOTTOM(300),
+        MIDDLE(500),
+        TOP(700);
+
+        public int position;
+
+        LiftPosition(int position){
+            this.position = position;
+        }
+    }
 
     private DcMotorEx liftMotor;
 
@@ -23,6 +34,11 @@ public class  Lift extends SubsystemBase {
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
+    @Override
+    public void periodic(){
+        //happens every loop
+    }
+
     public void setLiftPower(double power){
         liftMotor.setPower(power);
     }
@@ -31,8 +47,13 @@ public class  Lift extends SubsystemBase {
         liftMotor.setPower(0);
     }
 
-    @Override
-    public void periodic(){
-
+    public double getLiftPosition(){
+        return liftMotor.getCurrentPosition();
     }
+
+    public void resetLiftPosition(){
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //SDK will automatically switch back to regular mode
+    }
+
+
 }
