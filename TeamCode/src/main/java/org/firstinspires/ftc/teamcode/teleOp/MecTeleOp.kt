@@ -11,6 +11,7 @@ import com.arcrobotics.ftclib.command.button.Trigger
 import com.arcrobotics.ftclib.gamepad.GamepadEx
 import com.arcrobotics.ftclib.gamepad.GamepadKeys
 import com.qualcomm.hardware.bosch.BNO055IMU
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
@@ -45,6 +46,7 @@ there's no reason to not use it in teleop as well.
 MOST OF THIS IS NOT HOW THE SDK WORKS PLEASE DON'T TAKE THIS AS AN EXAMPLE OF THAT.
  */
 
+@Disabled
 @TeleOp(name = "Old - Main TeleOp", group = "TeleOp")
 class MecTeleOp : CommandOpMode() {
 
