@@ -30,7 +30,7 @@ public class CheeseTeleOp extends CommandOpMode {
     private BNO055IMU imu;
     private ScoringArm scoringArm;
     private Bucket bucket;
-    private Lift lift;
+    private DcMotorEx lift;
     private DcMotorEx leftIntake;
     private DcMotorEx rightIntake;
     private Servo rightArm, leftArm;
@@ -49,7 +49,7 @@ public class CheeseTeleOp extends CommandOpMode {
         //initialize subsystems
         scoringArm = new ScoringArm(hardwareMap);
         bucket = new Bucket(hardwareMap);
-        lift = new Lift(hardwareMap);
+        lift = hardwareMap.get(DcMotorEx.class, "lift");
         leftIntake = hardwareMap.get(DcMotorEx.class, "leftIntake");
         rightIntake = hardwareMap.get(DcMotorEx.class, "rightIntake");
         rightArm = hardwareMap.get(Servo.class, "rightArm");
@@ -143,5 +143,22 @@ public class CheeseTeleOp extends CommandOpMode {
 
         //scoring blocks
         //TODO: make syntax better
+        //TODO: get servo positions
+
+        //arm control
+
+        if (manipulator.getButton(GamepadKeys.Button.DPAD_UP)) {
+            lift.setPower(0.5);
+        }
+        else if (manipulator.getButton(GamepadKeys.Button.DPAD_DOWN)) {
+            lift.setPower(-0.5);
+        }
+
+
+        //bucket control
+        //TODO: make syntax better
+        //TODO: get servo positions
+
+        if ()
     }
 }
