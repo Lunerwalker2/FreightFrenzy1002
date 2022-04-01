@@ -68,10 +68,6 @@ public class CheeseTeleOp extends CommandOpMode {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         imu.initialize(parameters);
 
-
-        manipulator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .toggleWhenActive(scoringArm::scoringPosition, scoringArm::scoringPosition);
-
         telemetry.addLine("Ready to start!");
         telemetry.update();
 
@@ -147,6 +143,7 @@ public class CheeseTeleOp extends CommandOpMode {
 
         //arm control
 
+
         if (manipulator.getButton(GamepadKeys.Button.DPAD_UP)) {
             lift.setPower(0.5);
         }
@@ -159,14 +156,29 @@ public class CheeseTeleOp extends CommandOpMode {
         //TODO: make syntax better
         //TODO: get servo positions
 
-        if (manipulator.getButton(GamepadKeys.Button.A)) {
+        boolean current, previous = false, toggle = false;
+        current = manipulator.getButton(GamepadKeys.Button.A);
+        if (current && !previous) {
+            toggle = !toggle;
+        }
+        previous = current;
+
+        if (toggle) {
             bucket.close();
         }
         else {
             bucket.open();
         }
 
-        if (manipulator.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+        current = manipulator.getButton(GamepadKeys.Button.RIGHT_BUMPER);
+        previous = false;
+        toggle = false;
+        if (current && !previous) {
+            toggle = !toggle;
+        }
+        previous = current;
+
+        if (toggle) {
             scoringArm.scoringPosition();
         }
         else {
