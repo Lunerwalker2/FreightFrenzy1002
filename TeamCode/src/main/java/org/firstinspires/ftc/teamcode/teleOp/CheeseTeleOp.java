@@ -159,6 +159,18 @@ public class CheeseTeleOp extends CommandOpMode {
         //TODO: make syntax better
         //TODO: get servo positions
 
-        if ()
+        if (manipulator.getButton(GamepadKeys.Button.A)) {
+            bucket.close();
+        }
+        else {
+            bucket.open();
+        }
+
+        if (manipulator.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+            scoringArm.scoringPosition();
+        }
+        else {
+            scoringArm.loadingPosition();
+        }
     }
 }
