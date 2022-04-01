@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ScoringArm;
 @TeleOp(name = "Main TeleOp")
 public class CheeseTeleOp extends CommandOpMode {
 
-    private DcMotorEx rightFront, leftFront, rightBack, leftBack;
+    private DcMotorEx rightFront, leftFront, rightBack, leftBack, carouselMotor;
     private BNO055IMU imu;
     private ScoringArm scoringArm;
     private Bucket bucket;
@@ -171,6 +171,13 @@ public class CheeseTeleOp extends CommandOpMode {
         }
         else {
             scoringArm.loadingPosition();
+        }
+
+        if (manipulator.getButton(GamepadKeys.Button.DPAD_RIGHT)) {
+            carouselMotor.setPower(0.7);
+        }
+        else if (manipulator.getButton(GamepadKeys.Button.DPAD_LEFT)) {
+            carouselMotor.setPower(-0.7);
         }
     }
 }
