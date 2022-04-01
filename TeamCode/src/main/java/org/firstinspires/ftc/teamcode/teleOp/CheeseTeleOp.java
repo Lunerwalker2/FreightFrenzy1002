@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -30,8 +31,9 @@ public class CheeseTeleOp extends CommandOpMode {
     private ScoringArm scoringArm;
     private Bucket bucket;
     private Lift lift;
-    private LeftIntake leftIntake;
-    private RightIntake rightIntake;
+    private DcMotorEx leftIntake;
+    private DcMotorEx rightIntake;
+    private Servo rightArm, leftArm;
     private double offset = 0.0;
     GamepadEx driver = new GamepadEx(gamepad1);
     GamepadEx manipulator = new GamepadEx(gamepad2);
@@ -48,8 +50,10 @@ public class CheeseTeleOp extends CommandOpMode {
         scoringArm = new ScoringArm(hardwareMap);
         bucket = new Bucket(hardwareMap);
         lift = new Lift(hardwareMap);
-        leftIntake = new LeftIntake(hardwareMap);
-        rightIntake = new RightIntake(hardwareMap);
+        leftIntake = hardwareMap.get(DcMotorEx.class, "leftIntake");
+        rightIntake = hardwareMap.get(DcMotorEx.class, "rightIntake");
+        rightArm = hardwareMap.get(Servo.class, "rightArm");
+        leftArm = hardwareMap.get(Servo.class, "leftArm");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -105,5 +109,39 @@ public class CheeseTeleOp extends CommandOpMode {
         rightFront.setPower((ly - lx - rx) / denom);
         rightBack.setPower((ly + lx - rx) / denom);
 
+        //intake game elements
+        //TODO: make syntax better
+        if (driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0 && driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) < 0.5) {
+            rightIntake.setPower(0.3);
+        }
+        else if (driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
+            rightIntake.setPower(1.0);
+        }
+
+        if (driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0 && driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) < 0.5) {
+            leftIntake.setPower(0.3);
+        }
+        else if (driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+            leftIntake.setPower(1.0);
+        }
+
+        //control intake arms
+        //TODO: make syntax better
+        //TODO: get servo positions
+        if (driver.isDown(GamepadKeys.Button.RIGHT_BUMPER) != true) {
+            rightArm.setPosition(0);
+        }
+        else if (driver.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
+            rightArm.setPosition(1);
+        }
+        if (driver.isDown(GamepadKeys.Button.LEFT_BUMPER) != true) {
+            leftArm.setPosition(0);
+        }
+        else if (driver.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
+            leftArm.setPosition(1);
+        }
+
+        //scoring blocks
+        //TODO: make syntax better
     }
 }
