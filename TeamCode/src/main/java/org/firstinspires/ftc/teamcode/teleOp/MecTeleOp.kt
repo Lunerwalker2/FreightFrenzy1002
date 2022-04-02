@@ -71,7 +71,7 @@ class MecTeleOp : CommandOpMode() {
     private var intakeHasBeenDetected = false
 
     //Drive power multiplier for slow mode
-    private var powerMultiplier = 1.0
+    private var powerMultiplier = 0.7
     private val makeArmReadyToLoadCommand by lazy { MakeArmReadyToLoadCommand(lift, scoringArm, bucket) }
 
     //    private val makeReadyToLoadCommand by lazy { MakeReadyToLoadCommand(lift, scoringArm, bucket) }

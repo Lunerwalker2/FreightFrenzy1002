@@ -61,7 +61,7 @@ public class Intake extends SubsystemBase {
         type.setAchieveableMaxRPMFraction(0.9);
         backIntake.setMotorType(type2);
 
-//        backIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+        backIntake.setDirection(DcMotorSimple.Direction.REVERSE);
         frontIntake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.telemetry = telemetry;
