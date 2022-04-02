@@ -55,4 +55,12 @@ public class Lift extends SubsystemBase {
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //SDK will automatically switch back to regular mode
     }
 
+    public boolean atUpperLimit(){
+        return getLiftPosition() > 1000;
+    }
+
+    public boolean atLowerLimit(){
+        return getLiftPosition() < 5;
+    }
+
 }

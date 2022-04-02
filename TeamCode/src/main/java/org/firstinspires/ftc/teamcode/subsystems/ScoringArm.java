@@ -13,9 +13,11 @@ public class ScoringArm extends SubsystemBase {
     private final double loadPosition = 0.5;
     private final double scoringPosition = 0.0;
 
+    public boolean loading = true;
 
     public ScoringArm(HardwareMap hardwareMap){
         servo = hardwareMap.get(Servo.class, "scoringArmServo");
+        loadingPosition();
     }
 
     @Override
@@ -26,10 +28,12 @@ public class ScoringArm extends SubsystemBase {
 
     public void loadingPosition(){
         servo.setPosition(loadPosition);
+        loading = true;
     }
 
     public void scoringPosition(){
         servo.setPosition(scoringPosition);
+        loading = false;
     }
 
     public void setPosition(double position){

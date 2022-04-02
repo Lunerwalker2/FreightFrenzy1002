@@ -19,4 +19,20 @@ public class RightIntake extends SubsystemBase {
     public void periodic(){
 
     }
+
+    public void intake(){
+        intakeMotor.setPower(0.7);
+    }
+
+    public void stop(){
+        intakeMotor.setPower(0);
+    }
+
+    public void intakeDown(){
+        armServo.setPosition(1);
+    }
+
+    public void intakeUp(){
+        armServo.setPosition(0);
+    }
 }
