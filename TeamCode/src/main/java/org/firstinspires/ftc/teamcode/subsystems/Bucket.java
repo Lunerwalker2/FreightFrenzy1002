@@ -11,11 +11,12 @@ public class Bucket extends SubsystemBase {
 
     private final Servo servo;
 
-    private final double openPosition = 0.6;
-    private final double closePosition = 1.0;
+    private final double openPosition = 0.36;
+    private final double closePosition = 0.52;
 
     public Bucket(HardwareMap hardwareMap){
         servo = hardwareMap.get(Servo.class, "bucketServo");
+        open();
     }
 
 

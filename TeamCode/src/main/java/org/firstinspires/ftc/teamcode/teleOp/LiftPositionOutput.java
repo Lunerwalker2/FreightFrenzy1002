@@ -15,7 +15,7 @@ public class LiftPositionOutput extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        DcMotorEx liftMotor = hardwareMap.get(DcMotorEx.class, "lift");
+        DcMotorEx liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
 
 
 
@@ -23,6 +23,7 @@ public class LiftPositionOutput extends LinearOpMode {
 
         while (opModeIsActive()){
             telemetry.addData("Lift Position", liftMotor.getCurrentPosition());
+            telemetry.update();
         }
     }
 }

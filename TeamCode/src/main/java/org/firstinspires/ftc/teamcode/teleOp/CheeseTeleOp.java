@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -18,6 +19,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.commands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveLiftToLoadingPositionCommand;
@@ -28,6 +30,8 @@ import org.firstinspires.ftc.teamcode.subsystems.LeftIntake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.RightIntake;
 import org.firstinspires.ftc.teamcode.subsystems.ScoringArm;
+
+import java.util.List;
 
 @TeleOp(name = "Main TeleOp")
 public class CheeseTeleOp extends CommandOpMode {
@@ -116,11 +120,15 @@ public class CheeseTeleOp extends CommandOpMode {
                 .toggleWhenActive(rightIntake::intakeDown, rightIntake::intakeUp);
 
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5)
-                .whenActive(leftIntake::intake)
+                .whenActive(() -> {
+                    if (!leftIntake.up) leftIntake.intake();
+                })
                 .whenInactive(leftIntake::stop);
 
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5)
-                .whenActive(rightIntake::intake)
+                .whenActive(() -> {
+                    if (!rightIntake.up) rightIntake.intake();
+                })
                 .whenInactive(rightIntake::stop);
 
         manualLiftCommand = new ManualLiftCommand(lift, manipulator);
@@ -151,11 +159,11 @@ public class CheeseTeleOp extends CommandOpMode {
                         }
                 );
 
-        new Trigger(() -> -manipulator.getLeftY() > 0.5)
+        new Trigger(() -> manipulator.getLeftY() > 0.5)
                 .whenActive(moveLiftToScoringPositionCommand)
                 .cancelWhenActive(moveLiftToLoadingPositionCommand);
 
-        new Trigger(() -> -manipulator.getLeftY() < -0.5)
+        new Trigger(() -> manipulator.getLeftY() < -0.5)
                 .whenActive(moveLiftToLoadingPositionCommand)
                 .cancelWhenActive(moveLiftToScoringPositionCommand);
 
@@ -169,6 +177,9 @@ public class CheeseTeleOp extends CommandOpMode {
 
         Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         double heading = orientation.secondAngle; //y axis, on control hub
+        telemetry.addData("Z axis", orientation.firstAngle);
+        telemetry.addData("Y axis", orientation.secondAngle);
+        telemetry.addData("X axis", orientation.thirdAngle);
 
         //Add the angle offset to be able to reset the 0 heading, and normalize it back to -pi to pi
         heading = AngleUnit.normalizeRadians(heading + offset);
@@ -192,6 +203,11 @@ public class CheeseTeleOp extends CommandOpMode {
         leftBack.setPower((ly - lx + rx) / denom);
         rightFront.setPower((ly - lx - rx) / denom);
         rightBack.setPower((ly + lx - rx) / denom);
+
+        List<LynxModule> f = hardwareMap.getAll(LynxModule.class);
+        telemetry.addData("Hub 1", f.get(0).getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("Hub 2", f.get(1).getCurrent(CurrentUnit.AMPS));
+
 
         //intake game elements
         //TODO: make syntax better
@@ -279,5 +295,6 @@ public class CheeseTeleOp extends CommandOpMode {
 //        else if (manipulator.getButton(GamepadKeys.Button.DPAD_LEFT)) {
 //            carouselMotor.setPower(-0.7);
 //        }
+        telemetry.update();
     }
 }
