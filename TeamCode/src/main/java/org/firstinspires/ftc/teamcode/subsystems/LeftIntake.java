@@ -13,6 +13,7 @@ public class LeftIntake extends SubsystemBase {
     public LeftIntake(HardwareMap hardwareMap){
         intakeMotor = hardwareMap.get(DcMotorEx.class, "leftIntakeMotor");
         armServo = hardwareMap.get(Servo.class, "leftIntakeArm");
+        intakeUp();
     }
 
     @Override
