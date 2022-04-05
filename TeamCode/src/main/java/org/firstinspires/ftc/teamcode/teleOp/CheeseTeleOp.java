@@ -23,7 +23,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.commands.ManualLiftCommand;
+import org.firstinspires.ftc.teamcode.commands.ManualLiftResetCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveLiftToLoadingPositionCommand;
+import org.firstinspires.ftc.teamcode.commands.MoveLiftToMidScoringPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveLiftToScoringPositionCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel;
@@ -31,6 +33,7 @@ import org.firstinspires.ftc.teamcode.subsystems.LeftIntake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.RightIntake;
 import org.firstinspires.ftc.teamcode.subsystems.ScoringArm;
+import org.firstinspires.ftc.teamcode.util.Extensions;
 
 import java.util.List;
 
@@ -46,10 +49,14 @@ public class CheeseTeleOp extends CommandOpMode {
     private Lift lift;
     private CarouselWheel carouselWheel;
     private double offset = 0.0;
+    private double powerMultiplier = 1.0;
+    private boolean prevSlowState = false;
 
     private MoveLiftToScoringPositionCommand moveLiftToScoringPositionCommand;
+    private MoveLiftToMidScoringPositionCommand moveLiftToMidScoringPositionCommand;
     private MoveLiftToLoadingPositionCommand moveLiftToLoadingPositionCommand;
     private ManualLiftCommand manualLiftCommand;
+    private ManualLiftResetCommand manualLiftResetCommand;
 
 
     // What will run at the start as well as the events
@@ -94,16 +101,24 @@ public class CheeseTeleOp extends CommandOpMode {
                 lift, scoringArm, bucket
         );
 
+        moveLiftToMidScoringPositionCommand = new MoveLiftToMidScoringPositionCommand(
+                lift, scoringArm, bucket
+        );
+
         moveLiftToLoadingPositionCommand = new MoveLiftToLoadingPositionCommand(
                 lift, scoringArm, bucket
         );
+
+        manualLiftCommand = new ManualLiftCommand(lift, manipulator);
+
+        manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
 
 
         //Carousel wheel
         new Trigger(() -> gamepad2.right_trigger > 0.2)
                 .whileActiveContinuous(() -> {
-                    if (gamepad2.right_trigger < 0.8) carouselWheel.setWheelPower(0.5);
-                    else carouselWheel.setWheelPower(1.0);
+                    if (gamepad2.right_trigger < 0.8) carouselWheel.setWheelPower(0.4);
+                    else carouselWheel.setWheelPower(0.5);
                 })
                 .whenInactive(() -> {
                     carouselWheel.setWheelPower(0.0);
@@ -137,10 +152,11 @@ public class CheeseTeleOp extends CommandOpMode {
                 })
                 .whenInactive(rightIntake::stop);
 
-        manualLiftCommand = new ManualLiftCommand(lift, manipulator);
+
 
         lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
 
+        //If the trigger is pressed and the scoring arm is not in the robot then open the bucket
         new Trigger(() -> manipulator.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5)
                 .whenActive(() -> {
                     if (!scoringArm.loading) {
@@ -156,7 +172,8 @@ public class CheeseTeleOp extends CommandOpMode {
         manipulator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .toggleWhenActive(
                         () -> {
-                            scoringArm.scoringPosition();
+                            scoringArm.setPosition(0.75);
+                            scoringArm.loading = false;
                             bucket.close();
                         },
                         () -> {
@@ -166,13 +183,31 @@ public class CheeseTeleOp extends CommandOpMode {
                 );
 
         new Trigger(() -> manipulator.getLeftY() > 0.5)
+                //Automatic extend and slow drive base
                 .whenActive(moveLiftToScoringPositionCommand)
+                .whenActive(() -> powerMultiplier = 0.5)
                 .cancelWhenActive(moveLiftToLoadingPositionCommand);
 
-        new Trigger(() -> manipulator.getLeftY() < -0.5)
-                .whenActive(moveLiftToLoadingPositionCommand)
-                .cancelWhenActive(moveLiftToScoringPositionCommand);
+        new Trigger(() -> manipulator.getRightY() < -0.5)
+                //Automatic extend and slow drive base
+                .whenActive(moveLiftToMidScoringPositionCommand)
+                .whenActive(() -> powerMultiplier = 0.5)
+                .cancelWhenActive(moveLiftToLoadingPositionCommand);
 
+        new Trigger(() -> manipulator.getLeftY() < -0.5 || manipulator.getRightY() > 0.5)
+                //Automatic retract and restore drive base
+                .whenActive(moveLiftToLoadingPositionCommand)
+                .whenActive(() -> powerMultiplier = 1.0)
+                .cancelWhenActive(moveLiftToScoringPositionCommand)
+                .cancelWhenActive(moveLiftToMidScoringPositionCommand);
+
+        //Starts when pressed and ended when released
+        manipulator.getGamepadButton(GamepadKeys.Button.Y)
+                .whenHeld(manualLiftResetCommand);
+
+        //Just in case something is off, give a reset for this
+        manipulator.getGamepadButton(GamepadKeys.Button.A)
+                .whenPressed(() -> powerMultiplier = 1.0);
 
     }
 
@@ -188,15 +223,19 @@ public class CheeseTeleOp extends CommandOpMode {
         telemetry.addData("X axis", orientation.thirdAngle);
 
         //Add the angle offset to be able to reset the 0 heading, and normalize it back to -pi to pi
-        heading = AngleUnit.normalizeRadians(heading + offset);
+        heading = AngleUnit.normalizeRadians(heading - offset);
 
         //If reset, set offset to the current ange
-        if (gamepad1.x) offset = heading;
+        //If we need to reset our zero angle, increment the offset with the current heading to do so
+        if (gamepad1.x && !prevSlowState){
+            offset += heading;
+            gamepad1.rumble(0.0, 1.0, 300);
+        }
+        prevSlowState = gamepad1.x;
 
-
-        double ly = -gamepad1.left_stick_y;
-        double lx = gamepad1.left_stick_x * 1.1;
-        double rx = gamepad1.right_stick_x;
+        double ly = Extensions.cubeInput(-gamepad1.left_stick_y, 0.2);
+        double lx = Extensions.cubeInput(gamepad1.left_stick_x * 1.1, 0.2);
+        double rx = Extensions.cubeInput(gamepad1.right_stick_x, 0.2);
 
         //rotate by the heading of the robot
         Vector2d vector = new Vector2d(lx, ly).rotated(-heading);
@@ -205,14 +244,10 @@ public class CheeseTeleOp extends CommandOpMode {
 
         double denom = Math.max(abs(ly) + abs(lx) + abs(rx), 1.0);
 
-        leftFront.setPower((ly + lx + rx) / denom);
-        leftBack.setPower((ly - lx + rx) / denom);
-        rightFront.setPower((ly - lx - rx) / denom);
-        rightBack.setPower((ly + lx - rx) / denom);
-
-        List<LynxModule> f = hardwareMap.getAll(LynxModule.class);
-        telemetry.addData("Hub 1", f.get(0).getCurrent(CurrentUnit.AMPS));
-        telemetry.addData("Hub 2", f.get(1).getCurrent(CurrentUnit.AMPS));
+        leftFront.setPower((ly + lx + rx) / denom * powerMultiplier);
+        leftBack.setPower((ly - lx + rx) / denom * powerMultiplier);
+        rightFront.setPower((ly - lx - rx) / denom * powerMultiplier);
+        rightBack.setPower((ly + lx - rx) / denom * powerMultiplier);
 
 
         //intake game elements

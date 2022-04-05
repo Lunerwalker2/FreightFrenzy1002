@@ -21,6 +21,7 @@ public class LeftIntake extends SubsystemBase implements IntakeSide {
         intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         armServo = hardwareMap.get(Servo.class, "leftIntakeArm");
         intakeUp();
     }

@@ -20,6 +20,7 @@ public class RightIntake extends SubsystemBase implements IntakeSide {
         intakeMotor = hardwareMap.get(DcMotorEx.class, "rightIntakeMotor");
         intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         armServo = hardwareMap.get(Servo.class, "rightIntakeArm");
         intakeUp();
     }
@@ -51,7 +52,7 @@ public class RightIntake extends SubsystemBase implements IntakeSide {
     }
 
     public void intakeUp(){
-        armServo.setPosition(0.0);
+        armServo.setPosition(0.05);
         up = true;
     }
 
