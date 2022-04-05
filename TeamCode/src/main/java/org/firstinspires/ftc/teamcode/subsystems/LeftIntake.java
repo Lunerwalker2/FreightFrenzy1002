@@ -47,12 +47,12 @@ public class LeftIntake extends SubsystemBase implements IntakeSide {
     }
 
     public void intakeDown(){
-        armServo.setPosition(0.1);
+        armServo.setPosition(0.0);
         up = false;
     }
 
     public void intakeUp(){
-        armServo.setPosition(0.7);
+        armServo.setPosition(1.0);
         up = true;
     }
 

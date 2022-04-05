@@ -21,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.commands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveLiftToLoadingPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveLiftToScoringPositionCommand;
@@ -54,6 +55,9 @@ public class CheeseTeleOp extends CommandOpMode {
     // What will run at the start as well as the events
     @Override
     public void initialize() {
+
+        schedule(new BulkCacheCommand(hardwareMap));
+
         GamepadEx driver = new GamepadEx(gamepad1);
         GamepadEx manipulator = new GamepadEx(gamepad2);
 
@@ -98,8 +102,8 @@ public class CheeseTeleOp extends CommandOpMode {
         //Carousel wheel
         new Trigger(() -> gamepad2.right_trigger > 0.2)
                 .whileActiveContinuous(() -> {
-                    if (gamepad2.right_trigger < 0.8) carouselWheel.setWheelPower(0.52);
-                    else carouselWheel.setWheelPower(0.8);
+                    if (gamepad2.right_trigger < 0.8) carouselWheel.setWheelPower(0.5);
+                    else carouselWheel.setWheelPower(1.0);
                 })
                 .whenInactive(() -> {
                     carouselWheel.setWheelPower(0.0);
@@ -120,14 +124,16 @@ public class CheeseTeleOp extends CommandOpMode {
                 .toggleWhenActive(rightIntake::intakeDown, rightIntake::intakeUp);
 
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5)
-                .whenActive(() -> {
-                    if (!leftIntake.up) leftIntake.intake();
+                .whileActiveContinuous(() -> {
+                    if (leftIntake.up) leftIntake.intakePower(0.2);
+                    else leftIntake.intake();
                 })
                 .whenInactive(leftIntake::stop);
 
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5)
-                .whenActive(() -> {
-                    if (!rightIntake.up) rightIntake.intake();
+                .whileActiveContinuous(() -> {
+                    if (rightIntake.up) rightIntake.intakePower(0.2);
+                    else rightIntake.intake();
                 })
                 .whenInactive(rightIntake::stop);
 
@@ -176,7 +182,7 @@ public class CheeseTeleOp extends CommandOpMode {
         super.run();
 
         Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-        double heading = orientation.secondAngle; //y axis, on control hub
+        double heading = orientation.firstAngle; //y axis, on control hub
         telemetry.addData("Z axis", orientation.firstAngle);
         telemetry.addData("Y axis", orientation.secondAngle);
         telemetry.addData("X axis", orientation.thirdAngle);
