@@ -6,9 +6,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Bucket extends SubsystemBase {
 
-
-
-
     private final Servo servo;
 
     private final double openPosition = 0.36;
@@ -18,7 +15,6 @@ public class Bucket extends SubsystemBase {
         servo = hardwareMap.get(Servo.class, "bucketServo");
         open();
     }
-
 
     @Override
     public void periodic(){
