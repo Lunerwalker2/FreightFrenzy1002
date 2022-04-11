@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -117,8 +118,8 @@ public class CheeseTeleOp extends CommandOpMode {
         //Carousel wheel
         new Trigger(() -> gamepad2.right_trigger > 0.2)
                 .whileActiveContinuous(() -> {
-                    if (gamepad2.right_trigger < 0.8) carouselWheel.setWheelPower(0.4);
-                    else carouselWheel.setWheelPower(0.5);
+                    if (gamepad2.right_trigger < 0.8) carouselWheel.setWheelPower(0.55);
+                    else carouselWheel.setWheelPower(0.7);
                 })
                 .whenInactive(() -> {
                     carouselWheel.setWheelPower(0.0);
@@ -248,6 +249,11 @@ public class CheeseTeleOp extends CommandOpMode {
         leftBack.setPower((ly - lx + rx) / denom * powerMultiplier);
         rightFront.setPower((ly - lx - rx) / denom * powerMultiplier);
         rightBack.setPower((ly + lx - rx) / denom * powerMultiplier);
+
+        List<LynxModule> modules = hardwareMap.getAll(LynxModule.class);
+        telemetry.addData("hub 1", modules.get(0).getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("hub 2", modules.get(1).getCurrent(CurrentUnit.AMPS));
+
 
 
         //intake game elements
