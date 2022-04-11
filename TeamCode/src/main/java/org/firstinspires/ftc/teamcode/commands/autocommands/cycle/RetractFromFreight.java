@@ -64,11 +64,11 @@ public class RetractFromFreight extends ParallelCommandGroup {
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(13, -64.5), toRadians(0))
-                        .splineToConstantHeading(new Vector2d(30, -64), toRadians(0))
+                        .splineToConstantHeading(new Vector2d(40, -64), toRadians(0))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .splineToConstantHeading(new Vector2d(13, 64.5), toRadians(0))
-                        .splineToConstantHeading(new Vector2d(30, 64), toRadians(0))
+                        .splineToConstantHeading(new Vector2d(40, 64), toRadians(0))
                         .build();
 
         addCommands(

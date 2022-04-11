@@ -91,7 +91,6 @@ public class CheeseTeleOp extends CommandOpMode {
 
         imu.initialize(parameters);
 
-        lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
 
         telemetry.addLine("Ready to start!");
         telemetry.update();
@@ -110,6 +109,7 @@ public class CheeseTeleOp extends CommandOpMode {
         manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
 
         // BEGIN THE FUN!!!
+        lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
 
         // Driver Triggers
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5)
@@ -143,8 +143,8 @@ public class CheeseTeleOp extends CommandOpMode {
         new Trigger(() -> manipulator.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2)
                 //Carousel wheel
                 .whileActiveContinuous(() -> {
-                    if (gamepad2.right_trigger < 0.8) carouselWheel.setWheelPower(0.4);
-                    else carouselWheel.setWheelPower(0.5);
+                    if (gamepad2.right_trigger < 0.8) carouselWheel.setWheelPower(0.5);
+                    else carouselWheel.setWheelPower(0.6);
                 })
                 .whenInactive(() -> {
                     carouselWheel.setWheelPower(0.0);

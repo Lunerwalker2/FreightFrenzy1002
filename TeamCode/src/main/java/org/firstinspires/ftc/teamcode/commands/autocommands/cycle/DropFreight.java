@@ -51,12 +51,12 @@ public class DropFreight extends ParallelCommandGroup {
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .splineToConstantHeading(new Vector2d(13.0, -64.5), Math.toRadians(180.0))
-                        .splineToConstantHeading(new Vector2d(-10.0, -60), Math.toRadians(170))
+                        .splineToConstantHeading(new Vector2d(-14.0, -60), Math.toRadians(170))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(13.0, 64.5), Math.toRadians(180.0))
-                        .splineToConstantHeading(new Vector2d(-10.0, 60.0), Math.toRadians(-170))
+                        .splineToConstantHeading(new Vector2d(-14.0, 60.0), Math.toRadians(-170))
                         .build();
 
         //All of these happen in parallel
@@ -76,7 +76,7 @@ public class DropFreight extends ParallelCommandGroup {
                 ),
                 //Wait a bit for the intake to load the freight
                 new SequentialCommandGroup(
-                        new WaitCommand(1200),
+                        new WaitCommand(1400),
                         //Move lift and scoring out
                         new MoveLiftToScoringPositionCommand(
                                 lift, scoringArm, bucket, HubLevel.TOP

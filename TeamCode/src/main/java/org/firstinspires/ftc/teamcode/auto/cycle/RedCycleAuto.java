@@ -51,9 +51,9 @@ public class RedCycleAuto extends AutoBase {
         scoringArm = new ScoringArm(hardwareMap);
         bucket = new Bucket(hardwareMap);
         lift = new Lift(hardwareMap);
-        teamMarkerDetector = new TeamMarkerDetector(hardwareMap, true, false);
-
-        teamMarkerDetector.init();
+//        teamMarkerDetector = new TeamMarkerDetector(hardwareMap, true, false);
+//
+//        teamMarkerDetector.init();
 
 
         //commands here ig lol
@@ -71,15 +71,15 @@ public class RedCycleAuto extends AutoBase {
 
 
         //start vision
-        teamMarkerDetector.startStream();
-        while (!isStarted()){
-            hubLevel = HubLevel.valueOf(teamMarkerDetector.getHubLevel().toString());
-            telemetry.addLine("Ready For Start!");
-            telemetry.addData("Hub Level", hubLevel);
-            telemetry.update();
-        }
-
-        teamMarkerDetector.endStream();
+//        teamMarkerDetector.startStream();
+//        while (!isStarted()){
+//            hubLevel = HubLevel.valueOf(teamMarkerDetector.getHubLevel().toString());
+//            telemetry.addLine("Ready For Start!");
+//            telemetry.addData("Hub Level", hubLevel);
+//            telemetry.update();
+//        }
+//
+//        teamMarkerDetector.endStream();
 
 
         schedule(

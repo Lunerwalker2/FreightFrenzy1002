@@ -51,9 +51,9 @@ public class BlueCycleAuto extends AutoBase {
         scoringArm = new ScoringArm(hardwareMap);
         bucket = new Bucket(hardwareMap);
         lift = new Lift(hardwareMap);
-        teamMarkerDetector = new TeamMarkerDetector(hardwareMap, false, false);
+//        teamMarkerDetector = new TeamMarkerDetector(hardwareMap, false, false);
 
-        teamMarkerDetector.init();
+//        teamMarkerDetector.init();
 
         //commands here ig lol
         DropPreloadFreight dropPreloadFreight = new DropPreloadFreight(
@@ -70,15 +70,15 @@ public class BlueCycleAuto extends AutoBase {
 
 
         //start vision
-        teamMarkerDetector.startStream();
-        while (!isStarted()){
-            hubLevel = HubLevel.valueOf(teamMarkerDetector.getHubLevel().toString());
-            telemetry.addLine("Ready For Start!");
-            telemetry.addData("Hub Level", hubLevel);
-            telemetry.update();
-        }
+//        teamMarkerDetector.startStream();
+//        while (!isStarted()){
+//            hubLevel = HubLevel.valueOf(teamMarkerDetector.getHubLevel().toString());
+//            telemetry.addLine("Ready For Start!");
+//            telemetry.addData("Hub Level", hubLevel);
+//            telemetry.update();
+//        }
 
-        teamMarkerDetector.endStream();
+//        teamMarkerDetector.endStream();
 
         schedule(
                 new SequentialCommandGroup(
