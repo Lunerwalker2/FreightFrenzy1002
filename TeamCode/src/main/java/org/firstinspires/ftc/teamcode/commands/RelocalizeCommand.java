@@ -30,8 +30,6 @@ public class RelocalizeCommand extends CommandBase {
      * and facing straight down the x-axis (0 degrees), then the distances
      * from each sensor to the wall they are pointing at would be the following
      * in inches.
-     *
-     *
      */
     private static final double FORWARD_SENSOR_BASE_DISTANCE_TO_WALL = 66.78125;//63.125;
     private static final double BACKWARD_SENSOR_BASE_DISTANCE_TO_WALL = 64.75;
@@ -57,10 +55,9 @@ public class RelocalizeCommand extends CommandBase {
     private final DoubleSupplier headingSupplier;
     private final Consumer<Pose2d> poseConsumer;
     private final boolean redSide;
-    private boolean done = false;
-
     //Keep a timer so we can wait for the sensors to read.
-    private ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    private final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    private boolean done = false;
 
     /**
      * @param headingSupplier Supplier of the heading of the robot IN RADIANS.
@@ -74,76 +71,6 @@ public class RelocalizeCommand extends CommandBase {
         addRequirements(distanceSensors);
     }
 
-    /*
-    Happens once when the command is scheduled.
-     */
-    @Override
-    public void initialize() {
-        super.initialize();
-        //Start taking range measurements from the sensors
-        timer.reset();
-        done = false;
-        distanceSensors.pingAll();
-    }
-
-    /*
-    Happens repeatably until the command is no longer scheduled.
-     */
-
-    @Override
-    public void execute() {
-
-        if (timer.milliseconds() > 80 && !done) {
-            //Find our current heading once so we don't have to keep reading it
-            double heading = headingSupplier.getAsDouble();
-
-
-            double forward = (!redSide) ?
-                    distanceSensors.getForwardRange(DistanceUnit.INCH) :
-                    distanceSensors.getBackwardRange(DistanceUnit.INCH);
-
-            double side = distanceSensors.getLeftRange(DistanceUnit.INCH);
-
-            //test for possible invalid values
-//            if (!isValidReadings(forward, side)) return;
-
-            //Find the rotated distances
-            double[] rotatedDistances = findRotatedDistance(
-                    forward,
-                    side,
-                    heading,
-                    redSide
-            );
-
-
-            //Find our forward distance (x in field coordinates)
-            double x = (!redSide) ?
-                    (FORWARD_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[0]) :
-                    (BACKWARD_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[0]);
-
-            //Find our side distance (y in field coordinates)
-            double y = (!redSide) ?
-                    (RIGHT_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[1]) :
-                    (rotatedDistances[1] - LEFT_SENSOR_BASE_DISTANCE_TO_WALL);
-
-            //Update the user with the new position
-            if(forward < 35 && forward > 10) poseConsumer.accept(new Pose2d(x, y, heading));
-            done = true;
-        }
-    }
-
-    //This command will only run once
-
-    @Override
-    public void end(boolean interrupted) {
-
-    }
-
-    @Override
-    public boolean isFinished() {
-        return done;
-    }
-
     /**
      * Returns if the current range readings are valid or not. cm
      */
@@ -152,6 +79,10 @@ public class RelocalizeCommand extends CommandBase {
                 front > 96 ||
                 side > 100);
     }
+
+    /*
+    Happens repeatably until the command is no longer scheduled.
+     */
 
     /**
      * Function that runs the trig needed to correctly offset the distance sensor measurements by
@@ -217,6 +148,72 @@ public class RelocalizeCommand extends CommandBase {
         newDistances[1] = correctedSideDistance - rotatedSideSensorPosition.getY();
 
         return newDistances;
+    }
+
+    //This command will only run once
+
+    /*
+    Happens once when the command is scheduled.
+     */
+    @Override
+    public void initialize() {
+        super.initialize();
+        //Start taking range measurements from the sensors
+        timer.reset();
+        done = false;
+        distanceSensors.pingAll();
+    }
+
+    @Override
+    public void execute() {
+
+        if (timer.milliseconds() > 80 && !done) {
+            //Find our current heading once so we don't have to keep reading it
+            double heading = headingSupplier.getAsDouble();
+
+
+            double forward = (!redSide) ?
+                    distanceSensors.getForwardRange(DistanceUnit.INCH) :
+                    distanceSensors.getBackwardRange(DistanceUnit.INCH);
+
+            double side = distanceSensors.getLeftRange(DistanceUnit.INCH);
+
+            //test for possible invalid values
+//            if (!isValidReadings(forward, side)) return;
+
+            //Find the rotated distances
+            double[] rotatedDistances = findRotatedDistance(
+                    forward,
+                    side,
+                    heading,
+                    redSide
+            );
+
+
+            //Find our forward distance (x in field coordinates)
+            double x = (!redSide) ?
+                    (FORWARD_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[0]) :
+                    (BACKWARD_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[0]);
+
+            //Find our side distance (y in field coordinates)
+            double y = (!redSide) ?
+                    (RIGHT_SENSOR_BASE_DISTANCE_TO_WALL - rotatedDistances[1]) :
+                    (rotatedDistances[1] - LEFT_SENSOR_BASE_DISTANCE_TO_WALL);
+
+            //Update the user with the new position
+            if (forward < 35 && forward > 10) poseConsumer.accept(new Pose2d(x, y, heading));
+            done = true;
+        }
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+
+    }
+
+    @Override
+    public boolean isFinished() {
+        return done;
     }
 
 

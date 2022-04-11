@@ -8,7 +8,9 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.auto.AutoBase;
+import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.DropFreight;
 import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.DropPreloadFreight;
+import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.RetractFromFreight;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
 import org.firstinspires.ftc.teamcode.subsystems.LeftIntake;
@@ -58,6 +60,14 @@ public class BlueCycleAuto extends AutoBase {
                 drive, lift, leftIntake, scoringArm, bucket, startPose, () -> hubLevel, false
         );
 
+        DropFreight dropFreight = new DropFreight(
+                drive, lift, leftIntake, scoringArm, bucket, false
+        );
+
+        RetractFromFreight retractFromFreight = new RetractFromFreight(
+                drive, lift, leftIntake, scoringArm, bucket, false
+        );
+
 
         //start vision
         teamMarkerDetector.startStream();
@@ -73,7 +83,13 @@ public class BlueCycleAuto extends AutoBase {
         schedule(
                 new SequentialCommandGroup(
                         new WaitCommand(1000),
-                        dropPreloadFreight
+                        dropPreloadFreight,
+                        new WaitCommand(100),
+                        retractFromFreight,
+                        new WaitCommand(100),
+                        dropFreight,
+                        new WaitCommand(100),
+                        retractFromFreight
                 )
         );
 
