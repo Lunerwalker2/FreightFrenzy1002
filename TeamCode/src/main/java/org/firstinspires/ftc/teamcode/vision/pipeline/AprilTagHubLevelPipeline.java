@@ -62,7 +62,7 @@ public class AprilTagHubLevelPipeline extends OpenCvPipeline
     // UNITS ARE METERS
     public static double TAG_SIZE = 0.166;
 
-    private volatile HubLevel hubLevel = HubLevel.BOTTOM;
+    private volatile HubLevel hubLevel = HubLevel.TOP;
 
     public HubLevel getHubLevel() {
         return hubLevel;
@@ -70,7 +70,7 @@ public class AprilTagHubLevelPipeline extends OpenCvPipeline
 
     private boolean redSide;
 
-    public static double CENTER_MARGIN_BLUE = 0.3;
+    public static double CENTER_MARGIN_BLUE = 0.749;
     public static double CENTER_MARGIN_RED = 0.65;
 
     // instance variables
@@ -156,9 +156,9 @@ public class AprilTagHubLevelPipeline extends OpenCvPipeline
                 if(x > input.width() * CENTER_MARGIN_RED) hubLevel = HubLevel.MIDDLE;
                 else hubLevel = HubLevel.TOP;
             } else {
-                if(x < input.width() * 0.75){
-                    if (x > input.width() * CENTER_MARGIN_BLUE) hubLevel = HubLevel.MIDDLE;
-                    else hubLevel = HubLevel.BOTTOM;
+                if(x > input.width() * 0.31){
+                    if (x > input.width() * CENTER_MARGIN_BLUE) hubLevel = HubLevel.BOTTOM;
+                    else hubLevel = HubLevel.MIDDLE;
                 }
             }
         }

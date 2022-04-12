@@ -57,37 +57,56 @@ public class DropPreloadFreight extends ParallelCommandGroup {
 
 
         blueTop = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 60))
+                .lineTo(new Vector2d(-7, 60))
                 .build();
         blueMid = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 60))
+                .lineTo(new Vector2d(-14, 55))
                 .build();
         blueBottom = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 60))
+                .lineTo(new Vector2d(-8.5, 40))
                 .build();
         redTop = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 60))
+                .lineTo(new Vector2d(-7, 60))
                 .build();
         redMid = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 60))
+                .lineTo(new Vector2d(-14, 55))
                 .build();
         redBottom = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 60))
+                .lineTo(new Vector2d(-7, 47))
                 .build();
 
     }
 
     @Override
     public void initialize() {
-        addCommands(
-                new FollowTrajectoryCommand(drive, getPreLoadTrajectory(getHubLevel.get())),
-                new MoveLiftToScoringPositionCommand(lift, scoringArm, bucket, getHubLevel.get()),
-                new SequentialCommandGroup(
-                        new WaitCommand(2000),
-                        new InstantCommand(bucket::open)
-                )
+        addCommands(new FollowTrajectoryCommand(drive, getPreLoadTrajectory(getHubLevel.get())));
+        switch (getHubLevel.get()) {
+            case TOP:
+            case MIDDLE:
+                addCommands(
+                        new MoveLiftToScoringPositionCommand(lift, scoringArm, bucket, getHubLevel.get()),
+                        new SequentialCommandGroup(
+                                new WaitCommand(1000),
+                                new InstantCommand(bucket::open)
+                        )
+                );
+                break;
+            case BOTTOM:
+                addCommands(
+                        new InstantCommand(() -> {
+                            scoringArm.setPosition(0.9);
+                            bucket.close();
+                        }),
+                        new SequentialCommandGroup(
+                                new WaitCommand(2300),
+                                new InstantCommand(() -> {
+                                    scoringArm.setPosition(0.8);
+                                    bucket.open();
+                                })
+                        )
+                );
 
-        );
+        }
         super.initialize();
     }
 
