@@ -11,6 +11,8 @@ public interface IntakeSide {
 
     void outtake();
 
+//    boolean freightDetected();
+
     void stop();
 
     int currentPosition();

@@ -1,18 +1,21 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.interfaces.IntakeSide;
 
 public class RightIntake extends SubsystemBase implements IntakeSide {
 
     private final DcMotorEx intakeMotor;
     private final Servo armServo;
+//    private final Rev2mDistanceSensor intakeSensor;
 
     public boolean up = true;
 
@@ -22,6 +25,7 @@ public class RightIntake extends SubsystemBase implements IntakeSide {
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         armServo = hardwareMap.get(Servo.class, "rightIntakeArm");
+//        intakeSensor = hardwareMap.get(Rev2mDistanceSensor.class, "rightIntakeSensor");
         intakeUp();
     }
 
@@ -56,6 +60,10 @@ public class RightIntake extends SubsystemBase implements IntakeSide {
         up = true;
     }
 
+//    @Override
+//    public boolean freightDetected(){
+//        return intakeSensor.getDistance(DistanceUnit.INCH) < 2.0;
+//    }
     public int currentPosition(){
         return intakeMotor.getCurrentPosition();
     }
