@@ -86,7 +86,7 @@ public class DropPreloadFreight extends ParallelCommandGroup {
                 addCommands(
                         new MoveLiftToScoringPositionCommand(lift, scoringArm, bucket, getHubLevel.get()),
                         new SequentialCommandGroup(
-                                new WaitCommand(1000),
+                                new WaitCommand(1300),
                                 new InstantCommand(bucket::open)
                         )
                 );
