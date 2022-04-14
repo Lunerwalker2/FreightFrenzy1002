@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.auto.cycle;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -51,47 +52,61 @@ public class RedCycleAuto extends AutoBase {
         scoringArm = new ScoringArm(hardwareMap);
         bucket = new Bucket(hardwareMap);
         lift = new Lift(hardwareMap);
-//        teamMarkerDetector = new TeamMarkerDetector(hardwareMap, true, false);
-//
-//        teamMarkerDetector.init();
+        teamMarkerDetector = new TeamMarkerDetector(hardwareMap, true, false);
+
+        teamMarkerDetector.init();
 
 
         //commands here ig lol
         DropPreloadFreight dropPreloadFreight = new DropPreloadFreight(
-                drive, lift, leftIntake, scoringArm, bucket, startPose, () -> hubLevel, false
+                drive, lift, leftIntake, scoringArm, bucket, startPose, () -> hubLevel, true
         );
 
         DropFreight dropFreight = new DropFreight(
-                drive, lift, leftIntake, scoringArm, bucket, false
+                drive, lift, leftIntake, scoringArm, bucket, true
         );
 
         RetractFromFreight retractFromFreight = new RetractFromFreight(
-                drive, lift, leftIntake, scoringArm, bucket, false
+                drive, lift, leftIntake, scoringArm, bucket, true
         );
 
 
         //start vision
-//        teamMarkerDetector.startStream();
-//        while (!isStarted()){
-//            hubLevel = HubLevel.valueOf(teamMarkerDetector.getHubLevel().toString());
-//            telemetry.addLine("Ready For Start!");
-//            telemetry.addData("Hub Level", hubLevel);
-//            telemetry.update();
-//        }
-//
-//        teamMarkerDetector.endStream();
+        teamMarkerDetector.startStream();
+        while (!isStarted()){
+            hubLevel = HubLevel.valueOf(teamMarkerDetector.getHubLevel().toString());
+            telemetry.addLine("Ready For Start!");
+            telemetry.addData("Hub Level", hubLevel);
+            telemetry.update();
+        }
+
+        teamMarkerDetector.endStream();
 
 
         schedule(
                 new SequentialCommandGroup(
+                        //preload
                         new WaitCommand(1000),
                         dropPreloadFreight,
                         new WaitCommand(100),
                         retractFromFreight,
                         new WaitCommand(100),
+                        //cycle 1
                         dropFreight,
                         new WaitCommand(100),
-                        retractFromFreight
+                        retractFromFreight,
+                        new WaitCommand(100),
+                        //cycle 2
+                        dropFreight,
+                        new WaitCommand(100),
+                        retractFromFreight,
+                        new WaitCommand(100),
+                        //cycle 3
+                        dropFreight,
+                        new WaitCommand(100),
+                        retractFromFreight,
+                        //park
+                        new InstantCommand(() -> leftIntake.stop())
                 )
         );
 

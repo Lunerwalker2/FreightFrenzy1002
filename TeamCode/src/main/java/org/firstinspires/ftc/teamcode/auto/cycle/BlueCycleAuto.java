@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.auto.cycle;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -82,14 +83,28 @@ public class BlueCycleAuto extends AutoBase {
 
         schedule(
                 new SequentialCommandGroup(
+                        //preload
                         new WaitCommand(1000),
                         dropPreloadFreight,
                         new WaitCommand(100),
                         retractFromFreight,
                         new WaitCommand(100),
+                        //cycle 1
                         dropFreight,
                         new WaitCommand(100),
-                        retractFromFreight
+                        retractFromFreight,
+                        new WaitCommand(100),
+                        //cycle 2
+                        dropFreight,
+                        new WaitCommand(100),
+                        retractFromFreight,
+                        new WaitCommand(100),
+                        //cycle 3
+                        dropFreight,
+                        new WaitCommand(100),
+                        retractFromFreight,
+                        //park
+                        new InstantCommand(() -> leftIntake.stop())
                 )
         );
 
