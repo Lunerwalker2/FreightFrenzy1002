@@ -63,7 +63,7 @@ public class DropPreloadFreight extends ParallelCommandGroup {
                 .lineTo(new Vector2d(-14, 55))
                 .build();
         blueBottom = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-16.5, 40))
+                .lineTo(new Vector2d(-14, 40))
                 .build();
         redTop = drive.trajectoryBuilder(startPose)
                 .lineTo(new Vector2d(-14, 60))
@@ -72,7 +72,7 @@ public class DropPreloadFreight extends ParallelCommandGroup {
                 .lineTo(new Vector2d(-14, 55))
                 .build();
         redBottom = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 47))
+                .lineTo(new Vector2d(-14, 40))
                 .build();
 
     }

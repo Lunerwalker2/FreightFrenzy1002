@@ -29,7 +29,7 @@ public class CappingMech extends SubsystemBase {
 
     public void decrementPosition(){
         double newPos = position - 0.02;
-        if(newPos > 1.0){
+        if(newPos < 1.0){
             servo.setPosition(newPos);
             position = newPos;
         }

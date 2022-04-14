@@ -51,12 +51,12 @@ public class DropFreight extends ParallelCommandGroup {
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .splineToConstantHeading(new Vector2d(13.0, -64.5), Math.toRadians(180.0))
-                        .splineToConstantHeading(new Vector2d(-7.0, -60), Math.toRadians(170))
+                        .splineToConstantHeading(new Vector2d(-5.0, -60), Math.toRadians(170))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(13.0, 64.5), Math.toRadians(180.0))
-                        .splineToConstantHeading(new Vector2d(-7.0, 60.0), Math.toRadians(-170))
+                        .splineToConstantHeading(new Vector2d(-5.0, 60.0), Math.toRadians(-170))
                         .build();
 
         //All of these happen in parallel

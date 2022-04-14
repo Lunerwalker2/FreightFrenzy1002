@@ -86,7 +86,7 @@ public class RedCycleAuto extends AutoBase {
         schedule(
                 new SequentialCommandGroup(
                         //preload
-                        new WaitCommand(1000),
+                        new WaitCommand(200),
                         dropPreloadFreight,
                         new WaitCommand(100),
                         retractFromFreight,

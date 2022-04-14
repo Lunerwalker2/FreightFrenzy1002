@@ -85,7 +85,7 @@ public class BlueDuckAuto extends AutoBase {
 
         schedule(
                 new SequentialCommandGroup(
-                        new WaitCommand(1000),
+                        new WaitCommand(200),
                         dropPreloadFreight,
                         new WaitCommand(100),
                         goToCarousel,
