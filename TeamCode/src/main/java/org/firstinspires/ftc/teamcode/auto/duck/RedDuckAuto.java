@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.RetractFromFre
 import org.firstinspires.ftc.teamcode.commands.autocommands.duck.DropPreloadFreight;
 import org.firstinspires.ftc.teamcode.commands.autocommands.duck.GoToCarousel;
 import org.firstinspires.ftc.teamcode.commands.autocommands.duck.ParkInStorageUnit;
+import org.firstinspires.ftc.teamcode.commands.autocommands.duck.RetractFromCarousel;
+import org.firstinspires.ftc.teamcode.commands.autocommands.duck.ScanForDuck;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel;
@@ -73,6 +75,14 @@ public class RedDuckAuto extends AutoBase {
                 drive, false
         );
 
+        RetractFromCarousel retractFromCarousel = new RetractFromCarousel(
+                drive, leftIntake, true
+        );
+
+        ScanForDuck scanForDuck = new ScanForDuck(
+                drive, leftIntake, true
+        );
+
         //start vision
         teamMarkerDetector.startStream();
         while (!isStarted()){
@@ -91,7 +101,9 @@ public class RedDuckAuto extends AutoBase {
                         new WaitCommand(100),
                         goToCarousel,
                         new WaitCommand(100),
-                        parkInStorageUnit
+                        retractFromCarousel,
+                        new WaitCommand(100),
+                        scanForDuck
                 )
         );
 

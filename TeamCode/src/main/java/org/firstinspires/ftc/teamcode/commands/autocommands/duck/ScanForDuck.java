@@ -2,37 +2,42 @@ package org.firstinspires.ftc.teamcode.commands.autocommands.duck;
 
 import static java.lang.Math.toRadians;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.interfaces.IntakeSide;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-public class ParkInStorageUnit extends ParallelCommandGroup {
+public class ScanForDuck extends ParallelCommandGroup {
 
 
-
-    private final SampleMecanumDrive drive;
-    private final boolean redSide;
+    private SampleMecanumDrive drive;
+    private IntakeSide intakeSide;
+    private boolean redSide;
 
     private TrajectorySequence trajectory;
 
-    public ParkInStorageUnit(SampleMecanumDrive drive, boolean redSide){
+    public ScanForDuck(SampleMecanumDrive drive, IntakeSide intakeSide, boolean redSide) {
 
-        this.redSide = redSide;
         this.drive = drive;
+        this.intakeSide = intakeSide;
+        this.redSide = redSide;
     }
 
-
-    @Override
-    public void initialize(){
+    public void initialize() {
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineTo(new Vector2d(-65, -50))
+                        .lineToConstantHeading(new Vector2d(40, -50))
+                        .lineToLinearHeading(new Pose2d(40, -55, toRadians(-130)))
+                        .lineToConstantHeading(new Vector2d(60, -55))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineTo(new Vector2d(-65, 50))
+                        .lineToConstantHeading(new Vector2d(40, 50))
+                        .lineToLinearHeading(new Pose2d(40, 55, toRadians(130)))
+                        .lineToConstantHeading(new Vector2d(60, 55))
                         .build();
 
         addCommands(
@@ -41,4 +46,5 @@ public class ParkInStorageUnit extends ParallelCommandGroup {
 
         super.initialize();
     }
+
 }

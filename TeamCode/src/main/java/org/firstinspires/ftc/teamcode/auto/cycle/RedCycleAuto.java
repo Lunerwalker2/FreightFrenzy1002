@@ -106,7 +106,7 @@ public class RedCycleAuto extends AutoBase {
                         new WaitCommand(100),
                         retractFromFreight,
                         //park
-                        new InstantCommand(() -> leftIntake.stop())
+                        new InstantCommand(() -> rightIntake.stop())
                 )
         );
 
