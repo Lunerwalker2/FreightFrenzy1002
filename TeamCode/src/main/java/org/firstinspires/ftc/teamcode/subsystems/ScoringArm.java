@@ -12,8 +12,8 @@ public class ScoringArm extends SubsystemBase {
     private final ServoImplEx servo;
 
 
-    private final double loadPosition = 0.02;
-    private final double scoringPosition = 0.57;
+    private final double loadPosition = 1.0;
+    private final double scoringPosition = 0.4;
 
     public boolean loading = true;
 

@@ -99,13 +99,13 @@ public class DropPreloadFreight extends ParallelCommandGroup {
             case BOTTOM:
                 addCommands(
                         new InstantCommand(() -> {
-                            scoringArm.setPosition(0.84);
+                            scoringArm.setPosition(0.16);
                             bucket.close();
                         }),
                         new SequentialCommandGroup(
                                 new WaitCommand(2300),
                                 new InstantCommand(() -> {
-                                    scoringArm.setPosition(0.75);
+                                    scoringArm.setPosition(0.25);
                                     bucket.open();
                                 })
                         )

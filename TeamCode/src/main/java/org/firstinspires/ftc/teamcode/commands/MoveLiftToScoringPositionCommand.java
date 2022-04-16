@@ -42,13 +42,13 @@ public class MoveLiftToScoringPositionCommand extends ParallelCommandGroup {
                     double armPosition = 0;
                     switch (hubLevel) {
                         case TOP:
-                            armPosition = 0.6;
+                            armPosition = 0.4;
                             break;
                         case MIDDLE:
-                            armPosition = 0.72;
+                            armPosition = 0.3;
                             break;
                         case BOTTOM:
-                            armPosition = 0.9;
+                            armPosition = 0.2;
                             break;
                     }
                     scoringArm.setPosition(armPosition);
