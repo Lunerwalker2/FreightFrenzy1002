@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.auto.AutoBase;
 import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.DropFreight;
 import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.RetractFromFreight;
+import org.firstinspires.ftc.teamcode.commands.autocommands.duck.DropDuck;
 import org.firstinspires.ftc.teamcode.commands.autocommands.duck.DropPreloadFreight;
 import org.firstinspires.ftc.teamcode.commands.autocommands.duck.GoToCarousel;
 import org.firstinspires.ftc.teamcode.commands.autocommands.duck.ParkInStorageUnit;
@@ -72,7 +73,7 @@ public class RedDuckAuto extends AutoBase {
         );
 
         ParkInStorageUnit parkInStorageUnit = new ParkInStorageUnit(
-                drive, false
+                drive, lift, scoringArm, bucket, leftIntake, rightIntake, true
         );
 
         RetractFromCarousel retractFromCarousel = new RetractFromCarousel(
@@ -83,6 +84,10 @@ public class RedDuckAuto extends AutoBase {
                 drive, leftIntake, true
         );
 
+        DropDuck dropDuck = new DropDuck(
+                drive, lift, leftIntake, rightIntake, scoringArm, bucket, true
+        );
+
         //start vision
         teamMarkerDetector.startStream();
         while (!isStarted()){
@@ -91,6 +96,7 @@ public class RedDuckAuto extends AutoBase {
             telemetry.addData("Hub Level", hubLevel);
             telemetry.update();
         }
+
 
         teamMarkerDetector.endStream();
 
@@ -103,7 +109,11 @@ public class RedDuckAuto extends AutoBase {
                         new WaitCommand(100),
                         retractFromCarousel,
                         new WaitCommand(100),
-                        scanForDuck
+                        scanForDuck,
+                        new WaitCommand(100),
+                        dropDuck,
+                        new WaitCommand(100),
+                        parkInStorageUnit
                 )
         );
 

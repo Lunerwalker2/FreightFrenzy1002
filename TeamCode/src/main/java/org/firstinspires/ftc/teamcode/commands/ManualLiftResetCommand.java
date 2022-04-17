@@ -16,6 +16,8 @@ public class ManualLiftResetCommand extends CommandBase {
 
     public ManualLiftResetCommand(Lift lift, GamepadEx manipulator){
 
+        addRequirements(lift);
+
         this.lift = lift;
         this.manipulator = manipulator;
     }
@@ -23,7 +25,7 @@ public class ManualLiftResetCommand extends CommandBase {
     @Override
     public void execute(){
         if(manipulator.getButton(GamepadKeys.Button.DPAD_DOWN)){
-            lift.setLiftPower(-0.2);
+            lift.setLiftPower(-0.4);
         } else {
             lift.stop();
         }
@@ -31,7 +33,9 @@ public class ManualLiftResetCommand extends CommandBase {
 
 
     @Override
-    public boolean isFinished(){ return false;}
+    public boolean isFinished(){
+        return false;
+    }
 
     @Override
     public void end(boolean interrupted){

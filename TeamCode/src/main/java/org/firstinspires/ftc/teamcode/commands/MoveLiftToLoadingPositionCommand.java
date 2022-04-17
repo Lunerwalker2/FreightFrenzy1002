@@ -13,7 +13,7 @@ public class MoveLiftToLoadingPositionCommand extends ParallelCommandGroup {
 
     public MoveLiftToLoadingPositionCommand(Lift lift, ScoringArm scoringArm, Bucket bucket){
         addCommands(
-                new LiftPositionCommand(lift, 0),
+                new LiftPositionCommand(lift, 0, 7),
                 new InstantCommand(
                         () -> {
                             scoringArm.loadingPosition();

@@ -57,36 +57,42 @@ public class DropPreloadFreight extends ParallelCommandGroup {
 
 
         blueTop = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 60))
+                .lineTo(new Vector2d(-9, 60))
                 .build();
         blueMid = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 55))
+                .lineTo(new Vector2d(-10, 57))
                 .build();
         blueBottom = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 40))
+                .lineTo(new Vector2d(-14, 44.5))
                 .build();
         redTop = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 60))
+                .lineTo(new Vector2d(-9, 60))
                 .build();
         redMid = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 55))
+                .lineTo(new Vector2d(-10, 57))
                 .build();
         redBottom = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 40))
+                .lineTo(new Vector2d(-14, 44.5))
                 .build();
 
     }
 
     @Override
     public void initialize() {
-        addCommands(new FollowTrajectoryCommand(drive, getPreLoadTrajectory(getHubLevel.get())));
+        addCommands(
+                new SequentialCommandGroup(
+//                        new WaitCommand(300),
+                        new FollowTrajectoryCommand(drive, getPreLoadTrajectory(getHubLevel.get()))
+                )
+        );
         switch (getHubLevel.get()) {
             case TOP:
             case MIDDLE:
                 addCommands(
+                        new WaitCommand(200),
                         new MoveLiftToScoringPositionCommand(lift, scoringArm, bucket, getHubLevel.get()),
                         new SequentialCommandGroup(
-                                new WaitCommand(1300),
+                                new WaitCommand(2300),
                                 new InstantCommand(bucket::open)
                         )
                 );
@@ -94,13 +100,13 @@ public class DropPreloadFreight extends ParallelCommandGroup {
             case BOTTOM:
                 addCommands(
                         new InstantCommand(() -> {
-                            scoringArm.setPosition(0.1);
+                            scoringArm.setPosition(0.2);
                             bucket.close();
                         }),
                         new SequentialCommandGroup(
                                 new WaitCommand(2300),
                                 new InstantCommand(() -> {
-                                    scoringArm.setPosition(0.25);
+                                    scoringArm.setPosition(0.23);
                                     bucket.open();
                                 })
                         )

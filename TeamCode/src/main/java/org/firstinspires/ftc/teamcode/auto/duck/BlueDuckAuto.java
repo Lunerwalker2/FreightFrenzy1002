@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.auto.AutoBase;
+import org.firstinspires.ftc.teamcode.commands.autocommands.duck.DropDuck;
 import org.firstinspires.ftc.teamcode.commands.autocommands.duck.DropPreloadFreight;
 import org.firstinspires.ftc.teamcode.commands.autocommands.duck.GoToCarousel;
 import org.firstinspires.ftc.teamcode.commands.autocommands.duck.ParkInStorageUnit;
@@ -70,7 +71,7 @@ public class BlueDuckAuto extends AutoBase {
         );
 
         ParkInStorageUnit parkInStorageUnit = new ParkInStorageUnit(
-                drive, false
+                drive, lift, scoringArm, bucket, leftIntake, rightIntake, false
         );
 
         RetractFromCarousel retractFromCarousel = new RetractFromCarousel(
@@ -79,6 +80,10 @@ public class BlueDuckAuto extends AutoBase {
 
         ScanForDuck scanForDuck = new ScanForDuck(
                 drive, leftIntake, false
+        );
+
+        DropDuck dropDuck = new DropDuck(
+                drive, lift, leftIntake, rightIntake, scoringArm, bucket, false
         );
 
 
@@ -102,7 +107,11 @@ public class BlueDuckAuto extends AutoBase {
                         new WaitCommand(100),
                         retractFromCarousel,
                         new WaitCommand(100),
-                        scanForDuck
+                        scanForDuck,
+                        new WaitCommand(100),
+                        dropDuck,
+                        new WaitCommand(100),
+                        parkInStorageUnit
                 )
         );
 

@@ -30,6 +30,9 @@ public class RetractFromFreight extends ParallelCommandGroup {
 
     private TrajectorySequence trajectory;
 
+    private static int cycleNum = 0;
+    private double distanceAdd = 4;
+
 //    private final Pose2d redStartingPosition =
 //            new Pose2d(-10, -60, toRadians(180));
 //    private final Pose2d blueStartingPosition =
@@ -64,14 +67,14 @@ public class RetractFromFreight extends ParallelCommandGroup {
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(13, -65), toRadians(0))
-                        .splineToConstantHeading(new Vector2d(40, -64), toRadians(0))
-                        .splineToConstantHeading(new Vector2d(50, -64), toRadians(0))
+                        .splineToConstantHeading(new Vector2d(13, -64), toRadians(0))
+                        .splineToConstantHeading(new Vector2d(32, -65), toRadians(0))
+                        .splineToConstantHeading(new Vector2d(37, -65), toRadians(0))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(13, 65), toRadians(0))
-                        .splineToConstantHeading(new Vector2d(40, 64), toRadians(0))
-                        .splineToConstantHeading(new Vector2d(50, 64), toRadians(0))
+                        .splineToConstantHeading(new Vector2d(13, 64), toRadians(0))
+                        .splineToConstantHeading(new Vector2d(32, 65), toRadians(0))
+                        .splineToConstantHeading(new Vector2d(37, 65), toRadians(0))
                         .build();
 
         addCommands(
@@ -79,7 +82,7 @@ public class RetractFromFreight extends ParallelCommandGroup {
                 new FollowTrajectorySequenceCommand(drive, trajectory),
                 //Retract the lift
                 new SequentialCommandGroup(
-                        new WaitCommand(300),
+                        new WaitCommand(400),
                         new MoveLiftToLoadingPositionCommand(
                                 lift, scoringArm, bucket
                         )
@@ -91,6 +94,8 @@ public class RetractFromFreight extends ParallelCommandGroup {
                 })
 //                new WaitUntilCommand(intakeSide::freightDetected)
         );
+
+        cycleNum++;
 
         super.initialize();
     }

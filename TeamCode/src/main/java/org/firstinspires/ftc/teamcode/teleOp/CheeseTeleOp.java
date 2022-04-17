@@ -25,6 +25,7 @@ import org.firstinspires.ftc.teamcode.commands.MoveLiftToLoadingPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveLiftToMidScoringPositionCommand;
 import org.firstinspires.ftc.teamcode.commands.MoveLiftToScoringPositionCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Bucket;
+import org.firstinspires.ftc.teamcode.subsystems.CappingMech;
 import org.firstinspires.ftc.teamcode.subsystems.CarouselWheel;
 import org.firstinspires.ftc.teamcode.subsystems.LeftIntake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -43,9 +44,11 @@ public class CheeseTeleOp extends CommandOpMode {
     private RightIntake rightIntake;
     private Lift lift;
     private CarouselWheel carouselWheel;
+    private CappingMech cappingMech;
     private double offset = 0.0;
     private double powerMultiplier = 1.0;
     private boolean prevSlowState = false;
+    private boolean cappingMode = false;
 
     private MoveLiftToScoringPositionCommand moveLiftToScoringPositionCommand;
     private MoveLiftToMidScoringPositionCommand moveLiftToMidScoringPositionCommand;
@@ -70,6 +73,7 @@ public class CheeseTeleOp extends CommandOpMode {
         leftIntake = new LeftIntake(hardwareMap);
         rightIntake = new RightIntake(hardwareMap);
         lift = new Lift(hardwareMap);
+        cappingMech = new CappingMech(hardwareMap);
         carouselWheel = new CarouselWheel(hardwareMap);
 
 
@@ -143,8 +147,8 @@ public class CheeseTeleOp extends CommandOpMode {
         new Trigger(() -> manipulator.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2)
                 //Carousel wheel
                 .whileActiveContinuous(() -> {
-                    if (gamepad2.right_trigger < 0.8) carouselWheel.setWheelPower(0.5);
-                    else carouselWheel.setWheelPower(0.6);
+                    if (gamepad2.right_trigger < 0.8) carouselWheel.setWheelPower(0.6);
+                    else carouselWheel.setWheelPower(0.8);
                 })
                 .whenInactive(() -> {
                     carouselWheel.setWheelPower(0.0);
@@ -189,7 +193,7 @@ public class CheeseTeleOp extends CommandOpMode {
         manipulator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .toggleWhenActive(
                         () -> {
-                            scoringArm.setPosition(0.75);
+                            scoringArm.setPosition(0.3);
                             scoringArm.loading = false;
                             bucket.close();
                         },
@@ -203,9 +207,10 @@ public class CheeseTeleOp extends CommandOpMode {
                 //Starts when pressed and ended when released
                 .whenHeld(manualLiftResetCommand);
 
+
         manipulator.getGamepadButton(GamepadKeys.Button.A)
                 //TODO Just in case something is off, give a reset for this
-                .whenPressed(() -> powerMultiplier = 1.0);
+                .whenPressed(() -> cappingMode = !cappingMode);
 
     }
 
@@ -230,6 +235,14 @@ public class CheeseTeleOp extends CommandOpMode {
             gamepad1.rumble(0.0, 1.0, 300);
         }
         prevSlowState = gamepad1.x; // "Inefficient toggle" - Ryan 2022
+
+        if(gamepad2.dpad_up && cappingMode) cappingMech.extend();
+        else if(gamepad2.dpad_down && cappingMode) cappingMech.retract();
+        else cappingMech.stop();
+
+
+        if(gamepad2.dpad_left && cappingMode) cappingMech.incrementPosition();
+        else if(gamepad2.dpad_right && cappingMode) cappingMech.decrementPosition();
 
         double ly = Extensions.cubeInput(-gamepad1.left_stick_y, 0.2);
         double lx = Extensions.cubeInput(gamepad1.left_stick_x * 1.1, 0.2);

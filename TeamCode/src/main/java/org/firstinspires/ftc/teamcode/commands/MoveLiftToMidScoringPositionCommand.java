@@ -17,7 +17,7 @@ public class MoveLiftToMidScoringPositionCommand extends ParallelCommandGroup {
         addCommands(
                 new LiftPositionCommand(lift, Lift.LiftPosition.MIDDLE),
                 new InstantCommand(() -> {
-                    scoringArm.setPosition(0.28);
+                    scoringArm.setPosition(0.3);
                     scoringArm.loading = false;
                     bucket.close();
                 })

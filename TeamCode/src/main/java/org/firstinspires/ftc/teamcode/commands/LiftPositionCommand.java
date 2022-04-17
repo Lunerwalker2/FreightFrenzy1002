@@ -11,9 +11,9 @@ public class LiftPositionCommand extends CommandBase {
 
 
     private PIDFController liftController;
-    private PIDCoefficients coefficients = new PIDCoefficients(0.04, 0, 0.001);
+    private PIDCoefficients coefficients = new PIDCoefficients(0.05, 0, 0.001);
     private double kStatic = 0.0;
-    private double tolerance = 5;
+    private double tolerance;
     private final Lift lift;
     private final double targetPosition;
 
@@ -25,11 +25,16 @@ public class LiftPositionCommand extends CommandBase {
     }
 
     public LiftPositionCommand(Lift lift, double targetPosition){
+        this(lift, targetPosition, 5);
+    }
+
+    public LiftPositionCommand(Lift lift, double targetPosition, double tolerance){
         this.lift = lift;
+        this.tolerance = tolerance;
         this.targetPosition = targetPosition;
 
         liftController = new PIDFController(coefficients, 0, 0, kStatic);
-        liftController.setOutputBounds(-1, 1);
+        liftController.setOutputBounds(-0.6, 1);
     }
 
     @Override

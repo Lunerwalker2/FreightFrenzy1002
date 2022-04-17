@@ -84,26 +84,55 @@ public class BlueCycleAuto extends AutoBase {
         schedule(
                 new SequentialCommandGroup(
                         //preload
-                        new WaitCommand(1000),
+                        new WaitCommand(500),
                         dropPreloadFreight,
                         new WaitCommand(100),
                         retractFromFreight,
-                        new WaitCommand(100),
+
                         //cycle 1
+                        new WaitCommand(100),
                         dropFreight,
                         new WaitCommand(100),
                         retractFromFreight,
-                        new WaitCommand(100),
+
                         //cycle 2
+                        new WaitCommand(100),
                         dropFreight,
                         new WaitCommand(100),
                         retractFromFreight,
-                        new WaitCommand(100),
+
                         //cycle 3
+                        new WaitCommand(100),
                         dropFreight,
                         new WaitCommand(100),
                         retractFromFreight,
-                        //park
+
+//                        //cycle 4
+//                        new WaitCommand(100),
+//                        dropFreight,
+//                        new WaitCommand(100),
+//                        retractFromFreight,
+
+//                        //cycle 5
+//                        new WaitCommand(100),
+//                        dropFreight,
+//                        new WaitCommand(100),
+//                        retractFromFreight,
+
+//                        //cycle 6
+//                        new WaitCommand(100),
+//                        dropFreight,
+//                        new WaitCommand(100),
+//                        retractFromFreight,
+
+//                        //cycle 7
+//                        new WaitCommand(100),
+//                        dropFreight,
+//                        new WaitCommand(100),
+//                        retractFromFreight,
+
+
+
                         new InstantCommand(() -> leftIntake.stop())
                 )
         );

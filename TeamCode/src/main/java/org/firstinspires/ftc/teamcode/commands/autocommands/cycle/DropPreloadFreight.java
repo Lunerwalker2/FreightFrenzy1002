@@ -57,22 +57,22 @@ public class DropPreloadFreight extends ParallelCommandGroup {
 
 
         blueTop = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-7, 60))
+                .lineTo(new Vector2d(-9, 60))
                 .build();
         blueMid = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 55))
+                .lineTo(new Vector2d(-10, 58))
                 .build();
         blueBottom = drive.trajectoryBuilder(startPose)
                 .lineTo(new Vector2d(-14, 44.5))
                 .build();
         redTop = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-7, 60))
+                .lineTo(new Vector2d(-9, 60))
                 .build();
         redMid = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 55))
+                .lineTo(new Vector2d(-10, 58))
                 .build();
         redBottom = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-7, 47))
+                .lineTo(new Vector2d(-14, 44.5))
                 .build();
 
     }
@@ -87,6 +87,8 @@ public class DropPreloadFreight extends ParallelCommandGroup {
         );
         switch (getHubLevel.get()) {
             case TOP:
+
+
             case MIDDLE:
                 addCommands(
                         new MoveLiftToScoringPositionCommand(lift, scoringArm, bucket, getHubLevel.get()),
@@ -99,13 +101,13 @@ public class DropPreloadFreight extends ParallelCommandGroup {
             case BOTTOM:
                 addCommands(
                         new InstantCommand(() -> {
-                            scoringArm.setPosition(0.16);
+                            scoringArm.setPosition(0.2);
                             bucket.close();
                         }),
                         new SequentialCommandGroup(
                                 new WaitCommand(2300),
                                 new InstantCommand(() -> {
-                                    scoringArm.setPosition(0.25);
+                                    scoringArm.setPosition(0.23);
                                     bucket.open();
                                 })
                         )

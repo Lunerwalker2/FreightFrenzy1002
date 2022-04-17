@@ -33,6 +33,9 @@ public class DropFreight extends ParallelCommandGroup {
 
     private TrajectorySequence trajectory;
 
+    private int cycleNum = 0;
+    private double distanceAdd = 5;
+
 
     public DropFreight(SampleMecanumDrive drive, Lift lift, IntakeSide intakeSide,
                        ScoringArm scoringArm, Bucket bucket, boolean redSide) {
@@ -51,12 +54,12 @@ public class DropFreight extends ParallelCommandGroup {
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .splineToConstantHeading(new Vector2d(13.0, -64.5), Math.toRadians(180.0))
-                        .splineToConstantHeading(new Vector2d(-5.0, -60), Math.toRadians(170))
+                        .splineToConstantHeading(new Vector2d(-9 + (cycleNum * distanceAdd), -64), Math.toRadians(175))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .setReversed(true)
                         .splineToConstantHeading(new Vector2d(13.0, 64.5), Math.toRadians(180.0))
-                        .splineToConstantHeading(new Vector2d(-5.0, 60.0), Math.toRadians(-170))
+                        .splineToConstantHeading(new Vector2d(-9 + (cycleNum * distanceAdd), 64), Math.toRadians(-175))
                         .build();
 
         //All of these happen in parallel
@@ -70,19 +73,19 @@ public class DropFreight extends ParallelCommandGroup {
                             intakeSide.intakePower(0.2);
                         }),
                         //Wait for the arm to raise and drop the freight into the bucket
-                        new WaitCommand(1500),
+                        new WaitCommand(1600),
                         //After a bit stop the intake, running it a little to make sure bucket isnt stuck
                         new InstantCommand(intakeSide::stop)
                 ),
                 //Wait a bit for the intake to load the freight
                 new SequentialCommandGroup(
-                        new WaitCommand(1400),
+                        new WaitCommand(1500),
                         //Move lift and scoring out
                         new MoveLiftToScoringPositionCommand(
                                 lift, scoringArm, bucket, HubLevel.TOP
                         ),
                         //Wait a bit to make sure things are stable
-                        new WaitCommand(100),
+                        new WaitCommand(500),
                         //Open bucket and then wait a bit
                         new InstantCommand(bucket::open),
                         new WaitCommand(400)
@@ -90,6 +93,8 @@ public class DropFreight extends ParallelCommandGroup {
                 )
 
         );
+
+        cycleNum++;
 
 
         super.initialize();

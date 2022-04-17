@@ -13,6 +13,8 @@ public class ManualLiftCommand extends CommandBase {
     private final Lift lift;
     private final GamepadEx manipulator;
 
+    public static boolean cappingMode = false;
+
     public ManualLiftCommand(Lift lift, GamepadEx manipulator){
 
         addRequirements(lift);
@@ -28,11 +30,11 @@ public class ManualLiftCommand extends CommandBase {
         double multiplier = manipulator.getButton(GamepadKeys.Button.X) ? 0.5 : 1.0;
 
         //Check if the up button is pressed
-        if (manipulator.getButton(GamepadKeys.Button.DPAD_UP) && !lift.atUpperLimit()) {
+        if (manipulator.getButton(GamepadKeys.Button.DPAD_UP) && !lift.atUpperLimit() && !cappingMode) {
             lift.setLiftPower(0.8 * multiplier);
         }
         //Then check if the down is pressed
-        else if (manipulator.getButton(GamepadKeys.Button.DPAD_DOWN) && !lift.atLowerLimit()) {
+        else if (manipulator.getButton(GamepadKeys.Button.DPAD_DOWN) && !lift.atLowerLimit() && !cappingMode) {
             lift.setLiftPower(-0.5 * multiplier);
         }
         //Otherwise, do nothing

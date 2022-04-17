@@ -11,7 +11,7 @@ public class CappingMech extends SubsystemBase {
     private Servo servo;
     private CRServo crServo;
 
-    private double position = 1.0;
+    private double position = 0.9;
 
     public CappingMech(HardwareMap hardwareMap){
         servo = hardwareMap.get(Servo.class, "cappingServo");
