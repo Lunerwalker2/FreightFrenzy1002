@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -33,8 +34,8 @@ public class ScanForDuck extends ParallelCommandGroup {
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .lineToConstantHeading(new Vector2d(-45, -45))
-                        .lineToLinearHeading(new Pose2d(-45, -58.5, toRadians(-130)))
-                        .lineToConstantHeading(new Vector2d(-57, -58.5))
+                        .lineToLinearHeading(new Pose2d(-45, -56, toRadians(-140)))
+                        .lineToConstantHeading(new Vector2d(-57, -56))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .lineToConstantHeading(new Vector2d(-45, 45))
@@ -43,13 +44,7 @@ public class ScanForDuck extends ParallelCommandGroup {
                         .build();
 
         addCommands(
-                new SequentialCommandGroup(
-                        new FollowTrajectorySequenceCommand(drive, trajectory),
-                        new InstantCommand(() -> {
-                            intakeSide.intakePower(0.2);
-                            intakeSide.intakeUp();
-                        })
-                )
+                new FollowTrajectorySequenceCommand(drive, trajectory)
         );
 
         super.initialize();

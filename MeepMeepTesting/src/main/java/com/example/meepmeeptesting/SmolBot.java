@@ -39,7 +39,7 @@ public class SmolBot {
     //width = 13.25
 
 
-    private static final Pose2d blueStartingPosition = new Pose2d(8.34375, 65.375, toRadians(0));
+    private static final Pose2d blueStartingPosition = new Pose2d(-10, 64, toRadians(0));
     private static final Pose2d redStartingPosition =
             blueStartingPosition.copy(blueStartingPosition.getX(), -blueStartingPosition.getY(),
                     Angle.normDelta(blueStartingPosition.getHeading() + toRadians(180)));
@@ -61,24 +61,8 @@ public class SmolBot {
                 .setColorScheme(new ColorSchemeBlueDark())
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(blueStartingPosition)
-//                                .splineToConstantHeading(new Vector2d(8, 50), toRadians(-90))
-//                                .splineToSplineHeading(new Pose2d(8, 45, toRadians(-30)), toRadians(-90))
-                                .lineToLinearHeading(new Pose2d(10, 58, toRadians(-30)))
-                                .waitSeconds(0.5)
-                                .addDisplacementMarker(() -> System.out.println("Lift out"))
-                                .waitSeconds(0.5)
-                                .addDisplacementMarker(() -> System.out.println("Lift in"))
-                                .splineToConstantHeading(new Vector2d(13, 64.5), toRadians(0))
-                                .splineToConstantHeading(new Vector2d(45, 64), toRadians(0))
-                                .addDisplacementMarker(() -> System.out.println("Intaking"))
-                                .forward(7, getVelocityConstraint(5, toRadians(200), 12.1))
-                                .waitSeconds(0.5)
-                                .addDisplacementMarker(() -> System.out.println("Freight Found, Relocalizing"))
-                                .waitSeconds(0.1)
-                                .setReversed(true)
-                                .splineToConstantHeading(new Vector2d(13, 64.5), toRadians(180))
-                                .splineToConstantHeading(new Vector2d(-10, 58), toRadians(-160))
-                                .setReversed(false)
+//                                .lineToLinearHeading(new Pose2d(10, 64, toRadians(0)))
+                                .splineToConstantHeading(new Vector2d(37, 65), toRadians(0))
                                 .build()
                 );
 
@@ -178,7 +162,7 @@ public class SmolBot {
                 .setTheme(new ColorSchemeRedDark())
                 .setBackgroundAlpha(0.95f)
                 .addEntity(blueCycleRoute)
-                .addEntity(redCycleRoute)
+//                .addEntity(redCycleRoute)
 //                .addEntity(blueDuckRoute)
 //                .addEntity(redDuckRoute)
                 .start();

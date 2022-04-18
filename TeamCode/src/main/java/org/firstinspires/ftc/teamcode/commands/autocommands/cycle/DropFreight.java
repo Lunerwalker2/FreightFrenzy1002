@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands.autocommands.cycle;
 
+import static java.lang.Math.toRadians;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -51,16 +53,29 @@ public class DropFreight extends ParallelCommandGroup {
 
     @Override
     public void initialize() {
+//        trajectory = (redSide) ?
+//                drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+//                        .splineToConstantHeading(new Vector2d(13.0, -64.5), Math.toRadians(180.0))
+//                        .splineToConstantHeading(new Vector2d(-9 + (cycleNum * distanceAdd), -64), Math.toRadians(175))
+//                        .build() :
+//                drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+//                        .setReversed(true)
+//                        .splineToConstantHeading(new Vector2d(13.0, 64.5), Math.toRadians(180.0))
+//                        .splineToConstantHeading(new Vector2d(-9 + (cycleNum * distanceAdd), 64), Math.toRadians(-175))
+//                        .build();
+
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(13.0, -64.5), Math.toRadians(180.0))
-                        .splineToConstantHeading(new Vector2d(-9 + (cycleNum * distanceAdd), -64), Math.toRadians(175))
+                        .splineToConstantHeading(new Vector2d(10.0, -64.5), toRadians(180.0))
+                        .splineToConstantHeading(new Vector2d(-9, -64), toRadians(175))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(13.0, 64.5), Math.toRadians(180.0))
-                        .splineToConstantHeading(new Vector2d(-9 + (cycleNum * distanceAdd), 64), Math.toRadians(-175))
+                        .splineToConstantHeading(new Vector2d(10.0, 64.5), toRadians(180.0))
+                        .lineToLinearHeading(new Pose2d(-9, 64, toRadians(0)))
                         .build();
+
+        clearGroupedCommands();
 
         //All of these happen in parallel
         addCommands(
@@ -85,7 +100,7 @@ public class DropFreight extends ParallelCommandGroup {
                                 lift, scoringArm, bucket, HubLevel.TOP
                         ),
                         //Wait a bit to make sure things are stable
-                        new WaitCommand(500),
+                        new WaitCommand(1400),
                         //Open bucket and then wait a bit
                         new InstantCommand(bucket::open),
                         new WaitCommand(400)

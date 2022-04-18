@@ -11,7 +11,7 @@ public class LiftPositionCommand extends CommandBase {
 
 
     private PIDFController liftController;
-    private PIDCoefficients coefficients = new PIDCoefficients(0.05, 0, 0.001);
+    private PIDCoefficients coefficients = new PIDCoefficients(0.024, 0.001, 0.001);
     private double kStatic = 0.0;
     private double tolerance;
     private final Lift lift;

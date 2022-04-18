@@ -25,8 +25,8 @@ public class DistanceSensors extends SubsystemBase {
 
         //Get the sensors from the hardware map
         //TODO: YES I KNOW ITS REVERSED BUT I REFUSE TO SWITCH THE WIRING AROUND NOW
-        forwardSensor = hardwareMap.get(MB1242.class, "backwardSensor");
-        backwardSensor = hardwareMap.get(MB1242.class, "forwardSensor");
+        forwardSensor = hardwareMap.get(MB1242.class, "forwardSensor");
+        backwardSensor = hardwareMap.get(MB1242.class, "backwardSensor");
         leftSensor =
                 new AsyncRev2MSensor(hardwareMap.get(Rev2mDistanceSensor.class, "leftSensor"));
 

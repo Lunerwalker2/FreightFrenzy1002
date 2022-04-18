@@ -57,22 +57,22 @@ public class DropPreloadFreight extends ParallelCommandGroup {
 
 
         blueTop = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-9, 60))
+                .lineTo(new Vector2d(-9, 64))
                 .build();
         blueMid = drive.trajectoryBuilder(startPose)
                 .lineTo(new Vector2d(-10, 58))
                 .build();
         blueBottom = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 44.5))
+                .lineTo(new Vector2d(-12, 44.5))
                 .build();
         redTop = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-9, 60))
+                .lineTo(new Vector2d(-9, -64))
                 .build();
         redMid = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-10, 58))
+                .lineTo(new Vector2d(-10, -58))
                 .build();
         redBottom = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 44.5))
+                .lineTo(new Vector2d(-12, -44.5))
                 .build();
 
     }
@@ -101,13 +101,13 @@ public class DropPreloadFreight extends ParallelCommandGroup {
             case BOTTOM:
                 addCommands(
                         new InstantCommand(() -> {
-                            scoringArm.setPosition(0.2);
+                            scoringArm.setPosition(0.22);
                             bucket.close();
                         }),
                         new SequentialCommandGroup(
                                 new WaitCommand(2300),
                                 new InstantCommand(() -> {
-                                    scoringArm.setPosition(0.23);
+                                    scoringArm.setPosition(0.27);
                                     bucket.open();
                                 })
                         )

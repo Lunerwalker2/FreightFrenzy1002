@@ -30,7 +30,29 @@ public class LeftIntake extends SubsystemBase implements IntakeSide {
         intakeUp();
     }
 
-    @Override
+    @Override//                        //cycle 4
+//                        new WaitCommand(100),
+//                        dropFreight,
+//                        new WaitCommand(100),
+//                        retractFromFreight,
+
+//                        //cycle 5
+//                        new WaitCommand(100),
+//                        dropFreight,
+//                        new WaitCommand(100),
+//                        retractFromFreight,
+
+//                        //cycle 6
+//                        new WaitCommand(100),
+//                        dropFreight,
+//                        new WaitCommand(100),
+//                        retractFromFreight,
+
+//                        //cycle 7
+//                        new WaitCommand(100),
+//                        dropFreight,
+//                        new WaitCommand(100),
+//                        retractFromFreight,
     public void periodic(){
 
     }
@@ -57,7 +79,7 @@ public class LeftIntake extends SubsystemBase implements IntakeSide {
     }
 
     public void intakeUp(){
-        armServo.setPosition(0.91);
+        armServo.setPosition(0.9);
         up = true;
     }
 

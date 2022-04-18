@@ -57,7 +57,7 @@ public class DropPreloadFreight extends ParallelCommandGroup {
 
 
         blueTop = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-9, 60))
+                .lineTo(new Vector2d(-12, 60))
                 .build();
         blueMid = drive.trajectoryBuilder(startPose)
                 .lineTo(new Vector2d(-10, 57))
@@ -66,13 +66,13 @@ public class DropPreloadFreight extends ParallelCommandGroup {
                 .lineTo(new Vector2d(-14, 44.5))
                 .build();
         redTop = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-9, 60))
+                .lineTo(new Vector2d(-12, -60))
                 .build();
         redMid = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-10, 57))
+                .lineTo(new Vector2d(-10, -57))
                 .build();
         redBottom = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-14, 44.5))
+                .lineTo(new Vector2d(-12, -44))
                 .build();
 
     }
@@ -81,7 +81,7 @@ public class DropPreloadFreight extends ParallelCommandGroup {
     public void initialize() {
         addCommands(
                 new SequentialCommandGroup(
-//                        new WaitCommand(300),
+                        new WaitCommand(300),
                         new FollowTrajectoryCommand(drive, getPreLoadTrajectory(getHubLevel.get()))
                 )
         );
@@ -100,13 +100,13 @@ public class DropPreloadFreight extends ParallelCommandGroup {
             case BOTTOM:
                 addCommands(
                         new InstantCommand(() -> {
-                            scoringArm.setPosition(0.2);
+                            scoringArm.setPosition(0.22);
                             bucket.close();
                         }),
                         new SequentialCommandGroup(
                                 new WaitCommand(2300),
                                 new InstantCommand(() -> {
-                                    scoringArm.setPosition(0.23);
+                                    scoringArm.setPosition(0.27);
                                     bucket.open();
                                 })
                         )

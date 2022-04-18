@@ -91,21 +91,13 @@ public class RedCycleAuto extends AutoBase {
                         new WaitCommand(100),
                         retractFromFreight,
                         new WaitCommand(100),
+
                         //cycle 1
-                        dropFreight,
                         new WaitCommand(100),
-                        retractFromFreight,
+                        new DropFreight(drive, lift, rightIntake, scoringArm, bucket, true),
                         new WaitCommand(100),
-                        //cycle 2
-                        dropFreight,
-                        new WaitCommand(100),
-                        retractFromFreight,
-                        new WaitCommand(100),
-                        //cycle 3
-                        dropFreight,
-                        new WaitCommand(100),
-                        retractFromFreight,
-                        //park
+                        new RetractFromFreight(drive, lift, rightIntake, scoringArm, bucket, true),
+
                         new InstantCommand(() -> rightIntake.stop())
                 )
         );

@@ -135,7 +135,7 @@ public class AprilTagHubLevelPipelineDuck extends OpenCvPipeline
         }
 
         //Set the default case
-        hubLevel = (redSide) ? HubLevel.BOTTOM : HubLevel.TOP;
+        hubLevel = (redSide) ? HubLevel.BOTTOM : HubLevel.BOTTOM;
 
         // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
         // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
@@ -154,8 +154,8 @@ public class AprilTagHubLevelPipelineDuck extends OpenCvPipeline
              */
             double x = detection.center.x;
             if(redSide) {
-                if(x > input.width() * CENTER_MARGIN_RED) hubLevel = HubLevel.MIDDLE;
-                else hubLevel = HubLevel.TOP;
+                if(x > input.width() * CENTER_MARGIN_RED) hubLevel = HubLevel.TOP;
+                else hubLevel = HubLevel.MIDDLE;
             } else {
                 if(x < input.width() * 0.75){
                     if (x > input.width() * CENTER_MARGIN_BLUE) hubLevel = HubLevel.MIDDLE;

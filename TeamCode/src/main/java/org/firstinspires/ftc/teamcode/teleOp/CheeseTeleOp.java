@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.teleOp;
 
 import static java.lang.Math.abs;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.PerpetualCommand;
@@ -224,6 +227,10 @@ public class CheeseTeleOp extends CommandOpMode {
         telemetry.addData("Z axis", orientation.firstAngle);
         telemetry.addData("Y axis", orientation.secondAngle);
         telemetry.addData("X axis", orientation.thirdAngle);
+
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.put("li posit", lift.getLiftPosition());
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
         //Add the angle offset to be able to reset the 0 heading, and normalize it back to -pi to pi
         double heading = AngleUnit.normalizeRadians(orientation.firstAngle - offset);

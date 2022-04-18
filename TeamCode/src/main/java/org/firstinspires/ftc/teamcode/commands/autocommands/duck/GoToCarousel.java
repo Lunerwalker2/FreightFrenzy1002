@@ -55,13 +55,13 @@ public class GoToCarousel extends ParallelCommandGroup {
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .lineTo(new Vector2d(-50, -40))
-                        .turn(toRadians(120))
-                        .lineTo(new Vector2d(-60, -65))
+                        .turn(toRadians(-160))
+                        .lineTo(new Vector2d(-63, -55))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .lineTo(new Vector2d(-50, 40))
-                        .turn(toRadians(-82))
-                        .lineTo(new Vector2d(-65, 59))
+                        .turn(toRadians(-86))
+                        .lineTo(new Vector2d(-64, 59))
                         .build();
 
         addCommands(

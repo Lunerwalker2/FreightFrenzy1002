@@ -31,7 +31,7 @@ public class RetractFromFreight extends ParallelCommandGroup {
     private TrajectorySequence trajectory;
 
     private static int cycleNum = 0;
-    private double distanceAdd = 4;
+    private double distanceAdd = 2.5;
 
 //    private final Pose2d redStartingPosition =
 //            new Pose2d(-10, -60, toRadians(180));
@@ -64,19 +64,31 @@ public class RetractFromFreight extends ParallelCommandGroup {
         but since its very soon after start there likely isn't much drift anyways, and it lets us not write
         an entirely separate command for retracting from the preload.
          */
+//        trajectory = (redSide) ?
+//                drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+//                        .setReversed(true)
+//                        .splineToConstantHeading(new Vector2d(13, -64), toRadians(0))
+//                        .splineToConstantHeading(new Vector2d(32, -65), toRadians(0))
+//                        .splineToConstantHeading(new Vector2d(37, -65), toRadians(0))
+//                        .build() :
+//                drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+//                        .splineToConstantHeading(new Vector2d(13, 64), toRadians(0))
+//                        .splineToConstantHeading(new Vector2d(32, 65), toRadians(0))
+//                        .splineToConstantHeading(new Vector2d(37, 65), toRadians(0))
+//                        .build();
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(13, -64), toRadians(0))
+                        .splineToConstantHeading(new Vector2d(10, -64), toRadians(0))
                         .splineToConstantHeading(new Vector2d(32, -65), toRadians(0))
                         .splineToConstantHeading(new Vector2d(37, -65), toRadians(0))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(13, 64), toRadians(0))
-                        .splineToConstantHeading(new Vector2d(32, 65), toRadians(0))
-                        .splineToConstantHeading(new Vector2d(37, 65), toRadians(0))
+//                        .lineToLinearHeading(new Pose2d(10, 64, toRadians(0)))
+                        .splineToConstantHeading(new Vector2d(36 + (cycleNum * distanceAdd), 65), toRadians(0))
                         .build();
 
+        clearGroupedCommands();
         addCommands(
                 //Drive to the warehouse
                 new FollowTrajectorySequenceCommand(drive, trajectory),

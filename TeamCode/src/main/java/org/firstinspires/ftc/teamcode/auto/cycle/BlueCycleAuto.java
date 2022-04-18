@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.auto.cycle;
 
 import static java.lang.Math.toRadians;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -56,6 +57,8 @@ public class BlueCycleAuto extends AutoBase {
 
         teamMarkerDetector.init();
 
+        telemetry = new MultipleTelemetry(telemetry);
+
         //commands here ig lol
         DropPreloadFreight dropPreloadFreight = new DropPreloadFreight(
                 drive, lift, leftIntake, scoringArm, bucket, startPose, () -> hubLevel, false
@@ -91,45 +94,22 @@ public class BlueCycleAuto extends AutoBase {
 
                         //cycle 1
                         new WaitCommand(100),
-                        dropFreight,
+                        new DropFreight(drive, lift, leftIntake, scoringArm, bucket, false),
                         new WaitCommand(100),
-                        retractFromFreight,
+                        new RetractFromFreight(drive, lift, leftIntake, scoringArm, bucket, false),
 
                         //cycle 2
                         new WaitCommand(100),
-                        dropFreight,
+                        new DropFreight(drive, lift, leftIntake, scoringArm, bucket, false),
                         new WaitCommand(100),
-                        retractFromFreight,
+                        new RetractFromFreight(drive, lift, leftIntake, scoringArm, bucket, false),
 
                         //cycle 3
                         new WaitCommand(100),
-                        dropFreight,
+                        new DropFreight(drive, lift, leftIntake, scoringArm, bucket, false),
                         new WaitCommand(100),
-                        retractFromFreight,
+                        new RetractFromFreight(drive, lift, leftIntake, scoringArm, bucket, false),
 
-//                        //cycle 4
-//                        new WaitCommand(100),
-//                        dropFreight,
-//                        new WaitCommand(100),
-//                        retractFromFreight,
-
-//                        //cycle 5
-//                        new WaitCommand(100),
-//                        dropFreight,
-//                        new WaitCommand(100),
-//                        retractFromFreight,
-
-//                        //cycle 6
-//                        new WaitCommand(100),
-//                        dropFreight,
-//                        new WaitCommand(100),
-//                        retractFromFreight,
-
-//                        //cycle 7
-//                        new WaitCommand(100),
-//                        dropFreight,
-//                        new WaitCommand(100),
-//                        retractFromFreight,
 
 
 
