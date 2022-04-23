@@ -213,11 +213,11 @@ public class CheeseTeleOp extends CommandOpMode {
                 .whenHeld(manualLiftResetCommand);
 
 
-//        manipulator.getGamepadButton(GamepadKeys.Button.A)
-//                .whenPressed(() -> {
-//                    cappingMode = !cappingMode;
-//                    ManualLiftCommand.cappingMode = cappingMode;
-//                });
+        manipulator.getGamepadButton(GamepadKeys.Button.A)
+                .whenPressed(() -> {
+                    cappingMode = !cappingMode;
+                    ManualLiftCommand.cappingMode = cappingMode;
+                });
 
     }
 

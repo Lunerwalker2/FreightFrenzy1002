@@ -81,7 +81,6 @@ public class RetractFromFreight extends ParallelCommandGroup {
                         .setReversed(true)
                         .lineToLinearHeading(new Pose2d(10, -65, toRadians(180)))
                         .splineToConstantHeading(new Vector2d(40 + (cycleNum * distanceAdd), -65), toRadians(0))
-                        .strafeRight(22)
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .lineToLinearHeading(new Pose2d(10, 65, toRadians(0)))

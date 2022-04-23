@@ -20,7 +20,7 @@ public class CappingMech extends SubsystemBase {
     }
 
     public void incrementPosition(){
-        double newPos = position + 0.003;
+        double newPos = position + 0.002;
         if(newPos < 1.0){
             servo.setPosition(newPos);
             position = newPos;
@@ -28,7 +28,7 @@ public class CappingMech extends SubsystemBase {
     }
 
     public void decrementPosition(){
-        double newPos = position - 0.003;
+        double newPos = position - 0.002;
         if(newPos > 0.0){
             servo.setPosition(newPos);
             position = newPos;

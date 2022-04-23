@@ -66,12 +66,12 @@ public class DropFreight extends ParallelCommandGroup {
 
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(10.0, -64.5), toRadians(180.0))
+                        .splineToConstantHeading(new Vector2d(10.0, -65), toRadians(180.0))
                         .lineToLinearHeading(new Pose2d(-9, -64, toRadians(180)))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(10.0, 64.5), toRadians(180.0))
+                        .splineToConstantHeading(new Vector2d(10.0, 65), toRadians(180.0))
                         .lineToLinearHeading(new Pose2d(-9, 64, toRadians(0)))
                         .build();
 

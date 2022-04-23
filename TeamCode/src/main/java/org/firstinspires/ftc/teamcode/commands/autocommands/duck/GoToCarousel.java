@@ -55,23 +55,25 @@ public class GoToCarousel extends ParallelCommandGroup {
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .lineTo(new Vector2d(-50, -40))
-                        .turn(toRadians(-160))
-                        .lineTo(new Vector2d(-63, -55))
+                        .turn(toRadians(-178))
+                        .lineTo(new Vector2d(-60, -58))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .lineTo(new Vector2d(-50, 40))
-                        .turn(toRadians(-86))
-                        .lineTo(new Vector2d(-64, 59))
+                        .turn(toRadians(-120))
+                        .lineTo(new Vector2d(-62, 60))
                         .build();
 
         addCommands(
                 new InstantCommand(() -> {
                     leftIntake.intakePower(-0.4);
                     rightIntake.intakePower(-0.4);
+                    leftIntake.intakePosition(0.7);
+                    rightIntake.intakePosition(0.4);
                 }),
                 new SequentialCommandGroup(
                         new FollowTrajectorySequenceCommand(drive, trajectory),
-                        new InstantCommand(() -> carouselWheel.setWheelPower(-0.6)),
+                        new InstantCommand(() -> carouselWheel.setWheelPower(0.6)),
                         new WaitCommand(3000),
                         new InstantCommand(() -> carouselWheel.setWheelPower(0))
                 ),
@@ -86,6 +88,8 @@ public class GoToCarousel extends ParallelCommandGroup {
                         new InstantCommand(() -> {
                             leftIntake.intakePower(0);
                             rightIntake.intakePower(0);
+                            leftIntake.intakeUp();
+                            rightIntake.intakeUp();
                         })
                 )
 

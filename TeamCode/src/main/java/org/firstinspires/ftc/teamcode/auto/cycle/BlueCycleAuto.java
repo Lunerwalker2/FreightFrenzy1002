@@ -86,6 +86,7 @@ public class BlueCycleAuto extends AutoBase {
 
         schedule(
                 new SequentialCommandGroup(
+//                        new WaitCommand(5000),
                         //preload
                         new WaitCommand(500),
                         dropPreloadFreight,

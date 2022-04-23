@@ -49,10 +49,10 @@ public class DropDuck extends ParallelCommandGroup {
 
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-40, 47, toRadians(-45)))
+                        .lineToLinearHeading(new Pose2d(-40, -47, toRadians(135)))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-40, 47, toRadians(45)))
+                        .lineToLinearHeading(new Pose2d(-42, 48, toRadians(45)))
                         .build();
 
         addCommands(

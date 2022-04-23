@@ -47,10 +47,10 @@ public class ParkInStorageUnit extends ParallelCommandGroup {
     public void initialize(){
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-65, -38, toRadians(-90)))
+                        .lineToLinearHeading(new Pose2d(-65, -38, toRadians(90)))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-65, 38, toRadians(90)))
+                        .lineToLinearHeading(new Pose2d(-65, 40.1, toRadians(90)))
                         .build();
 
         addCommands(
@@ -59,6 +59,8 @@ public class ParkInStorageUnit extends ParallelCommandGroup {
                 new InstantCommand(() -> {
                     leftIntake.intakePower(-0.4);
                     rightIntake.intakePower(-0.4);
+                    leftIntake.intakePosition(0.7);
+                    rightIntake.intakePosition(0.4);
                 })
         );
 
