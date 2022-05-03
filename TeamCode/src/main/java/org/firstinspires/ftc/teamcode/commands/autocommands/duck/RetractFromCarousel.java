@@ -37,7 +37,7 @@ public class RetractFromCarousel extends ParallelCommandGroup {
                         .lineToLinearHeading(new Pose2d(-60, -45, toRadians(-40)))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-60, 45, toRadians(40)))
+                        .lineToLinearHeading(new Pose2d(-60, 47, toRadians(40)))
                         .build();
 
         addCommands(

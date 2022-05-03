@@ -102,7 +102,7 @@ public class RedDuckAuto extends AutoBase {
 
         schedule(
                 new SequentialCommandGroup(
-                        new WaitCommand(200),
+                        new WaitCommand(2000),
                         dropPreloadFreight,
                         new WaitCommand(100),
                         goToCarousel,

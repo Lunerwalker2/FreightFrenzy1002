@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.auto.AutoBase;
+import org.firstinspires.ftc.teamcode.commands.FollowTrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.DropFreight;
 import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.DropPreloadFreight;
 import org.firstinspires.ftc.teamcode.commands.autocommands.cycle.RetractFromFreight;
@@ -63,11 +64,11 @@ public class RedCycleAuto extends AutoBase {
         );
 
         DropFreight dropFreight = new DropFreight(
-                drive, lift, leftIntake, scoringArm, bucket, true
+                drive, lift, rightIntake, scoringArm, bucket, true
         );
 
         RetractFromFreight retractFromFreight = new RetractFromFreight(
-                drive, lift, leftIntake, scoringArm, bucket, true
+                drive, lift, rightIntake, scoringArm, bucket, true
         );
 
 
@@ -86,13 +87,24 @@ public class RedCycleAuto extends AutoBase {
         schedule(
                 new SequentialCommandGroup(
                         //preload
-                        new WaitCommand(200),
+                        new WaitCommand(500),
                         dropPreloadFreight,
                         new WaitCommand(100),
                         retractFromFreight,
-                        new WaitCommand(100),
 
                         //cycle 1
+                        new WaitCommand(100),
+                        new DropFreight(drive, lift, rightIntake, scoringArm, bucket, true),
+                        new WaitCommand(100),
+                        new RetractFromFreight(drive, lift, rightIntake, scoringArm, bucket, true),
+
+                        //cycle 2
+                        new WaitCommand(100),
+                        new DropFreight(drive, lift, rightIntake, scoringArm, bucket, true),
+                        new WaitCommand(100),
+                        new RetractFromFreight(drive, lift, rightIntake, scoringArm, bucket, true),
+
+                        //cycle 3
                         new WaitCommand(100),
                         new DropFreight(drive, lift, rightIntake, scoringArm, bucket, true),
                         new WaitCommand(100),

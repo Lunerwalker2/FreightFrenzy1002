@@ -31,7 +31,7 @@ public class RetractFromFreight extends ParallelCommandGroup {
     private TrajectorySequence trajectory;
 
     private static int cycleNum = 0;
-    private double distanceAdd = 2.5;
+    private double distanceAdd = 2;
 
 //    private final Pose2d redStartingPosition =
 //            new Pose2d(-10, -60, toRadians(180));
@@ -79,12 +79,11 @@ public class RetractFromFreight extends ParallelCommandGroup {
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(10, -64), toRadians(0))
-                        .splineToConstantHeading(new Vector2d(32, -65), toRadians(0))
-                        .splineToConstantHeading(new Vector2d(37, -65), toRadians(0))
+                        .lineToLinearHeading(new Pose2d(10, -65, toRadians(180)))
+                        .splineToConstantHeading(new Vector2d(40 + (cycleNum * distanceAdd), -65), toRadians(0))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-//                        .lineToLinearHeading(new Pose2d(10, 64, toRadians(0)))
+                        .lineToLinearHeading(new Pose2d(10, 65, toRadians(0)))
                         .splineToConstantHeading(new Vector2d(36 + (cycleNum * distanceAdd), 65), toRadians(0))
                         .build();
 
@@ -94,7 +93,7 @@ public class RetractFromFreight extends ParallelCommandGroup {
                 new FollowTrajectorySequenceCommand(drive, trajectory),
                 //Retract the lift
                 new SequentialCommandGroup(
-                        new WaitCommand(400),
+                        new WaitCommand(500),
                         new MoveLiftToLoadingPositionCommand(
                                 lift, scoringArm, bucket
                         )

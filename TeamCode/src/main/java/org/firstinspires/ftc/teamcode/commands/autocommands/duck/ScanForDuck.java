@@ -34,8 +34,8 @@ public class ScanForDuck extends ParallelCommandGroup {
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .lineToConstantHeading(new Vector2d(-45, -45))
-                        .lineToLinearHeading(new Pose2d(-45, -56, toRadians(-140)))
-                        .lineToConstantHeading(new Vector2d(-57, -56))
+                        .lineToLinearHeading(new Pose2d(-45, -54, toRadians(-140)))
+                        .lineToConstantHeading(new Vector2d(-57, -54))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .lineToConstantHeading(new Vector2d(-45, 45))

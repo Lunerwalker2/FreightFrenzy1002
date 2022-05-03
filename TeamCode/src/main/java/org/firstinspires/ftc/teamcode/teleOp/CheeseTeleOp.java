@@ -190,6 +190,8 @@ public class CheeseTeleOp extends CommandOpMode {
                             carouselWheel.setDirection(false);
                         },
                         () -> {
+                            telemetry.addLine("Ready For Start!");
+
                             carouselWheel.setDirection(true);
                         });
 
@@ -212,8 +214,10 @@ public class CheeseTeleOp extends CommandOpMode {
 
 
         manipulator.getGamepadButton(GamepadKeys.Button.A)
-                //TODO Just in case something is off, give a reset for this
-                .whenPressed(() -> cappingMode = !cappingMode);
+                .whenPressed(() -> {
+                    cappingMode = !cappingMode;
+                    ManualLiftCommand.cappingMode = cappingMode;
+                });
 
     }
 
@@ -224,13 +228,6 @@ public class CheeseTeleOp extends CommandOpMode {
 
         Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
 
-        telemetry.addData("Z axis", orientation.firstAngle);
-        telemetry.addData("Y axis", orientation.secondAngle);
-        telemetry.addData("X axis", orientation.thirdAngle);
-
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.put("li posit", lift.getLiftPosition());
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
         //Add the angle offset to be able to reset the 0 heading, and normalize it back to -pi to pi
         double heading = AngleUnit.normalizeRadians(orientation.firstAngle - offset);
@@ -243,13 +240,13 @@ public class CheeseTeleOp extends CommandOpMode {
         }
         prevSlowState = gamepad1.x; // "Inefficient toggle" - Ryan 2022
 
-        if(gamepad2.dpad_up && cappingMode) cappingMech.extend();
-        else if(gamepad2.dpad_down && cappingMode) cappingMech.retract();
+        if (gamepad2.dpad_up && cappingMode) cappingMech.retract();
+        else if (gamepad2.dpad_down && cappingMode) cappingMech.extend();
         else cappingMech.stop();
 
 
-        if(gamepad2.dpad_left && cappingMode) cappingMech.incrementPosition();
-        else if(gamepad2.dpad_right && cappingMode) cappingMech.decrementPosition();
+        if (gamepad2.dpad_left && cappingMode) cappingMech.incrementPosition();
+        else if (gamepad2.dpad_right && cappingMode) cappingMech.decrementPosition();
 
         double ly = Extensions.cubeInput(-gamepad1.left_stick_y, 0.2);
         double lx = Extensions.cubeInput(gamepad1.left_stick_x * 1.1, 0.2);
@@ -268,92 +265,6 @@ public class CheeseTeleOp extends CommandOpMode {
         rightBack.setPower((ly + lx - rx) / normalize * powerMultiplier);
 
 
-        //intake game elements
-        //TODO: make syntax better
-//        if (driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0 && driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) < 0.5) {
-//            rightIntake.setPower(0.3);
-//        }
-//        else if (driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
-//            rightIntake.setPower(1.0);
-//        }
-//
-//        if (driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0 && driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) < 0.5) {
-//            leftIntake.setPower(0.3);
-//        }
-//        else if (driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-//            leftIntake.setPower(1.0);
-//        }
-
-        //control intake arms
-        //TODO: make syntax better
-        //TODO: get servo positions
-//        if (driver.isDown(GamepadKeys.Button.RIGHT_BUMPER) != true) {
-//            rightArm.setPosition(0);
-//        }
-//        else if (driver.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
-//            rightArm.setPosition(1);
-//        }
-//        if (driver.isDown(GamepadKeys.Button.LEFT_BUMPER) != true) {
-//            leftArm.setPosition(0);
-//        }
-//        else if (driver.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
-//            leftArm.setPosition(1);
-//        }
-
-        //scoring blocks
-        //TODO: make syntax better
-        //TODO: get servo positions
-
-        //arm control
-
-//
-//        if (manipulator.getButton(GamepadKeys.Button.DPAD_UP)) {
-//            lift.setPower(0.5);
-//        }
-//        else if (manipulator.getButton(GamepadKeys.Button.DPAD_DOWN)) {
-//            lift.setPower(-0.5);
-//        }
-
-
-        //bucket control
-        //TODO: make syntax better
-        //TODO: get servo positions
-
-//        boolean current, previous = false, toggle = false;
-//        current = manipulator.getButton(GamepadKeys.Button.A);
-//        if (current && !previous) {
-//            toggle = !toggle;
-//        }
-//        previous = current;
-//
-//        if (toggle) {
-//            bucket.close();
-//        }
-//        else {
-//            bucket.open();
-//        }
-//
-//        current = manipulator.getButton(GamepadKeys.Button.RIGHT_BUMPER);
-//        previous = false;
-//        toggle = false;
-//        if (current && !previous) {
-//            toggle = !toggle;
-//        }
-//        previous = current;
-//
-//        if (toggle) {
-//            scoringArm.scoringPosition();
-//        }
-//        else {
-//            scoringArm.loadingPosition();
-//        }
-//
-//        if (manipulator.getButton(GamepadKeys.Button.DPAD_RIGHT)) {
-//            carouselMotor.setPower(0.7);
-//        }
-//        else if (manipulator.getButton(GamepadKeys.Button.DPAD_LEFT)) {
-//            carouselMotor.setPower(-0.7);
-//        }
         telemetry.update();
     }
 }

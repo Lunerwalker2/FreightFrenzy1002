@@ -154,7 +154,7 @@ public class AprilTagHubLevelPipeline extends OpenCvPipeline
             double x = detection.center.x;
             if(redSide) {
                 if(x > input.width() * CENTER_MARGIN_RED) hubLevel = HubLevel.MIDDLE;
-                else hubLevel = HubLevel.TOP;
+                else hubLevel = HubLevel.BOTTOM;
             } else {
                 if(x > input.width() * 0.31){
                     if (x > input.width() * CENTER_MARGIN_BLUE) hubLevel = HubLevel.BOTTOM;

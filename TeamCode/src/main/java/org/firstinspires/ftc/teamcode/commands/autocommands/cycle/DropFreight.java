@@ -66,12 +66,12 @@ public class DropFreight extends ParallelCommandGroup {
 
         trajectory = (redSide) ?
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(10.0, -64.5), toRadians(180.0))
-                        .splineToConstantHeading(new Vector2d(-9, -64), toRadians(175))
+                        .splineToConstantHeading(new Vector2d(10.0, -65), toRadians(180.0))
+                        .lineToLinearHeading(new Pose2d(-9, -64, toRadians(180)))
                         .build() :
                 drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                         .setReversed(true)
-                        .splineToConstantHeading(new Vector2d(10.0, 64.5), toRadians(180.0))
+                        .splineToConstantHeading(new Vector2d(10.0, 65), toRadians(180.0))
                         .lineToLinearHeading(new Pose2d(-9, 64, toRadians(0)))
                         .build();
 
@@ -85,8 +85,10 @@ public class DropFreight extends ParallelCommandGroup {
                         //Raise arm and keep a constant power for the intake
                         new InstantCommand(() -> {
                             intakeSide.intakeUp();
-                            intakeSide.intakePower(0.2);
+                            intakeSide.intakePower(-0.4);
                         }),
+                        new WaitCommand(300),
+                        new InstantCommand(() -> intakeSide.intakePower(0.2)),
                         //Wait for the arm to raise and drop the freight into the bucket
                         new WaitCommand(1600),
                         //After a bit stop the intake, running it a little to make sure bucket isnt stuck
