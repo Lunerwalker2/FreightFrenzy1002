@@ -45,8 +45,8 @@ class TankDriveTeleop(): LinearOpMode() {
             val y = -gamepad1.left_stick_y.toDouble()
             val r = gamepad1.right_stick_x.toDouble()
 
-            var leftSpeed = 0.0
-            var rightSpeed = 0.0
+            var leftSpeed: Double
+            var rightSpeed: Double
 
 
             if(gamepad1.right_stick_button){

@@ -35,6 +35,12 @@ public class HDriveTeleop extends LinearOpMode {
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         centerWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        centerWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         waitForStart();
 
         while (opModeIsActive()){
@@ -43,14 +49,14 @@ public class HDriveTeleop extends LinearOpMode {
             double x = gamepad1.left_stick_x;
             double r = gamepad1.right_stick_x;
 
-            double denom = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(r), 1.0);
+            double denom = Math.max(Math.abs(y) + Math.abs(r), 1.0);
 
-            leftFront.setPower((y + r) * denom);
-            leftBack.setPower((y + r) * denom);
-            rightFront.setPower((y - r) * denom);
-            rightBack.setPower((y - r) * denom);
+            leftFront.setPower((y + r) / denom);
+            leftBack.setPower((y + r) / denom);
+            rightFront.setPower((y - r) / denom);
+            rightBack.setPower((y - r) / denom);
 
-            centerWheel.setPower(x * denom);
+            centerWheel.setPower(x);
         }
 
 
