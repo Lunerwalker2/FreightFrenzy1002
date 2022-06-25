@@ -4,10 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import org.firstinspires.ftc.teamcode.util.Extensions
 import kotlin.math.abs
 
 @TeleOp
-class TankDriveTeleop(): LinearOpMode() {
+class TankDriveTeleOp(): LinearOpMode() {
 
 
     private lateinit var leftFront: DcMotor
@@ -24,8 +25,8 @@ class TankDriveTeleop(): LinearOpMode() {
         rightFront = hardwareMap.get(DcMotor::class.java, "rf")
         rightBack = hardwareMap.get(DcMotor::class.java, "rb")
 
-        leftFront.direction = DcMotorSimple.Direction.REVERSE
-        leftBack.direction = DcMotorSimple.Direction.REVERSE
+        rightFront.direction = DcMotorSimple.Direction.REVERSE
+        rightBack   .direction = DcMotorSimple.Direction.REVERSE
 
         leftFront.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         leftBack.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
@@ -42,14 +43,14 @@ class TankDriveTeleop(): LinearOpMode() {
 
         while (opModeIsActive()){
 
-            val y = -gamepad1.left_stick_y.toDouble()
-            val r = gamepad1.right_stick_x.toDouble()
+            val y = Extensions.cubeInput(-gamepad1.left_stick_y.toDouble(), 0.2)
+            val r = Extensions.cubeInput(-gamepad1.right_stick_x.toDouble(), 0.2)
 
             var leftSpeed: Double
             var rightSpeed: Double
 
 
-            if(gamepad1.right_stick_button){
+            if(!gamepad1.left_bumper){
                 //arcade drive
                 leftSpeed = y + r
                 rightSpeed = y - r
@@ -66,6 +67,8 @@ class TankDriveTeleop(): LinearOpMode() {
 
             leftFront.power = leftSpeed
             leftBack.power = leftSpeed
+            rightFront.power = rightSpeed
+            rightBack.power = rightSpeed
 
         }
 

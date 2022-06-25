@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp
-public class HDriveTeleop extends LinearOpMode {
+public class HDriveTeleOp extends LinearOpMode {
 
 
     DcMotor leftFront;
