@@ -46,4 +46,4 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 
 # Release Information
 
-[Release Log](RELEASELOG.md)
+[Release Log](RELEASELOG.MD)
