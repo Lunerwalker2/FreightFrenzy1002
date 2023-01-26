@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.util.MB1242;
-import org.outoftheboxrobotics.neutrinoi2c.Rev2mDistanceSensor.AsyncRev2MSensor;
 
 public class DistanceSensors extends SubsystemBase {
 
@@ -15,7 +14,7 @@ public class DistanceSensors extends SubsystemBase {
     private final MB1242 forwardSensor;
     private final MB1242 backwardSensor;
     //The TOF Distance sensor on the sides.
-    private final AsyncRev2MSensor leftSensor;
+
 
     //Debugging rate timer
     private final ElapsedTime cycleTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -27,10 +26,10 @@ public class DistanceSensors extends SubsystemBase {
         //TODO: YES I KNOW ITS REVERSED BUT I REFUSE TO SWITCH THE WIRING AROUND NOW
         forwardSensor = hardwareMap.get(MB1242.class, "forwardSensor");
         backwardSensor = hardwareMap.get(MB1242.class, "backwardSensor");
-        leftSensor =
-                new AsyncRev2MSensor(hardwareMap.get(Rev2mDistanceSensor.class, "leftSensor"));
-
-        leftSensor.setMeasurementIntervalMs(60);
+//        leftSensor =
+//                new AsyncRev2MSensor(hardwareMap.get(Rev2mDistanceSensor.class, "leftSensor"));
+//
+//        leftSensor.setMeasurementIntervalMs(60);
 
 //        disableAll();
         cycleTimer.reset();
@@ -63,7 +62,8 @@ public class DistanceSensors extends SubsystemBase {
 
     //Get the left sensor range in cm
     public double getLeftRange(DistanceUnit unit) {
-        return unit.fromCm(leftSensor.getDistance(DistanceUnit.CM));
+//        return unit.fromCm(leftSensor.getDistance(DistanceUnit.CM));
+        return 0;
     }
 
     public double getForwardRange(DistanceUnit unit) {
@@ -86,7 +86,7 @@ public class DistanceSensors extends SubsystemBase {
         ElapsedTime timer = new ElapsedTime();
         while (timer.milliseconds() < 80) ;
         return forwardSensor.getDistance(DistanceUnit.CM) > 20 || //20cm is the minimum range, so we test with it
-                leftSensor.getDistance(DistanceUnit.CM) > 3 ||
+                4 > 3 ||
                 backwardSensor.getDistance(DistanceUnit.CM) > 20;
     }
 }

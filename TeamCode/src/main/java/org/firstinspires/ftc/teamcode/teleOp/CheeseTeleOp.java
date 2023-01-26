@@ -198,7 +198,7 @@ public class CheeseTeleOp extends CommandOpMode {
         manipulator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .toggleWhenActive(
                         () -> {
-                            scoringArm.setPosition(0.3);
+                            scoringArm.setPosition(0.2);
                             scoringArm.loading = false;
                             bucket.close();
                         },

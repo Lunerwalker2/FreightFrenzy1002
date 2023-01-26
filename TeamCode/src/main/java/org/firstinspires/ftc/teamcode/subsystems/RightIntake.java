@@ -60,7 +60,7 @@ public class RightIntake extends SubsystemBase implements IntakeSide {
     }
 
     public void intakeUp(){
-        armServo.setPosition(0.14);
+        armServo.setPosition(0.16);
         up = true;
     }
 
